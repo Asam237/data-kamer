@@ -68,7 +68,6 @@ const Index = () => {
                   📊 Tableaux de bord interactifs
                 </p>
                 <p className="font-medium mb-1">📈 Graphiques détaillés</p>
-                <p className="font-medium">🗺️ Cartes géographiques</p>
               </div>
             </div>
           </motion.div>

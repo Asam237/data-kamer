@@ -280,46 +280,8 @@ export const cameroonData: CameroonData = {
         "Faculty of Engineering and Technology",
       ],
     },
-
-    // UNIVERSITÉS PRIVÉES RECONNUES
     {
       id: 9,
-      name: "Université Catholique d'Afrique Centrale (UCAC)",
-      region: "Centre",
-      founded: 1989,
-      type: "Privé",
-      students: 8000,
-      website: "https://ucac-icy.net/",
-      description:
-        "Établissement sous-régional d'enseignement supérieur alliant excellence académique et formation humaine intégrale.",
-      faculties: [
-        "Faculté de Philosophie",
-        "Faculté de Théologie",
-        "Faculté des Sciences Sociales et de Gestion",
-        "Faculté de Médecine et des Sciences Biomédicales",
-        "École Supérieure de Technologie",
-      ],
-    },
-    {
-      id: 10,
-      name: "Université des Montagnes",
-      region: "Ouest",
-      founded: 2000,
-      type: "Privé",
-      students: 5000,
-      website: "https://www.udesmontagnes.org",
-      description:
-        "Université privée située à Bangangté, reconnue pour ses programmes en médecine et ingénierie.",
-      faculties: [
-        "Faculté de Médecine et des Sciences Biomédicales",
-        "Faculté des Sciences de l'Ingénieur",
-        "Faculté des Sciences Économiques et de Gestion",
-        "Faculté des Arts, Lettres et Sciences Humaines",
-      ],
-    },
-
-    {
-      id: 11,
       name: "Université de Bertoua",
       region: "Est",
       founded: 2022,
@@ -341,7 +303,7 @@ export const cameroonData: CameroonData = {
     },
 
     {
-      id: 12,
+      id: 10,
       name: "Université d'Ebolowa",
       region: "Sud",
       founded: 2022,
@@ -354,7 +316,7 @@ export const cameroonData: CameroonData = {
     },
 
     {
-      id: 13,
+      id: 11,
       name: "Université de Garoua",
       region: "Nord",
       founded: 2022,
@@ -370,6 +332,43 @@ export const cameroonData: CameroonData = {
         "Faculté de Médecine et des Sciences Biomédicales",
         "Faculté des Sciences",
         "Faculté des Sciences de l'Éducation",
+      ],
+    },
+
+    // UNIVERSITÉS PRIVÉES RECONNUES
+    {
+      id: 12,
+      name: "Université Catholique d'Afrique Centrale (UCAC)",
+      region: "Centre",
+      founded: 1989,
+      type: "Privé",
+      students: 8000,
+      website: "https://ucac-icy.net/",
+      description:
+        "Établissement sous-régional d'enseignement supérieur alliant excellence académique et formation humaine intégrale.",
+      faculties: [
+        "Faculté de Philosophie",
+        "Faculté de Théologie",
+        "Faculté des Sciences Sociales et de Gestion",
+        "Faculté de Médecine et des Sciences Biomédicales",
+        "École Supérieure de Technologie",
+      ],
+    },
+    {
+      id: 13,
+      name: "Université des Montagnes",
+      region: "Ouest",
+      founded: 2000,
+      type: "Privé",
+      students: 5000,
+      website: "https://www.udesmontagnes.org",
+      description:
+        "Université privée située à Bangangté, reconnue pour ses programmes en médecine et ingénierie.",
+      faculties: [
+        "Faculté de Médecine et des Sciences Biomédicales",
+        "Faculté des Sciences de l'Ingénieur",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Arts, Lettres et Sciences Humaines",
       ],
     },
 

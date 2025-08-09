@@ -151,7 +151,7 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:space-y-0">
       {/* Header with stats */}
       <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div className="flex justify-between items-center mb-6">
@@ -304,7 +304,7 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
       )}
 
       {/* Results count */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center py-3">
         <p className="text-sm text-gray-600">
           {filteredUniversities.length} université
           {filteredUniversities.length !== 1 ? "s" : ""} trouvée
@@ -447,8 +447,8 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
   const age = currentYear - university.founded;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 max-h-[100vh]">
+      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[100vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-start mb-6">
             <div>

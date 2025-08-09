@@ -8,7 +8,7 @@ import {
   TrendingUp,
   BarChart3,
   PieChart,
-  Activity
+  Activity,
 } from "lucide-react";
 import {
   AreaChart,
@@ -23,7 +23,8 @@ import {
   BarChart,
   Bar,
   LineChart,
-  Line
+  Line,
+  Pie,
 } from "recharts";
 
 interface StatCardProps {
@@ -57,7 +58,9 @@ const StatCard: React.FC<StatCardProps> = ({
     transition={{ duration: 0.3 }}
     className="group relative"
   >
-    <div className={`absolute -inset-0.5 bg-gradient-to-r ${color.gradient} rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300`}></div>
+    <div
+      className={`absolute -inset-0.5 bg-gradient-to-r ${color.gradient} rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300`}
+    ></div>
     <div className="relative bg-white rounded-2xl shadow-xl p-6 border border-gray-100 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex-1">
@@ -68,20 +71,29 @@ const StatCard: React.FC<StatCardProps> = ({
             {typeof value === "number" ? value.toLocaleString() : value}
           </p>
           {description && (
-            <p className="text-xs text-gray-400 mt-1">
-              {description}
-            </p>
+            <p className="text-xs text-gray-400 mt-1">{description}</p>
           )}
           {trend && (
             <div className="flex items-center mt-2">
-              <TrendingUp className={`w-4 h-4 mr-1 ${trend.isPositive ? 'text-green-500' : 'text-red-500'}`} />
-              <span className={`text-sm font-medium ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                {trend.isPositive ? '+' : ''}{trend.value}%
+              <TrendingUp
+                className={`w-4 h-4 mr-1 ${
+                  trend.isPositive ? "text-green-500" : "text-red-500"
+                }`}
+              />
+              <span
+                className={`text-sm font-medium ${
+                  trend.isPositive ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {trend.isPositive ? "+" : ""}
+                {trend.value}%
               </span>
             </div>
           )}
         </div>
-        <div className={`p-4 rounded-2xl ${color.bg} bg-opacity-20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}>
+        <div
+          className={`p-4 rounded-2xl ${color.bg} bg-opacity-20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}
+        >
           <Icon className={`w-8 h-8 ${color.text}`} />
         </div>
       </div>
@@ -131,7 +143,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         gradient: "from-blue-400 to-blue-600",
       },
       description: "Habitants du Cameroun",
-      trend: { value: 2.8, isPositive: true }
+      trend: { value: 2.8, isPositive: true },
     },
     {
       title: "Régions",
@@ -143,7 +155,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         gradient: "from-emerald-400 to-emerald-600",
       },
       description: "Divisions administratives",
-      trend: { value: 0, isPositive: true }
+      trend: { value: 0, isPositive: true },
     },
     {
       title: "Départements",
@@ -155,7 +167,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         gradient: "from-purple-400 to-purple-600",
       },
       description: "Subdivisions",
-      trend: { value: 0, isPositive: true }
+      trend: { value: 0, isPositive: true },
     },
     {
       title: "Universités",
@@ -167,35 +179,35 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         gradient: "from-orange-400 to-orange-600",
       },
       description: "Institutions publiques",
-      trend: { value: 12.5, isPositive: true }
+      trend: { value: 12.5, isPositive: true },
     },
   ];
 
   // Sample data for charts
   const populationData = [
-    { name: 'Centre', population: 4665000, area: 68953 },
-    { name: 'Extrême-Nord', population: 4653000, area: 34263 },
-    { name: 'Littoral', population: 3728000, area: 20248 },
-    { name: 'Nord', population: 2445000, area: 66090 },
-    { name: 'Nord-Ouest', population: 2037000, area: 17300 },
-    { name: 'Ouest', population: 1960000, area: 13892 },
-    { name: 'Sud-Ouest', population: 1553000, area: 25410 },
-    { name: 'Adamaoua', population: 1010000, area: 63701 },
-    { name: 'Est', population: 801000, area: 109002 },
-    { name: 'Sud', population: 775000, area: 47191 },
+    { name: "Centre", population: 4665000, area: 68953 },
+    { name: "Extrême-Nord", population: 4653000, area: 34263 },
+    { name: "Littoral", population: 3728000, area: 20248 },
+    { name: "Nord", population: 2445000, area: 66090 },
+    { name: "Nord-Ouest", population: 2037000, area: 17300 },
+    { name: "Ouest", population: 1960000, area: 13892 },
+    { name: "Sud-Ouest", population: 1553000, area: 25410 },
+    { name: "Adamaoua", population: 1010000, area: 63701 },
+    { name: "Est", population: 801000, area: 109002 },
+    { name: "Sud", population: 775000, area: 47191 },
   ];
 
   const universityData = [
-    { name: 'Public', value: 8, color: '#3B82F6' },
-    { name: 'Privé', value: 15, color: '#10B981' },
+    { name: "Public", value: 11, color: "#3B82F6" },
+    { name: "Privé", value: 15, color: "#10B981" },
   ];
 
   const growthData = [
-    { year: '2018', population: 25216000 },
-    { year: '2019', population: 25876000 },
-    { year: '2020', population: 26545000 },
-    { year: '2021', population: 27224000 },
-    { year: '2022', population: 27914000 },
+    { year: "2018", population: 25216000 },
+    { year: "2019", population: 25876000 },
+    { year: "2020", population: 26545000 },
+    { year: "2021", population: 27224000 },
+    { year: "2022", population: 27914000 },
   ];
 
   return (
@@ -231,39 +243,47 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Population par Région</h3>
+            <h3 className="text-xl font-bold text-gray-900">
+              Population par Région
+            </h3>
             <BarChart3 className="w-6 h-6 text-blue-500" />
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={populationData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis 
-                dataKey="name" 
+              <XAxis
+                dataKey="name"
                 tick={{ fontSize: 12 }}
                 angle={-45}
                 textAnchor="end"
                 height={80}
               />
               <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip 
-                formatter={(value) => [value.toLocaleString(), 'Population']}
-                labelStyle={{ color: '#374151' }}
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              <Tooltip
+                formatter={(value) => [value.toLocaleString(), "Population"]}
+                labelStyle={{ color: "#374151" }}
+                contentStyle={{
+                  backgroundColor: "white",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                 }}
               />
-              <Bar 
-                dataKey="population" 
+              <Bar
+                dataKey="population"
                 fill="url(#populationGradient)"
                 radius={[4, 4, 0, 0]}
               />
               <defs>
-                <linearGradient id="populationGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                <linearGradient
+                  id="populationGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.3} />
                 </linearGradient>
               </defs>
             </BarChart>
@@ -278,7 +298,9 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Répartition des Universités</h3>
+            <h3 className="text-xl font-bold text-gray-900">
+              Répartition des Universités
+            </h3>
             <PieChart className="w-6 h-6 text-emerald-500" />
           </div>
           <ResponsiveContainer width="100%" height={300}>
@@ -296,13 +318,13 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip 
-                formatter={(value) => [value, 'Universités']}
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              <Tooltip
+                formatter={(value) => [value, "Universités"]}
+                contentStyle={{
+                  backgroundColor: "white",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                 }}
               />
             </RechartsPieChart>
@@ -310,7 +332,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           <div className="flex justify-center space-x-6 mt-4">
             {universityData.map((item, index) => (
               <div key={index} className="flex items-center">
-                <div 
+                <div
                   className="w-3 h-3 rounded-full mr-2"
                   style={{ backgroundColor: item.color }}
                 ></div>
@@ -328,40 +350,45 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Superficie par Région</h3>
+            <h3 className="text-xl font-bold text-gray-900">
+              Superficie par Région
+            </h3>
             <Activity className="w-6 h-6 text-purple-500" />
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={populationData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis 
-                dataKey="name" 
+              <XAxis
+                dataKey="name"
                 tick={{ fontSize: 12 }}
                 angle={-45}
                 textAnchor="end"
                 height={80}
               />
               <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip 
-                formatter={(value) => [value.toLocaleString() + ' km²', 'Superficie']}
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              <Tooltip
+                formatter={(value) => [
+                  value.toLocaleString() + " km²",
+                  "Superficie",
+                ]}
+                contentStyle={{
+                  backgroundColor: "white",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                 }}
               />
-              <Area 
-                type="monotone" 
-                dataKey="area" 
-                stroke="#8B5CF6" 
+              <Area
+                type="monotone"
+                dataKey="area"
+                stroke="#8B5CF6"
                 fill="url(#areaGradient)"
                 strokeWidth={2}
               />
               <defs>
                 <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1}/>
+                  <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
             </AreaChart>
@@ -376,7 +403,9 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Évolution de la Population</h3>
+            <h3 className="text-xl font-bold text-gray-900">
+              Évolution de la Population
+            </h3>
             <TrendingUp className="w-6 h-6 text-green-500" />
           </div>
           <ResponsiveContainer width="100%" height={300}>
@@ -384,22 +413,22 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="year" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip 
-                formatter={(value) => [value.toLocaleString(), 'Population']}
-                contentStyle={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              <Tooltip
+                formatter={(value) => [value.toLocaleString(), "Population"]}
+                contentStyle={{
+                  backgroundColor: "white",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                 }}
               />
-              <Line 
-                type="monotone" 
-                dataKey="population" 
-                stroke="#10B981" 
+              <Line
+                type="monotone"
+                dataKey="population"
+                stroke="#10B981"
                 strokeWidth={3}
-                dot={{ fill: '#10B981', strokeWidth: 2, r: 6 }}
-                activeDot={{ r: 8, stroke: '#10B981', strokeWidth: 2 }}
+                dot={{ fill: "#10B981", strokeWidth: 2, r: 6 }}
+                activeDot={{ r: 8, stroke: "#10B981", strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -419,9 +448,17 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { label: "Capitale", value: data.capital, icon: MapPin },
-            { label: "Superficie", value: `${data.totalArea.toLocaleString()} km²`, icon: Globe },
+            {
+              label: "Superficie",
+              value: `${data.totalArea.toLocaleString()} km²`,
+              icon: Globe,
+            },
             { label: "Monnaie", value: data.currency, icon: Activity },
-            { label: "Langues Officielles", value: data.officialLanguages.join(", "), icon: Users },
+            {
+              label: "Langues Officielles",
+              value: data.officialLanguages.join(", "),
+              icon: Users,
+            },
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -432,9 +469,13 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
             >
               <div className="flex items-center mb-3">
                 <item.icon className="w-5 h-5 text-blue-500 mr-2" />
-                <p className="text-sm font-medium text-gray-500">{item.label}</p>
+                <p className="text-sm font-medium text-gray-500">
+                  {item.label}
+                </p>
               </div>
-              <p className="text-lg font-semibold text-gray-900">{item.value}</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {item.value}
+              </p>
             </motion.div>
           ))}
         </div>

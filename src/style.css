@@ -54,17 +54,21 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
     @apply bg-background text-foreground;
   }
 }
 
-/* Custom animations */
+@layer utilities {
+  .border-border {
+    border-color: hsl(var(--border));
+  }
+}
+
+/* All your other custom CSS below this line... */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -77,7 +81,8 @@
 }
 
 @keyframes pulse-slow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

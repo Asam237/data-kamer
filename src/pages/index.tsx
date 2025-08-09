@@ -9,7 +9,7 @@ const Index = () => {
   useEffect(() => {
     // Redirect to dashboard after a brief moment
     const timer = setTimeout(() => {
-      router.push('/dashboard');
+      router.push("/dashboard");
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -36,7 +36,8 @@ const Index = () => {
             Data<span className="text-blue-600">Kamer</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-md mx-auto">
-            Plateforme moderne de visualisation et d'analyse des données du Cameroun
+            Plateforme moderne de visualisation et d&apos;analyse des données du
+            Cameroun
           </p>
         </motion.div>
 
@@ -49,7 +50,7 @@ const Index = () => {
           {[
             { icon: Users, label: "Population" },
             { icon: MapPin, label: "Régions" },
-            { icon: BarChart3, label: "Statistiques" }
+            { icon: BarChart3, label: "Statistiques" },
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -73,7 +74,9 @@ const Index = () => {
           className="flex items-center justify-center"
         >
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500 mr-3"></div>
-          <span className="text-gray-600">Chargement de l'application...</span>
+          <span className="text-gray-600">
+            Chargement de l&apos;application...
+          </span>
         </motion.div>
       </motion.div>
     </div>

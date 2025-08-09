@@ -6,7 +6,7 @@ export const cameroonData: CameroonData = {
       id: 1,
       name: "Adamaoua",
       capital: "Ngaoundéré",
-      population: 1010000,
+      population: 884289,
       area: 63701,
       departments: ["Djérem", "Faro-et-Déo", "Mayo-Banyo", "Mbéré", "Vina"],
     },
@@ -14,7 +14,7 @@ export const cameroonData: CameroonData = {
       id: 2,
       name: "Centre",
       capital: "Yaoundé",
-      population: 4665000,
+      population: 3098044,
       area: 68953,
       departments: [
         "Haute-Sanaga",
@@ -33,7 +33,7 @@ export const cameroonData: CameroonData = {
       id: 3,
       name: "Est",
       capital: "Bertoua",
-      population: 801000,
+      population: 771755,
       area: 109002,
       departments: ["Boumba-et-Ngoko", "Haut-Nyong", "Kadey", "Lom-et-Djérem"],
     },
@@ -41,7 +41,7 @@ export const cameroonData: CameroonData = {
       id: 4,
       name: "Extrême-Nord",
       capital: "Maroua",
-      population: 4653000,
+      population: 3111792,
       area: 34263,
       departments: [
         "Diamaré",
@@ -56,7 +56,7 @@ export const cameroonData: CameroonData = {
       id: 5,
       name: "Littoral",
       capital: "Douala",
-      population: 3728000,
+      population: 2510283,
       area: 20248,
       departments: ["Moungo", "Nkam", "Sanaga-Maritime", "Wouri"],
     },
@@ -64,7 +64,7 @@ export const cameroonData: CameroonData = {
       id: 6,
       name: "Nord",
       capital: "Garoua",
-      population: 2445000,
+      population: 1687859,
       area: 66090,
       departments: ["Bénoué", "Faro", "Mayo-Louti", "Mayo-Rey"],
     },
@@ -72,7 +72,7 @@ export const cameroonData: CameroonData = {
       id: 7,
       name: "Nord-Ouest",
       capital: "Bamenda",
-      population: 2037000,
+      population: 1728953,
       area: 17300,
       departments: [
         "Boyo",
@@ -88,7 +88,7 @@ export const cameroonData: CameroonData = {
       id: 8,
       name: "Ouest",
       capital: "Bafoussam",
-      population: 1960000,
+      population: 1720047,
       area: 13892,
       departments: [
         "Bamboutos",
@@ -105,7 +105,7 @@ export const cameroonData: CameroonData = {
       id: 9,
       name: "Sud",
       capital: "Ebolowa",
-      population: 775000,
+      population: 634855,
       area: 47191,
       departments: ["Dja-et-Lobo", "Mvila", "Océan", "Vallée-du-Ntem"],
     },
@@ -113,7 +113,7 @@ export const cameroonData: CameroonData = {
       id: 10,
       name: "Sud-Ouest",
       capital: "Buea",
-      population: 1553000,
+      population: 1318079,
       area: 25410,
       departments: [
         "Fako",
@@ -127,6 +127,7 @@ export const cameroonData: CameroonData = {
   ],
 
   universities: [
+    // UNIVERSITÉS PUBLIQUES
     {
       id: 1,
       name: "Université de Yaoundé I",
@@ -268,6 +269,150 @@ export const cameroonData: CameroonData = {
         "Faculty of Engineering and Technology",
       ],
     },
+
+    // UNIVERSITÉS PRIVÉES RECONNUES
+    {
+      id: 9,
+      name: "Université Catholique d'Afrique Centrale (UCAC)",
+      region: "Centre",
+      founded: 1989,
+      type: "Privé",
+      students: 8000,
+      website: "https://ucac-icy.net/",
+      description:
+        "Établissement sous-régional d'enseignement supérieur alliant excellence académique et formation humaine intégrale.",
+      faculties: [
+        "Faculté de Philosophie",
+        "Faculté de Théologie",
+        "Faculté des Sciences Sociales et de Gestion",
+        "Faculté de Médecine et des Sciences Biomédicales",
+        "École Supérieure de Technologie",
+      ],
+    },
+    {
+      id: 10,
+      name: "Université des Montagnes",
+      region: "Ouest",
+      founded: 2000,
+      type: "Privé",
+      students: 5000,
+      website: "https://www.udesmontagnes.org",
+      description:
+        "Université privée située à Bangangté, reconnue pour ses programmes en médecine et ingénierie.",
+      faculties: [
+        "Faculté de Médecine et des Sciences Biomédicales",
+        "Faculté des Sciences de l'Ingénieur",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Arts, Lettres et Sciences Humaines",
+      ],
+    },
+
+    {
+      id: 11,
+      name: "Université de Bertoua",
+      region: "Est",
+      founded: 2022,
+      type: "Public",
+      students: 10000,
+      website: "https://www.univ-bertoua.cm",
+      description:
+        "Université publique créée par le décret N°2022/008 du 05 Janvier 2022, située dans la région de l'Est du Cameroun.",
+      faculties: [
+        "L'Ecole Normale Supérieure (ENS) à Bertoua",
+        "L'Ecole Supérieure des Sciences de l'Urbanisme et du Tourisme (ESSUT)",
+        "L'Institut Supérieur d'Agriculture, du Bois, de l'Eau et de l'Environnement,(ISABEE)",
+        "L'Ecole Supérieure de Transformation des Mines et des Ressources Energétiques (ESTM)",
+        "La Faculté des Arts, Lettres et Sciences Humaines",
+        "La Faculté des Sciences",
+        "La Faculté des Sciences Économiques et de Gestion",
+        "La Faculté des Sciences Juridiques et Politiques",
+      ],
+    },
+
+    {
+      id: 12,
+      name: "Université d'Ebolowa",
+      region: "Sud",
+      founded: 2022,
+      type: "Public",
+      students: 4800,
+      website: "https://unv-ebolowa.cm/",
+      description:
+        "Université publique située dans la région du Sud du Cameroun, créée dans le cadre de la décentralisation de l'enseignement supérieur.",
+      faculties: ["Informations sur les facultés"],
+    },
+
+    {
+      id: 13,
+      name: "Université de Garoua",
+      region: "Nord",
+      founded: 2022,
+      type: "Public",
+      students: 3500,
+      website: "http://univ-garoua.cm/",
+      description:
+        "Université publique située dans la région du Nord du Cameroun.",
+      faculties: [
+        "Faculté des Sciences Juridiques et Politiques",
+        "Faculté des Sciences Économiques et Gestion",
+        "École Supérieure des Sciences Économiques et Commerciales",
+        "Faculté de Médecine et des Sciences Biomédicales",
+        "Faculté des Sciences",
+        "Faculté des Sciences de l'Éducation",
+      ],
+    },
+
+    {
+      id: 14,
+      name: "Université Adventiste Cosendai",
+      region: "Centre",
+      founded: 2007,
+      type: "Privé",
+      students: 1200,
+      website: "https://uacosendai-edu.net/",
+      description:
+        "Université privée confessionnelle située à Nanga-Eboko, offrant une formation diversifiée dans un cadre serein.",
+      faculties: [
+        "Faculté de Théologie",
+        "Faculté des Sciences de l'Éducation",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Sciences de la Santé",
+      ],
+    },
+    {
+      id: 15,
+      name: "Université Protestante d'Afrique Centrale",
+      region: "Centre",
+      founded: 2009,
+      type: "Privé",
+      students: 3000,
+      website: "https://www.upac.cm",
+      description:
+        "Université protestante offrant des formations dans diverses disciplines avec une approche chrétienne.",
+      faculties: [
+        "Faculté de Théologie",
+        "Faculté des Sciences de l'Éducation",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Sciences et Technologies",
+      ],
+    },
+    {
+      id: 16,
+      name: "Université de l'Équateur",
+      region: "Sud",
+      founded: 2012,
+      type: "Privé",
+      students: 2500,
+      website: "https://www.ude-cameroun.org",
+      description:
+        "Université privée située à Ebolowa, contribuant au développement de la région du Sud.",
+      faculties: [
+        "Faculté des Sciences Juridiques et Politiques",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Sciences de la Santé",
+        "Faculté des Sciences et Technologies",
+      ],
+    },
   ],
 
   overview: {
@@ -275,7 +420,7 @@ export const cameroonData: CameroonData = {
     totalArea: 475442,
     totalRegions: 10,
     totalDepartments: 58,
-    totalUniversities: 8,
+    totalUniversities: 11,
     capital: "Yaoundé",
     officialLanguages: ["Français", "Anglais"],
     currency: "Franc CFA",

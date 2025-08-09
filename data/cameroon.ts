@@ -144,6 +144,9 @@ export const cameroonData: CameroonData = {
         "École Nationale Supérieure Polytechnique",
         "École Normale Supérieure",
         "Institut Universitaire de Technologie",
+        "Faculté des arts, lettres et sciences humaines",
+        "Faculté des Sciences de l'Éducation",
+        "École Doctorale",
       ],
     },
     {
@@ -161,6 +164,8 @@ export const cameroonData: CameroonData = {
         "Faculté des Sciences Économiques et de Gestion",
         "Institut des Relations Internationales du Cameroun",
         "École Supérieure des Sciences et Techniques de l'Information et de la Communication",
+        "Institut de Formation et de Recherche Démographique (IFORD)",
+        "Chaire Santé et Globalisation",
       ],
     },
     {
@@ -175,10 +180,16 @@ export const cameroonData: CameroonData = {
         "Université pluridisciplinaire située dans la capitale économique du Cameroun.",
       faculties: [
         "Faculté des Sciences",
+        "Faculté des Sciences Juridiques et Politiques",
         "Faculté des Lettres et Sciences Humaines",
         "Faculté des Sciences Économiques et de Gestion Appliquée",
         "Faculté de Médecine et des Sciences Pharmaceutiques",
+        "École Nationale Supérieure Polytechnique",
         "Institut Universitaire de Technologie",
+        "Ecole Normale Supérieure d'Enseignement Technique",
+        "Institut Universitaire de Technologie",
+        "Institut des Beaux-Arts",
+        "Institut des Sciences Halieutiques",
       ],
     },
     {

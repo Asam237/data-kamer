@@ -20,7 +20,7 @@ const Index = () => {
     window.addEventListener("resize", checkScreenSize);
 
     // Redirect to dashboard après un bref moment (seulement si pas mobile)
-    let timer;
+    let timer: any;
     if (!isMobile) {
       timer = setTimeout(() => {
         router.push("/dashboard");

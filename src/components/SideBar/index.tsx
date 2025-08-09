@@ -162,7 +162,7 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
             {/* Social Networks */}
             <div className="flex items-center justify-center space-x-4 mb-3">
               <a
-                href="https://github.com/Asam237"
+                href="https://github.com/Asam237/data-kamer"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-500 hover:text-gray-700 transition-colors duration-200"

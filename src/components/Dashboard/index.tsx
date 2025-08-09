@@ -222,7 +222,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           Tableau de Bord DataKamer
         </h1>
         <p className="text-lg text-gray-600">
-          Données complètes sur le Cameroun - Mise à jour en temps réel
+          Tout savoir sur le Cameroun - Statistiques et informations clés
         </p>
       </motion.div>
 

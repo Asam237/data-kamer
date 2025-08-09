@@ -25,19 +25,6 @@ Inspirée d’outils similaires réalisés pour le Sénégal, cette solution off
 
 ---
 
-## 📂 Structure du projet
-
-```bash
-📦 camedata
- ┣ 📂 pages        # Pages Next.js
- ┣ 📂 components   # Composants réutilisables
- ┣ 📂 styles       # Fichiers CSS / Tailwind
- ┣ 📂 data         # Jeux de données Cameroun
- ┣ 📜 package.json # Dépendances et scripts
- ┗ 📜 README.md    # Documentation
-
-```
-
 ### Installation des dépendances
 
 Depuis votre terminal:
@@ -48,6 +35,8 @@ npm install
 yarn
 ```
 
+---
+
 ## Développement
 
 Depuis votre terminal:
@@ -57,6 +46,8 @@ npm run dev
 yarn dev
 
 ```
+
+---
 
 ## Auteur
 

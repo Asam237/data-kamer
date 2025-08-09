@@ -45,3 +45,4 @@ next-env.d.ts
 # extension
 extension/*
 !extension/manifest.json
+.env

@@ -3,16 +3,12 @@ import type { AppProps } from "next/app";
 import { Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import "../style.css";
-import "../components/Curve/styles.css";
-import { SessionProvider } from "next-auth/react";
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <>
       <Theme>
-        <SessionProvider session={session}>
-          <Component {...pageProps} />
-        </SessionProvider>
+        <Component {...pageProps} />
       </Theme>
     </>
   );

@@ -16,7 +16,10 @@ module.exports = {
       },
       colors: {
         primary: {
-          DEFAULT: "#006DB2",
+          50: "#f0f9ff",
+          500: "#3b82f6",
+          600: "#2563eb",
+          700: "#1d4ed8",
         },
         primaryTitle: {
           DEFAULT: "#0E3758",

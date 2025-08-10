@@ -12,7 +12,7 @@ export interface University {
   name: string;
   region: string;
   founded: number;
-  type?: "Public" | "Privé";
+  type?: string;
   students?: number;
   faculties?: string[];
   website?: string;

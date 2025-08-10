@@ -6,7 +6,7 @@ import RegionsView from "../components/RegionsView";
 import UniversitiesView from "../components/UniversitiesView";
 import StatsView from "../components/StatsView";
 import SettingsView from "../components/SettingsView";
-import { cameroonData } from "../../data/cameroon";
+import cameroonData from "../../data/cameroon.json";
 
 type ViewType = "dashboard" | "regions" | "universities" | "stats" | "settings";
 
@@ -19,7 +19,7 @@ const DashboardPage = () => {
       initial: { opacity: 0, y: 20 },
       animate: { opacity: 1, y: 0 },
       exit: { opacity: 0, y: -20 },
-      transition: { duration: 0.3 }
+      transition: { duration: 0.3 },
     };
 
     switch (activeView) {
@@ -66,9 +66,7 @@ const DashboardPage = () => {
     <div className="flex h-screen bg-gray-50">
       <Sidebar activeView={activeView} setActiveView={setActiveView} />
       <main className="flex-1 ml-64 overflow-auto">
-        <div className="p-8">
-          {renderView()}
-        </div>
+        <div className="p-8">{renderView()}</div>
       </main>
     </div>
   );

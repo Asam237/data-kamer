@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { cameroonData } from "../../../../data/cameroon";
+import cameroonData from "../../../../data/cameroon.json";
 import { University } from "../../../../types";
 
 interface ApiError {
@@ -20,7 +20,9 @@ export default function handler(
   }
 
   try {
-    const { universities } = cameroonData;
+    const universities = Array.isArray(cameroonData.universities)
+      ? cameroonData.universities
+      : [];
     res.status(200).json(universities);
   } catch (error) {
     console.error("Erreur dans /api/universities:", error);

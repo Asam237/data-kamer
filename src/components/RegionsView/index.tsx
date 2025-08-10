@@ -76,17 +76,18 @@ export default function RegionsView() {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <MapIcon className="w-6 h-6 text-blue-500" />
-                <h3 className="text-lg font-semibold">Region Details</h3>
+                <h3 className="text-lg font-semibold">Détails sur la région</h3>
               </div>
               <div className="space-y-2">
                 <p>
-                  <strong>Capital:</strong> {region.capital}
+                  <strong>Capitale:</strong> {region.capital}
                 </p>
                 <p>
-                  <strong>Area:</strong> {region.area.toLocaleString()} km²
+                  <strong>Superficie:</strong> {region.area.toLocaleString()}{" "}
+                  km²
                 </p>
                 <p>
-                  <strong>Departments:</strong> {region.departments.length}
+                  <strong>Départements:</strong> {region.departments.length}
                 </p>
               </div>
             </div>
@@ -151,13 +152,13 @@ export default function RegionsView() {
         {/* Header and Search */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Regions of Cameroon
+            Regions du Cameroun
           </h1>
           <div className="relative w-full md:w-auto">
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search regions..."
+              placeholder="Rechercher une région..."
               className="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

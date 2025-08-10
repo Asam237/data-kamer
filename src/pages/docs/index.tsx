@@ -14,6 +14,8 @@ export default function SwaggerPage() {
   return spec ? (
     <SwaggerUI spec={spec} />
   ) : (
-    <div className="flex justify-center items-center">Chargement...</div>
+    <div className="flex justify-center items-center h-screen">
+      Chargement...
+    </div>
   );
 }

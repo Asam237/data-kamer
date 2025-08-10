@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import swaggerUi from "swagger-ui-express";
-import { swaggerDefinition } from "../../swagger";
+import { swaggerDefinition } from "../../../src/swagger";
 
 export const config = {
   api: {
@@ -11,6 +11,5 @@ export const config = {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Content-Type", "application/json");
   res.status(200).json(swaggerDefinition);
 }

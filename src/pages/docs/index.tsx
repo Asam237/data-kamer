@@ -11,5 +11,9 @@ export default function SwaggerPage() {
       .then(setSpec);
   }, []);
 
-  return spec ? <SwaggerUI spec={spec} /> : <div>Chargement...</div>;
+  return spec ? (
+    <SwaggerUI spec={spec} />
+  ) : (
+    <div className="flex justify-center items-center">Chargement...</div>
+  );
 }

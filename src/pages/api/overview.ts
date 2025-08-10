@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { cameroonData } from "../../../data/cameroon";
+import cameroonData from "../../../data/cameroon.json";
 import { ExtendedOverview } from "../../../types";
 
 interface ApiError {
@@ -11,7 +11,6 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<ExtendedOverview | ApiError>
 ) {
-  // Vérifier la méthode HTTP
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);
     return res.status(405).json({

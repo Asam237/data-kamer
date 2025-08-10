@@ -8,6 +8,10 @@ export const swaggerDefinition = {
   },
   servers: [
     {
+      url: "https://data-kamer.vercel.app",
+      description: "Serveur de production",
+    },
+    {
       url: "http://localhost:3000",
       description: "Serveur local",
     },

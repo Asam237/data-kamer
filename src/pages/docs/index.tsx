@@ -12,7 +12,7 @@ export default function SwaggerPage() {
   }, []);
 
   return spec ? (
-    <SwaggerUI spec={spec} />
+    <SwaggerUI url="https://data-kamer.vercel.app/api/swagger" />
   ) : (
     <div className="flex justify-center items-center h-screen">
       Chargement...

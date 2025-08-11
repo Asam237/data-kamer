@@ -26,6 +26,7 @@ import {
   Line,
   Pie,
 } from "recharts";
+import cameroonData from "../../../data/cameroon.json";
 
 interface StatCardProps {
   title: string;
@@ -116,6 +117,33 @@ interface DashboardProps {
   data: DashboardData | null;
 }
 
+interface Region {
+  id: number;
+  name: string;
+  capital: string;
+  population: number;
+  area: number;
+  departments: string[];
+}
+
+interface University {
+  id: number;
+  name: string;
+  region: string;
+  founded: number;
+  type: string;
+  students: number;
+  website: string;
+  description: string;
+  faculties: string[];
+}
+
+interface CameroonData {
+  regions: Region[];
+  universities: University[];
+  overview: DashboardData;
+}
+
 const Dashboard: React.FC<DashboardProps> = ({ data }) => {
   if (!data) {
     return (
@@ -183,23 +211,21 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
     },
   ];
 
-  // Sample data for charts
-  const populationData = [
-    { name: "Centre", population: 4665000, area: 68953 },
-    { name: "Extrême-Nord", population: 4653000, area: 34263 },
-    { name: "Littoral", population: 3728000, area: 20248 },
-    { name: "Nord", population: 2445000, area: 66090 },
-    { name: "Nord-Ouest", population: 2037000, area: 17300 },
-    { name: "Ouest", population: 1960000, area: 13892 },
-    { name: "Sud-Ouest", population: 1553000, area: 25410 },
-    { name: "Adamaoua", population: 1010000, area: 63701 },
-    { name: "Est", population: 801000, area: 109002 },
-    { name: "Sud", population: 775000, area: 47191 },
-  ];
+  const populationData = cameroonData.regions.map((region: any) => ({
+    name: region.name,
+    population: region.population,
+    area: region.area,
+  }));
 
+  const publicCount = cameroonData.universities.filter(
+    (u: any) => u.type === "Public"
+  ).length;
+  const privateCount = cameroonData.universities.filter(
+    (u: any) => u.type === "Privé"
+  ).length;
   const universityData = [
-    { name: "Public", value: 11, color: "#3B82F6" },
-    { name: "Privé", value: 15, color: "#10B981" },
+    { name: "Public", value: publicCount, color: "#3B82F6" },
+    { name: "Privé", value: privateCount, color: "#10B981" },
   ];
 
   const growthData = [
@@ -207,7 +233,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
     { year: "2019", population: 25876000 },
     { year: "2020", population: 26545000 },
     { year: "2021", population: 27224000 },
-    { year: "2022", population: 27914000 },
+    { year: "2022", population: cameroonData.overview.totalPopulation },
   ];
 
   return (

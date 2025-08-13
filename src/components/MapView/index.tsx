@@ -333,7 +333,6 @@ const MapView: React.FC = () => {
         {/* Map container */}
         <div className="flex-1 relative">
           <Map
-            height="100%"
             center={center}
             zoom={zoom}
             onBoundsChanged={({ center, zoom }) => {

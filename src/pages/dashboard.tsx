@@ -7,8 +7,15 @@ import UniversitiesView from "../components/UniversitiesView";
 import StatsView from "../components/StatsView";
 import SettingsView from "../components/SettingsView";
 import cameroonData from "../../data/cameroon.json";
+import MapView from "@/components/MapView";
 
-type ViewType = "dashboard" | "regions" | "universities" | "stats" | "settings";
+type ViewType =
+  | "dashboard"
+  | "regions"
+  | "universities"
+  | "stats"
+  | "settings"
+  | "map";
 
 const DashboardPage = () => {
   const [activeView, setActiveView] = useState<ViewType>("dashboard");
@@ -47,10 +54,10 @@ const DashboardPage = () => {
             <StatsView data={data} />
           </motion.div>
         );
-      case "settings":
+      case "map":
         return (
           <motion.div {...viewProps}>
-            <SettingsView />
+            <MapView />
           </motion.div>
         );
       default:

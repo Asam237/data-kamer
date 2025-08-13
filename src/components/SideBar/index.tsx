@@ -7,11 +7,12 @@ import {
   BarChart3,
   Settings,
   TrendingUp,
+  Map,
 } from "lucide-react";
 
 type NavigationItem = {
   name: string;
-  key: "dashboard" | "regions" | "universities" | "stats" | "settings";
+  key: "dashboard" | "regions" | "universities" | "stats" | "settings" | "map";
   icon: any;
   description: string;
 };
@@ -41,12 +42,12 @@ const navigation: NavigationItem[] = [
     icon: BarChart3,
     description: "Analyses avancées",
   },
-  // {
-  //   name: "Paramètres",
-  //   key: "settings",
-  //   icon: Settings,
-  //   description: "Configuration"
-  // },
+  {
+    name: "Carte",
+    key: "map",
+    icon: Map,
+    description: "Données géographiques",
+  },
 ];
 
 type SidebarProps = {

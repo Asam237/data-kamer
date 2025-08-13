@@ -1,4 +1,4 @@
-import { CameroonData } from "../types";
+import { CameroonData } from "../../types";
 
 export const cameroonData: CameroonData = {
   regions: [

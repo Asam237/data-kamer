@@ -6,7 +6,18 @@
       "capital": "Ngaoundéré",
       "population": 884289,
       "area": 63701,
-      "departments": ["Djérem", "Faro-et-Déo", "Mayo-Banyo", "Mbéré", "Vina"]
+      "departments": ["Djérem", "Faro-et-Déo", "Mayo-Banyo", "Mbéré", "Vina"],
+      "majorCompanies": [
+        { "name": "SODECOTON", "sector": "Agriculture" },
+        { "name": "Brasseries du Cameroun", "sector": "Boissons" },
+        { "name": "Dangote Cement", "sector": "Construction" }
+      ],
+      "jobDemand": ["Élevage", "Agriculture", "Agroalimentaire", "Tourisme"],
+      "specialties": {
+        "gastronomy": "Kilishi (viande séchée), Lait frais, Fromage peul",
+        "professions": "Éleveurs, Agriculteurs, Commerçants de bétail",
+        "entertainment": "Festivals culturels peuls, Courses de chevaux, Tourisme de montagne"
+      }
     },
     {
       "id": 2,
@@ -25,7 +36,26 @@
         "Nyong-et-Kéllé",
         "Nyong-et-Mfoumou",
         "Nyong-et-So'o"
-      ]
+      ],
+      "majorCompanies": [
+        { "name": "ENEO", "sector": "Énergie" },
+        { "name": "MTN Cameroon", "sector": "Télécommunications" },
+        { "name": "CAMTEL", "sector": "Télécommunications" },
+        { "name": "Orange Cameroun", "sector": "Télécommunications" },
+        { "name": "BICEC", "sector": "Banque" }
+      ],
+      "jobDemand": [
+        "Administration publique",
+        "Télécommunications",
+        "Banque/Finance",
+        "Éducation",
+        "Services"
+      ],
+      "specialties": {
+        "gastronomy": "Okok, Poulet DG, Ndolè, Koki",
+        "professions": "Fonctionnaires, Diplomates, Enseignants, Banquiers",
+        "entertainment": "Musées nationaux, Festivals culturels, Cinéma, Théâtre"
+      }
     },
     {
       "id": 3,
@@ -33,7 +63,24 @@
       "capital": "Bertoua",
       "population": 771755,
       "area": 109002,
-      "departments": ["Boumba-et-Ngoko", "Haut-Nyong", "Kadey", "Lom-et-Djérem"]
+      "departments": [
+        "Boumba-et-Ngoko",
+        "Haut-Nyong",
+        "Kadey",
+        "Lom-et-Djérem"
+      ],
+      "majorCompanies": [
+        { "name": "PALLISCO", "sector": "Exploitation forestière" },
+        { "name": "SFID", "sector": "Bois" },
+        { "name": "COTCO", "sector": "Pétrole" },
+        { "name": "CamIron", "sector": "Mines" }
+      ],
+      "jobDemand": ["Foresterie", "Mines", "Agriculture", "Conservation"],
+      "specialties": {
+        "gastronomy": "Gibier, Manioc, Poisson d'eau douce, Chenilles comestibles",
+        "professions": "Forestiers, Mineurs, Agriculteurs, Gardes forestiers",
+        "entertainment": "Écotourisme, Safaris, Danses traditionnelles des peuples de la forêt"
+      }
     },
     {
       "id": 4,
@@ -48,7 +95,23 @@
         "Mayo-Kani",
         "Mayo-Sava",
         "Mayo-Tsanaga"
-      ]
+      ],
+      "majorCompanies": [
+        { "name": "SODECOTON", "sector": "Agriculture" },
+        { "name": "SEMRY", "sector": "Riziculture" },
+        { "name": "CICAM", "sector": "Textile" }
+      ],
+      "jobDemand": [
+        "Agriculture",
+        "Artisanat",
+        "Commerce transfrontalier",
+        "Tourisme"
+      ],
+      "specialties": {
+        "gastronomy": "Folléré, Kilibu (bouillie de mil), Viande séchée",
+        "professions": "Artisans (poterie, vannerie, cuir), Agriculteurs, Pêcheurs",
+        "entertainment": "Artisanat local, Marchés traditionnels, Festivals culturels"
+      }
     },
     {
       "id": 5,
@@ -56,7 +119,26 @@
       "capital": "Douala",
       "population": 2510283,
       "area": 20248,
-      "departments": ["Moungo", "Nkam", "Sanaga-Maritime", "Wouri"]
+      "departments": ["Moungo", "Nkam", "Sanaga-Maritime", "Wouri"],
+      "majorCompanies": [
+        { "name": "SABC", "sector": "Boissons" },
+        { "name": "CAMRAIL", "sector": "Transport ferroviaire" },
+        { "name": "Port Autonome de Douala", "sector": "Transport maritime" },
+        { "name": "ALUCAM", "sector": "Aluminium" },
+        { "name": "SOCAPALM", "sector": "Agriculture" }
+      ],
+      "jobDemand": [
+        "Logistique/Transport",
+        "Industrie",
+        "Commerce international",
+        "Services financiers",
+        "Pétrole/Gaz"
+      ],
+      "specialties": {
+        "gastronomy": "Ndolè, Poisson braisé, Miondo, Bobolo",
+        "professions": "Commerçants, Industriels, Transitaires, Banquiers, Marins",
+        "entertainment": "Plages, Vie nocturne, Festivals musicaux, Expositions d'art"
+      }
     },
     {
       "id": 6,
@@ -64,7 +146,18 @@
       "capital": "Garoua",
       "population": 1687859,
       "area": 66090,
-      "departments": ["Bénoué", "Faro", "Mayo-Louti", "Mayo-Rey"]
+      "departments": ["Bénoué", "Faro", "Mayo-Louti", "Mayo-Rey"],
+      "majorCompanies": [
+        { "name": "SODECOTON", "sector": "Agriculture" },
+        { "name": "Brasseries du Cameroun", "sector": "Boissons" },
+        { "name": "CIMENCAM", "sector": "Ciment" }
+      ],
+      "jobDemand": ["Agriculture", "Élevage", "Commerce", "Construction"],
+      "specialties": {
+        "gastronomy": "Kilishi, Kossam (lait caillé), Couscous de maïs",
+        "professions": "Éleveurs, Agriculteurs, Artisans du cuir",
+        "entertainment": "Courses de chevaux, Lutte traditionnelle, Festivals culturels"
+      }
     },
     {
       "id": 7,
@@ -80,7 +173,18 @@
         "Mezam",
         "Momo",
         "Ngo-Ketunjia"
-      ]
+      ],
+      "majorCompanies": [
+        { "name": "Ndawara Tea Estate", "sector": "Agriculture" },
+        { "name": "Cameroon Development Corporation", "sector": "Agriculture" },
+        { "name": "Guinness Cameroon", "sector": "Boissons" }
+      ],
+      "jobDemand": ["Agriculture", "Artisanat", "Éducation", "Commerce"],
+      "specialties": {
+        "gastronomy": "Achu, Fufu and Njama-njama, Corn chaff",
+        "professions": "Agriculteurs, Artisans, Enseignants, Commerçants",
+        "entertainment": "Danses traditionnelles, Festivals culturels, Tourisme de montagne"
+      }
     },
     {
       "id": 8,
@@ -97,7 +201,25 @@
         "Mifi",
         "Ndé",
         "Noun"
-      ]
+      ],
+      "majorCompanies": [
+        { "name": "SABC", "sector": "Boissons" },
+        { "name": "SOCAPALM", "sector": "Agriculture" },
+        { "name": "UNALOR", "sector": "Aviculture" },
+        { "name": "SIC CACAO", "sector": "Agroalimentaire" }
+      ],
+      "jobDemand": [
+        "Agriculture",
+        "Commerce",
+        "Artisanat",
+        "Transport",
+        "Agroalimentaire"
+      ],
+      "specialties": {
+        "gastronomy": "Taro, Poulet DG, Kondré, Nkui",
+        "professions": "Agriculteurs, Commerçants, Artisans, Entrepreneurs",
+        "entertainment": "Funérailles traditionnelles, Festivals culturels, Marchés colorés"
+      }
     },
     {
       "id": 9,
@@ -105,7 +227,19 @@
       "capital": "Ebolowa",
       "population": 634855,
       "area": 47191,
-      "departments": ["Dja-et-Lobo", "Mvila", "Océan", "Vallée-du-Ntem"]
+      "departments": ["Dja-et-Lobo", "Mvila", "Océan", "Vallée-du-Ntem"],
+      "majorCompanies": [
+        { "name": "HEVECAM", "sector": "Caoutchouc" },
+        { "name": "SOCAPALM", "sector": "Agriculture" },
+        { "name": "SAFACAM", "sector": "Agriculture" },
+        { "name": "CamIron", "sector": "Mines" }
+      ],
+      "jobDemand": ["Agriculture", "Foresterie", "Mines", "Tourisme"],
+      "specialties": {
+        "gastronomy": "Okok, Gibier, Kwem (feuilles de manioc), Sauce jaune",
+        "professions": "Agriculteurs, Forestiers, Pêcheurs, Chasseurs",
+        "entertainment": "Danses traditionnelles, Écotourisme, Pêche sportive"
+      }
     },
     {
       "id": 10,
@@ -120,7 +254,22 @@
         "Manyu",
         "Meme",
         "Ndian"
-      ]
+      ],
+      "majorCompanies": [
+        {
+          "name": "CDC (Cameroon Development Corporation)",
+          "sector": "Agriculture"
+        },
+        { "name": "PAMOL", "sector": "Huile de palme" },
+        { "name": "SONARA", "sector": "Pétrole" },
+        { "name": "Guinness Cameroon", "sector": "Boissons" }
+      ],
+      "jobDemand": ["Agriculture", "Tourisme", "Pétrole", "Pêche", "Services"],
+      "specialties": {
+        "gastronomy": "Eru and Water fufu, Ekwang, Mbanga soup, Poisson braisé",
+        "professions": "Agriculteurs, Pêcheurs, Guides touristiques, Employés pétroliers",
+        "entertainment": "Tourisme de montagne (Mont Cameroun), Plages, Festivals culturels"
+      }
     }
   ],
   "universities": [

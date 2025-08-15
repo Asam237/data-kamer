@@ -151,7 +151,7 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
   }
 
   return (
-    <div className="space-y-6 lg:space-y-0">
+    <div className="space-y-6 lg:space-y-0 p-8">
       {/* Header with stats */}
       <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div className="flex justify-between items-center mb-6">

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import cameroonData from "../../../../data/cameroon.json";
+import cameroonData from "../../../../public/data/cameroon.json";
 import { University } from "../../../../types";
 
 interface ApiError {

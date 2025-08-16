@@ -9,6 +9,7 @@ import SettingsView from "../components/SettingsView";
 import cameroonData from "../../data/cameroon.json";
 import MapView from "@/components/MapView";
 import { Monitor } from "lucide-react";
+import EneoOutageView from "@/components/OutageView";
 
 type ViewType =
   | "dashboard"
@@ -16,6 +17,7 @@ type ViewType =
   | "universities"
   | "stats"
   | "settings"
+  | "outages"
   | "map";
 
 const DashboardPage = () => {
@@ -114,6 +116,12 @@ const DashboardPage = () => {
         return (
           <motion.div {...viewProps}>
             <StatsView data={data} />
+          </motion.div>
+        );
+      case "outages":
+        return (
+          <motion.div {...viewProps}>
+            <EneoOutageView />
           </motion.div>
         );
       case "map":

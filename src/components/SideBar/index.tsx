@@ -8,11 +8,19 @@ import {
   Settings,
   TrendingUp,
   Map,
+  Zap,
 } from "lucide-react";
 
 type NavigationItem = {
   name: string;
-  key: "dashboard" | "regions" | "universities" | "stats" | "settings" | "map";
+  key:
+    | "dashboard"
+    | "regions"
+    | "universities"
+    | "stats"
+    | "settings"
+    | "map"
+    | "outages";
   icon: any;
   description: string;
 };
@@ -30,23 +38,29 @@ const navigation: NavigationItem[] = [
     icon: MapPin,
     description: "Exploration des régions",
   },
+  // {
+  //   name: "Universités",
+  //   key: "universities",
+  //   icon: GraduationCap,
+  //   description: "Institutions d'enseignement",
+  // },
   {
-    name: "Universités",
-    key: "universities",
-    icon: GraduationCap,
-    description: "Institutions d'enseignement",
-  },
-  {
-    name: "Statistiques",
-    key: "stats",
-    icon: BarChart3,
-    description: "Analyses avancées",
+    name: "Coupures",
+    key: "outages",
+    icon: Zap,
+    description: "Coupures de courant ENEO",
   },
   {
     name: "Carte",
     key: "map",
     icon: Map,
     description: "Données géographiques",
+  },
+  {
+    name: "Statistiques",
+    key: "stats",
+    icon: BarChart3,
+    description: "Analyses avancées",
   },
 ];
 

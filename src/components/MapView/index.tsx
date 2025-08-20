@@ -1490,7 +1490,7 @@ const MapView: React.FC = () => {
                         darkMode ? "text-gray-200" : "text-gray-700"
                       }`}
                     >
-                      Secteurs d'emploi en demande
+                      Secteurs d&apos;emploi en demande
                     </h4>
                     <div className="space-y-2">
                       {selectedRegion.jobDemand.map((job, index) => (

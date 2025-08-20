@@ -887,9 +887,6 @@ const MapView: React.FC = () => {
               attribution={false}
               metaWheelZoom={true}
               twoFingerDrag={true}
-              className={`${darkMode ? "dark-map" : ""} ${
-                isAnimating ? "transition-opacity duration-500 opacity-80" : ""
-              }`}
             >
               {showRegions &&
                 cameroonData.regions.map((region) => (

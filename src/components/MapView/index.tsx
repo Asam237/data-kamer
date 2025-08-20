@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Map, Marker, Overlay, ZoomControl } from "pigeon-maps";
 import {
   Users,
@@ -10,7 +10,6 @@ import {
   Menu,
   Info,
   ChevronDown,
-  ChevronUp,
   Building2,
   Briefcase,
   UtensilsCrossed,
@@ -18,12 +17,23 @@ import {
   Music,
   Search,
   X,
-  ArrowLeft,
   ChevronRight,
-  ChevronLeft,
+  Camera,
+  Compass,
+  Mountain,
+  PalmtreeIcon,
+  Globe,
+  Sun,
+  Heart,
+  Share2,
+  Star,
+  MapPin,
+  Maximize,
+  Minimize,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
-// Types pour les données
 interface Department {
   id: number;
   name: string;
@@ -38,6 +48,8 @@ interface Department {
     professions: string;
     entertainment: string;
   };
+  touristSites?: TouristSite[];
+  mainImage?: string;
 }
 
 interface Overview {
@@ -55,7 +67,16 @@ interface CameroonData {
   overview: Overview;
 }
 
-// Coordonnées approximatives des capitales régionales du Cameroun
+interface TouristSite {
+  name: string;
+  description: string;
+  location?: string;
+  image?: string;
+  type?: string;
+  rating?: number;
+  coordinates?: [number, number];
+}
+
 const REGION_COORDINATES: Record<string, [number, number]> = {
   Adamaoua: [7.3233, 13.5837],
   Centre: [3.8667, 11.5167],
@@ -69,7 +90,6 @@ const REGION_COORDINATES: Record<string, [number, number]> = {
   "Sud-Ouest": [4.1667, 9.2333],
 };
 
-// Fonction pour générer une couleur basée sur l'ID
 const getRegionColor = (id: number): string => {
   const colors = [
     "#3498db",
@@ -86,11 +106,49 @@ const getRegionColor = (id: number): string => {
   return colors[(id - 1) % colors.length];
 };
 
+const getTouristSiteIcon = (type: string) => {
+  switch (type) {
+    case "nature":
+      return <PalmtreeIcon className="h-5 w-5 text-green-600" />;
+    case "culture":
+      return <Landmark className="h-5 w-5 text-purple-600" />;
+    case "montagne":
+      return <Mountain className="h-5 w-5 text-gray-700" />;
+    case "plage":
+      return <Sun className="h-5 w-5 text-yellow-500" />;
+    case "historique":
+      return <Globe className="h-5 w-5 text-blue-600" />;
+    case "urbain":
+      return <Building2 className="h-5 w-5 text-gray-600" />;
+    default:
+      return <Compass className="h-5 w-5 text-blue-500" />;
+  }
+};
+
+const getTouristSiteColor = (type: string): string => {
+  switch (type) {
+    case "nature":
+      return "#10b981";
+    case "culture":
+      return "#8b5cf6";
+    case "montagne":
+      return "#6b7280";
+    case "plage":
+      return "#f59e0b";
+    case "historique":
+      return "#3b82f6";
+    case "urbain":
+      return "#64748b";
+    default:
+      return "#3b82f6";
+  }
+};
+
 const MapView: React.FC = () => {
   const [cameroonData, setCameroonData] = useState<CameroonData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [center, setCenter] = useState<[number, number]>([7.3697, 12.3547]); // Centre du Cameroun
+  const [center, setCenter] = useState<[number, number]>([7.3697, 12.3547]);
   const [zoom, setZoom] = useState(6);
   const [selectedRegion, setSelectedRegion] = useState<Department | null>(null);
   const [showRegions, setShowRegions] = useState(true);
@@ -98,7 +156,7 @@ const MapView: React.FC = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<
-    "info" | "companies" | "jobs" | "specialties"
+    "info" | "companies" | "jobs" | "specialties" | "tourism"
   >("info");
   const [mapStyle, setMapStyle] = useState<"default" | "satellite">("default");
   const [showTooltip, setShowTooltip] = useState(false);
@@ -106,8 +164,22 @@ const MapView: React.FC = () => {
   const [tooltipPosition, setTooltipPosition] = useState<[number, number]>([
     0, 0,
   ]);
+  const [darkMode, setDarkMode] = useState(false);
+  const [showTouristSites, setShowTouristSites] = useState(false);
+  const [selectedTouristSite, setSelectedTouristSite] =
+    useState<TouristSite | null>(null);
+  const [immersiveMode, setImmersiveMode] = useState(false);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [showPopulation, setShowPopulation] = useState(true);
+  const [showArea, setShowArea] = useState(true);
+  const [showDepartments, setShowDepartments] = useState(true);
+  const [showCompanies, setShowCompanies] = useState(true);
 
-  // Charger les données depuis le fichier JSON
+  const mapRef = useRef<HTMLDivElement>(null);
+  const touristSiteRef = useRef<HTMLDivElement>(null);
+
+  const [isAnimating, setIsAnimating] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -117,12 +189,11 @@ const MapView: React.FC = () => {
         }
         const data = await response.json();
 
-        // Nous gardons seulement les régions et l'aperçu général
         const filteredData = {
           regions: data.regions,
           overview: {
             ...data.overview,
-            totalUniversities: undefined, // Suppression de cette propriété
+            totalUniversities: undefined,
           },
         };
 
@@ -141,12 +212,40 @@ const MapView: React.FC = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (selectedTouristSite && touristSiteRef.current) {
+      touristSiteRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedTouristSite]);
+
+  useEffect(() => {
+    if (isAnimating) {
+      const timer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isAnimating]);
+
   const handleMarkerClick = (region: Department) => {
+    setIsAnimating(true);
     setSelectedRegion(region);
     setCenter(REGION_COORDINATES[region.name]);
     setZoom(8);
     setDetailsOpen(true);
     setActiveTab("info");
+    setSelectedTouristSite(null);
+  };
+
+  const handleTouristSiteClick = (site: TouristSite, regionName: string) => {
+    setSelectedTouristSite(site);
+    if (site.coordinates) {
+      setCenter(site.coordinates);
+      setZoom(10);
+    } else {
+      setCenter(REGION_COORDINATES[regionName]);
+      setZoom(8);
+    }
   };
 
   const handleMarkerHover = (
@@ -175,10 +274,33 @@ const MapView: React.FC = () => {
     setZoom(6);
     setSelectedRegion(null);
     setDetailsOpen(false);
+    setSelectedTouristSite(null);
+    setImmersiveMode(false);
   };
 
   const toggleMapStyle = () => {
     setMapStyle(mapStyle === "default" ? "satellite" : "default");
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
+  const toggleImmersiveMode = () => {
+    setImmersiveMode(!immersiveMode);
+    if (!immersiveMode) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+    }
+  };
+
+  const toggleFavorite = (siteName: string) => {
+    if (favorites.includes(siteName)) {
+      setFavorites(favorites.filter((name) => name !== siteName));
+    } else {
+      setFavorites([...favorites, siteName]);
+    }
   };
 
   const filteredRegions = cameroonData?.regions.filter(
@@ -192,29 +314,67 @@ const MapView: React.FC = () => {
 
   const closeDetails = () => {
     setDetailsOpen(false);
+    setSelectedTouristSite(null);
   };
 
-  // Fonction pour formater les nombres avec séparateur de milliers
   const formatNumber = (num: number): string => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 
-  // Fonction pour le provider de carte
   const mapTiler = (x: number, y: number, z: number, dpr?: number) => {
     return mapStyle === "default"
       ? `https://tile.openstreetmap.org/${z}/${x}/${y}.png`
       : `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`;
   };
 
+  const getRegionPosition = (regionName: string): string => {
+    switch (regionName) {
+      case "Adamaoua":
+        return "centre";
+      case "Centre":
+        return "centre";
+      case "Est":
+        return "est";
+      case "Extrême-Nord":
+        return "nord";
+      case "Littoral":
+        return "sud-ouest";
+      case "Nord":
+        return "nord";
+      case "Nord-Ouest":
+        return "nord-ouest";
+      case "Ouest":
+        return "ouest";
+      case "Sud":
+        return "sud";
+      case "Sud-Ouest":
+        return "sud-ouest";
+      default:
+        return "";
+    }
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div
+        className={`flex items-center justify-center h-screen ${
+          darkMode ? "bg-gray-900" : "bg-gray-50"
+        }`}
+      >
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mx-auto mb-6"></div>
-          <p className="text-xl font-semibold text-gray-700">
+          <div
+            className={`animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 ${
+              darkMode ? "border-green-400" : "border-green-600"
+            } mx-auto mb-6`}
+          ></div>
+          <p
+            className={`text-xl font-semibold ${
+              darkMode ? "text-gray-100" : "text-gray-700"
+            }`}
+          >
             Chargement des données...
           </p>
-          <p className="text-gray-500 mt-2">
+          <p className={`${darkMode ? "text-gray-300" : "text-gray-500"} mt-2`}>
             Préparation de la carte interactive du Cameroun
           </p>
         </div>
@@ -224,8 +384,16 @@ const MapView: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="bg-white border-l-4 border-red-500 shadow-lg rounded-lg p-6 max-w-md">
+      <div
+        className={`flex items-center justify-center h-screen ${
+          darkMode ? "bg-gray-900" : "bg-gray-50"
+        }`}
+      >
+        <div
+          className={`${
+            darkMode ? "bg-gray-800 border-red-400" : "bg-white border-red-500"
+          } border-l-4 shadow-lg rounded-lg p-6 max-w-md`}
+        >
           <div className="flex items-center">
             <div className="flex-shrink-0 text-red-500">
               <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
@@ -237,14 +405,28 @@ const MapView: React.FC = () => {
               </svg>
             </div>
             <div className="ml-4">
-              <h2 className="text-lg font-bold text-gray-800 mb-1">
+              <h2
+                className={`text-lg font-bold ${
+                  darkMode ? "text-gray-100" : "text-gray-800"
+                } mb-1`}
+              >
                 Erreur de chargement
               </h2>
-              <p className="text-gray-600">{error}</p>
-              <p className="mt-4 text-sm text-gray-500">
+              <p className={`${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                {error}
+              </p>
+              <p
+                className={`mt-4 text-sm ${
+                  darkMode ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
                 Assurez-vous que le fichier JSON est correctement placé dans le
                 dossier{" "}
-                <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                <code
+                  className={`${
+                    darkMode ? "bg-gray-700" : "bg-gray-100"
+                  } px-2 py-1 rounded text-sm`}
+                >
                   public/data/cameroon.json
                 </code>
               </p>
@@ -263,9 +445,17 @@ const MapView: React.FC = () => {
 
   if (!cameroonData) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div
+        className={`flex items-center justify-center h-screen ${
+          darkMode ? "bg-gray-900" : "bg-gray-50"
+        }`}
+      >
         <div className="text-center">
-          <p className="text-xl font-semibold text-gray-700">
+          <p
+            className={`text-xl font-semibold ${
+              darkMode ? "text-gray-100" : "text-gray-700"
+            }`}
+          >
             Aucune donnée disponible
           </p>
           <button
@@ -280,14 +470,134 @@ const MapView: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div
+      className={`flex flex-col h-screen ${
+        darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-800"
+      } transition-colors duration-300`}
+    >
+      <div
+        className={`${
+          darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+        } border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300`}
+      >
+        <div className="flex items-center">
+          <button
+            className={`mr-3 p-2 rounded-full ${
+              darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+            } transition-colors`}
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <h1 className="text-xl font-bold flex items-center">
+            <Globe
+              className={`h-6 w-6 mr-2 ${
+                darkMode ? "text-green-400" : "text-green-600"
+              }`}
+            />
+            Carte Interactive du Cameroun
+          </h1>
+        </div>
+        <div className="flex items-center space-x-3">
+          <button
+            className={`p-2 rounded-full ${
+              darkMode
+                ? "bg-gray-700 hover:bg-gray-600"
+                : "bg-gray-100 hover:bg-gray-200"
+            } transition-colors`}
+            onClick={() => setShowTouristSites(!showTouristSites)}
+            title={
+              showTouristSites
+                ? "Masquer les sites touristiques"
+                : "Afficher les sites touristiques"
+            }
+          >
+            {showTouristSites ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
+          </button>
+          <button
+            className={`p-2 rounded-full ${
+              darkMode
+                ? "bg-gray-700 hover:bg-gray-600"
+                : "bg-gray-100 hover:bg-gray-200"
+            } transition-colors`}
+            onClick={toggleMapStyle}
+            title={mapStyle === "default" ? "Vue satellite" : "Vue carte"}
+          >
+            <Layers className="h-5 w-5" />
+          </button>
+          <button
+            className={`p-2 rounded-full ${
+              darkMode
+                ? "bg-gray-700 hover:bg-gray-600"
+                : "bg-gray-100 hover:bg-gray-200"
+            } transition-colors`}
+            onClick={toggleImmersiveMode}
+            title={immersiveMode ? "Mode normal" : "Mode immersif"}
+          >
+            {immersiveMode ? (
+              <Minimize className="h-5 w-5" />
+            ) : (
+              <Maximize className="h-5 w-5" />
+            )}
+          </button>
+          <button
+            className={`p-2 rounded-full ${
+              darkMode
+                ? "bg-gray-700 hover:bg-gray-600"
+                : "bg-gray-100 hover:bg-gray-200"
+            } transition-colors`}
+            onClick={toggleDarkMode}
+            title={darkMode ? "Mode clair" : "Mode sombre"}
+          >
+            {darkMode ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        {sidebarOpen && (
-          <div className="w-80 bg-white shadow-lg overflow-hidden flex flex-col z-10">
-            <div className="bg-gray-50 border-b p-4">
-              <h2 className="font-bold text-gray-800 flex items-center">
-                <MapIcon className="h-5 w-5 mr-2 text-green-600" />
+        {sidebarOpen && !immersiveMode && (
+          <div
+            className={`w-80 ${
+              darkMode
+                ? "bg-gray-800 border-gray-700"
+                : "bg-white border-gray-200"
+            } border-r shadow-lg overflow-hidden flex flex-col z-10 transition-all duration-300`}
+          >
+            <div
+              className={`${
+                darkMode ? "bg-gray-700" : "bg-gray-50"
+              } border-b p-4`}
+            >
+              <h2
+                className={`font-bold ${
+                  darkMode ? "text-gray-100" : "text-gray-800"
+                } flex items-center`}
+              >
+                <MapIcon
+                  className={`h-5 w-5 mr-2 ${
+                    darkMode ? "text-green-400" : "text-green-600"
+                  }`}
+                />
                 Régions du Cameroun ({cameroonData.regions.length})
               </h2>
 
@@ -298,7 +608,11 @@ const MapView: React.FC = () => {
                     placeholder="Rechercher une région..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className={`w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                      darkMode
+                        ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
+                        : "bg-white border-gray-300 text-gray-800 placeholder-gray-500"
+                    }`}
                   />
                   {searchTerm ? (
                     <button
@@ -323,11 +637,33 @@ const MapView: React.FC = () => {
                 />
                 <label
                   htmlFor="showRegions"
-                  className="text-sm font-medium text-gray-700"
+                  className={`text-sm font-medium ${
+                    darkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
                 >
                   Afficher les marqueurs sur la carte
                 </label>
               </div>
+
+              {showTouristSites && (
+                <div className="mt-3 flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={showTouristSites}
+                    onChange={() => setShowTouristSites(!showTouristSites)}
+                    id="showTouristSites"
+                    className="mr-2"
+                  />
+                  <label
+                    htmlFor="showTouristSites"
+                    className={`text-sm font-medium ${
+                      darkMode ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    Afficher les sites touristiques
+                  </label>
+                </div>
+              )}
             </div>
 
             <div className="overflow-y-auto flex-1 p-3">
@@ -336,10 +672,18 @@ const MapView: React.FC = () => {
                   {filteredRegions.map((region) => (
                     <li
                       key={region.id}
-                      className={`cursor-pointer rounded-lg overflow-hidden transition-all duration-200 border ${
-                        selectedRegion?.id === region.id
-                          ? "border-green-500 shadow-md"
-                          : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                      className={`cursor-pointer rounded-lg overflow-hidden transition-all duration-200 ${
+                        darkMode
+                          ? `border ${
+                              selectedRegion?.id === region.id
+                                ? "border-green-500 bg-gray-700"
+                                : "border-gray-700 hover:border-gray-600 bg-gray-800 hover:bg-gray-700"
+                            }`
+                          : `border ${
+                              selectedRegion?.id === region.id
+                                ? "border-green-500 shadow-md"
+                                : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                            }`
                       }`}
                       onClick={() => handleMarkerClick(region)}
                     >
@@ -353,31 +697,61 @@ const MapView: React.FC = () => {
                           {region.id}
                         </div>
                         <div className="flex-1">
-                          <div className="font-medium">{region.name}</div>
-                          <div className="text-sm text-gray-500 flex items-center">
+                          <div
+                            className={`font-medium ${
+                              darkMode ? "text-gray-100" : "text-gray-800"
+                            }`}
+                          >
+                            {region.name}
+                          </div>
+                          <div
+                            className={`text-sm ${
+                              darkMode ? "text-gray-400" : "text-gray-500"
+                            } flex items-center`}
+                          >
                             <Home className="h-3 w-3 mr-1" />
                             {region.capital}
                           </div>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                        <ChevronRight
+                          className={`h-4 w-4 ${
+                            darkMode ? "text-gray-500" : "text-gray-400"
+                          }`}
+                        />
                       </div>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <div className="text-center py-8">
-                  <div className="text-gray-400 mb-2">
+                  <div
+                    className={`${
+                      darkMode ? "text-gray-500" : "text-gray-400"
+                    } mb-2`}
+                  >
                     <Search className="h-12 w-12 mx-auto" />
                   </div>
-                  <p className="text-gray-600 font-medium">
+                  <p
+                    className={`${
+                      darkMode ? "text-gray-300" : "text-gray-600"
+                    } font-medium`}
+                  >
                     Aucune région trouvée
                   </p>
-                  <p className="text-gray-500 text-sm mt-1">
+                  <p
+                    className={`${
+                      darkMode ? "text-gray-400" : "text-gray-500"
+                    } text-sm mt-1`}
+                  >
                     Essayez avec un autre terme de recherche
                   </p>
                   {searchTerm && (
                     <button
-                      className="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors text-sm"
+                      className={`mt-4 px-4 py-2 ${
+                        darkMode
+                          ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                          : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                      } rounded transition-colors text-sm`}
                       onClick={() => setSearchTerm("")}
                     >
                       Effacer la recherche
@@ -386,16 +760,121 @@ const MapView: React.FC = () => {
                 </div>
               )}
             </div>
+
+            <div
+              className={`${
+                darkMode
+                  ? "bg-gray-700 border-gray-600"
+                  : "bg-gray-50 border-gray-200"
+              } border-t p-4`}
+            >
+              <h3
+                className={`text-sm font-semibold ${
+                  darkMode ? "text-gray-200" : "text-gray-700"
+                } mb-2`}
+              >
+                Aperçu du Cameroun
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                <div
+                  className={`${
+                    darkMode ? "bg-gray-800" : "bg-white"
+                  } p-2 rounded border ${
+                    darkMode ? "border-gray-700" : "border-gray-200"
+                  } hover:shadow-md transition-shadow duration-200`}
+                >
+                  <div
+                    className={`text-xs ${
+                      darkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    Population
+                  </div>
+                  <div
+                    className={`font-medium ${
+                      darkMode ? "text-gray-200" : "text-gray-800"
+                    }`}
+                  >
+                    {formatNumber(cameroonData.overview.totalPopulation)}
+                  </div>
+                </div>
+                <div
+                  className={`${
+                    darkMode ? "bg-gray-800" : "bg-white"
+                  } p-2 rounded border ${
+                    darkMode ? "border-gray-700" : "border-gray-200"
+                  } hover:shadow-md transition-shadow duration-200`}
+                >
+                  <div
+                    className={`text-xs ${
+                      darkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    Superficie
+                  </div>
+                  <div
+                    className={`font-medium ${
+                      darkMode ? "text-gray-200" : "text-gray-800"
+                    }`}
+                  >
+                    {formatNumber(cameroonData.overview.totalArea)} km²
+                  </div>
+                </div>
+                <div
+                  className={`${
+                    darkMode ? "bg-gray-800" : "bg-white"
+                  } p-2 rounded border ${
+                    darkMode ? "border-gray-700" : "border-gray-200"
+                  } hover:shadow-md transition-shadow duration-200`}
+                >
+                  <div
+                    className={`text-xs ${
+                      darkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    Capitale
+                  </div>
+                  <div
+                    className={`font-medium ${
+                      darkMode ? "text-gray-200" : "text-gray-800"
+                    }`}
+                  >
+                    {cameroonData.overview.capital}
+                  </div>
+                </div>
+                <div
+                  className={`${
+                    darkMode ? "bg-gray-800" : "bg-white"
+                  } p-2 rounded border ${
+                    darkMode ? "border-gray-700" : "border-gray-200"
+                  } hover:shadow-md transition-shadow duration-200`}
+                >
+                  <div
+                    className={`text-xs ${
+                      darkMode ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
+                    Monnaie
+                  </div>
+                  <div
+                    className={`font-medium ${
+                      darkMode ? "text-gray-200" : "text-gray-800"
+                    }`}
+                  >
+                    {cameroonData.overview.currency}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Main content area with map and details panel */}
         <div className="flex-1 flex overflow-hidden relative">
-          {/* Map container */}
           <div
             className={`${
-              detailsOpen ? "w-3/5" : "w-full"
+              detailsOpen && !immersiveMode ? "w-3/5" : "w-full"
             } transition-all duration-300 relative`}
+            ref={mapRef}
           >
             <Map
               provider={mapTiler}
@@ -408,6 +887,9 @@ const MapView: React.FC = () => {
               attribution={false}
               metaWheelZoom={true}
               twoFingerDrag={true}
+              className={`${darkMode ? "dark-map" : ""} ${
+                isAnimating ? "transition-opacity duration-500 opacity-80" : ""
+              }`}
             >
               {showRegions &&
                 cameroonData.regions.map((region) => (
@@ -431,68 +913,186 @@ const MapView: React.FC = () => {
                   />
                 ))}
 
+              {showTouristSites &&
+                selectedRegion &&
+                selectedRegion.touristSites &&
+                selectedRegion.touristSites.map(
+                  (site, index) =>
+                    site.coordinates && (
+                      <Marker
+                        key={`tourist-site-${index}`}
+                        width={30}
+                        anchor={site.coordinates}
+                        onClick={() =>
+                          handleTouristSiteClick(site, selectedRegion.name)
+                        }
+                        color={getTouristSiteColor(site.type || "default")}
+                      />
+                    )
+                )}
+
               {showTooltip && tooltipRegion && !detailsOpen && (
                 <Overlay
                   anchor={REGION_COORDINATES[tooltipRegion.name]}
                   offset={[0, -20]}
                 >
-                  <div className="bg-white px-3 py-1.5 rounded shadow-lg text-sm font-medium border border-gray-200 pointer-events-none">
+                  <div
+                    className={`px-3 py-1.5 rounded shadow-lg text-sm font-medium border pointer-events-none ${
+                      darkMode
+                        ? "bg-gray-800 text-gray-100 border-gray-700"
+                        : "bg-white text-gray-800 border-gray-200"
+                    }`}
+                  >
                     {tooltipRegion.name} - {tooltipRegion.capital}
                   </div>
                 </Overlay>
               )}
 
+              {showTouristSites &&
+                selectedTouristSite &&
+                selectedTouristSite.coordinates && (
+                  <Overlay
+                    anchor={selectedTouristSite.coordinates}
+                    offset={[0, -20]}
+                  >
+                    <div
+                      className={`px-3 py-2 rounded-lg shadow-lg text-sm font-medium border ${
+                        darkMode
+                          ? "bg-gray-800 text-gray-100 border-gray-700"
+                          : "bg-white text-gray-800 border-gray-200"
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        {getTouristSiteIcon(
+                          selectedTouristSite.type || "default"
+                        )}
+                        <span className="ml-1">{selectedTouristSite.name}</span>
+                      </div>
+                    </div>
+                  </Overlay>
+                )}
+
               <ZoomControl />
             </Map>
 
-            {/* Custom map controls */}
             <div className="absolute top-4 right-4 flex flex-col space-y-2">
               <button
-                className="bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors ${
+                  darkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
                 onClick={handleZoomIn}
                 title="Zoom avant"
               >
                 <Plus className="h-5 w-5" />
               </button>
               <button
-                className="bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors ${
+                  darkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
                 onClick={handleZoomOut}
                 title="Zoom arrière"
               >
                 <Minus className="h-5 w-5" />
               </button>
               <button
-                className="bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors ${
+                  darkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
                 onClick={resetView}
                 title="Vue d'ensemble"
               >
                 <Layers className="h-5 w-5" />
               </button>
+              <button
+                className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors ${
+                  darkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+                onClick={toggleMapStyle}
+                title={mapStyle === "default" ? "Vue satellite" : "Vue carte"}
+              >
+                <Globe className="h-5 w-5" />
+              </button>
             </div>
 
-            {/* Legend */}
-            <div className="absolute bottom-14 right-4 bg-white p-3 rounded-lg shadow-md border border-gray-200">
+            <div
+              className={`absolute bottom-14 right-4 p-3 rounded-lg shadow-md border ${
+                darkMode
+                  ? "bg-gray-800 border-gray-700 text-gray-200"
+                  : "bg-white border-gray-200 text-gray-800"
+              }`}
+            >
               <div className="text-sm font-medium mb-2">Légende</div>
               <div className="space-y-2">
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
-                  <span className="text-xs text-gray-700">Régions</span>
+                  <span
+                    className={`text-xs ${
+                      darkMode ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    Régions
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
-                  <span className="text-xs text-gray-700">
+                  <span
+                    className={`text-xs ${
+                      darkMode ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
                     Région sélectionnée
                   </span>
                 </div>
+                {showTouristSites && (
+                  <>
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+                      <span
+                        className={`text-xs ${
+                          darkMode ? "text-gray-300" : "text-gray-700"
+                        }`}
+                      >
+                        Sites naturels
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 bg-purple-500 rounded-full mr-2"></div>
+                      <span
+                        className={`text-xs ${
+                          darkMode ? "text-gray-300" : "text-gray-700"
+                        }`}
+                      >
+                        Sites culturels
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Details panel */}
-          {detailsOpen && selectedRegion && (
-            <div className="w-2/5 bg-white shadow-lg overflow-y-auto transition-all duration-300 border-l border-gray-200">
-              <div className="sticky top-0 z-10 bg-white shadow-sm">
-                <div className="bg-blue-700 p-4 text-white ">
+          {detailsOpen && selectedRegion && !immersiveMode && (
+            <div
+              className={`w-2/5 overflow-y-auto transition-all duration-300 border-l ${
+                darkMode
+                  ? "bg-gray-800 border-gray-700"
+                  : "bg-white border-gray-200"
+              } shadow-lg`}
+            >
+              <div className="sticky top-0 z-10">
+                <div
+                  className={`p-4 text-white ${
+                    darkMode ? "bg-blue-800" : "bg-blue-700"
+                  }`}
+                >
                   <div className="flex items-center justify-between">
                     <button
                       onClick={closeDetails}
@@ -504,45 +1104,105 @@ const MapView: React.FC = () => {
                     <h3 className="text-xl font-bold flex-1 text-center">
                       {selectedRegion.name}
                     </h3>
-                    <div className="w-5"></div> {/* Spacer for alignment */}
+                    <div className="w-5"></div>
                   </div>
                   <div className="mt-2 text-center text-green-100">
                     Capitale: {selectedRegion.capital}
                   </div>
                 </div>
 
-                {/* Stats bar */}
-                <div className="bg-green-50 p-3 border-b border-gray-200">
+                <div
+                  className={`p-3 border-b ${
+                    darkMode
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-green-50 border-gray-200"
+                  }`}
+                >
                   <div className="flex justify-around text-center">
                     <div>
-                      <div className="text-lg font-bold text-gray-800">
+                      <div
+                        className={`text-lg font-bold ${
+                          darkMode ? "text-gray-100" : "text-gray-800"
+                        }`}
+                      >
                         {formatNumber(selectedRegion.population)}
                       </div>
-                      <div className="text-xs text-gray-500">Population</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-gray-800">
-                        {formatNumber(selectedRegion.area)} km²
+                      <div
+                        className={`text-xs ${
+                          darkMode ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        Habitants
                       </div>
-                      <div className="text-xs text-gray-500">Superficie</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-gray-800">
+                      <div
+                        className={`text-lg font-bold ${
+                          darkMode ? "text-gray-100" : "text-gray-800"
+                        }`}
+                      >
+                        {formatNumber(selectedRegion.area)}
+                      </div>
+                      <div
+                        className={`text-xs ${
+                          darkMode ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        km²
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        className={`text-lg font-bold ${
+                          darkMode ? "text-gray-100" : "text-gray-800"
+                        }`}
+                      >
+                        {Math.round(
+                          selectedRegion.population / selectedRegion.area
+                        )}
+                      </div>
+                      <div
+                        className={`text-xs ${
+                          darkMode ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        hab/km²
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        className={`text-lg font-bold ${
+                          darkMode ? "text-gray-100" : "text-gray-800"
+                        }`}
+                      >
                         {selectedRegion.departments.length}
                       </div>
-                      <div className="text-xs text-gray-500">Départements</div>
+                      <div
+                        className={`text-xs ${
+                          darkMode ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        Départements
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Tabs */}
-                <div className="flex border-b border-gray-200">
+                <div
+                  className={`flex border-b z-50 ${
+                    darkMode ? "border-gray-700" : "border-gray-200"
+                  }`}
+                >
                   <button
-                    className={`flex-1 py-3 text-sm font-medium border-b-2 ${
+                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
                       activeTab === "info"
-                        ? "border-green-500 text-green-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700"
-                    } transition-colors`}
+                        ? darkMode
+                          ? "border-b-2 border-green-400 text-green-400"
+                          : "border-b-2 border-green-600 text-green-600"
+                        : darkMode
+                        ? "text-gray-400 hover:text-gray-300"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
                     onClick={() => setActiveTab("info")}
                   >
                     <div className="flex items-center justify-center">
@@ -551,11 +1211,15 @@ const MapView: React.FC = () => {
                     </div>
                   </button>
                   <button
-                    className={`flex-1 py-3 text-sm font-medium border-b-2 ${
+                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
                       activeTab === "companies"
-                        ? "border-green-500 text-green-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700"
-                    } transition-colors`}
+                        ? darkMode
+                          ? "border-b-2 border-green-400 text-green-400"
+                          : "border-b-2 border-green-600 text-green-600"
+                        : darkMode
+                        ? "text-gray-400 hover:text-gray-300"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
                     onClick={() => setActiveTab("companies")}
                   >
                     <div className="flex items-center justify-center">
@@ -564,24 +1228,32 @@ const MapView: React.FC = () => {
                     </div>
                   </button>
                   <button
-                    className={`flex-1 py-3 text-sm font-medium border-b-2 ${
+                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
                       activeTab === "jobs"
-                        ? "border-green-500 text-green-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700"
-                    } transition-colors`}
+                        ? darkMode
+                          ? "border-b-2 border-green-400 text-green-400"
+                          : "border-b-2 border-green-600 text-green-600"
+                        : darkMode
+                        ? "text-gray-400 hover:text-gray-300"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
                     onClick={() => setActiveTab("jobs")}
                   >
                     <div className="flex items-center justify-center">
                       <Briefcase className="h-4 w-4 mr-1" />
-                      Emploi
+                      Emplois
                     </div>
                   </button>
                   <button
-                    className={`flex-1 py-3 text-sm font-medium border-b-2 ${
+                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
                       activeTab === "specialties"
-                        ? "border-green-500 text-green-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700"
-                    } transition-colors`}
+                        ? darkMode
+                          ? "border-b-2 border-green-400 text-green-400"
+                          : "border-b-2 border-green-600 text-green-600"
+                        : darkMode
+                        ? "text-gray-400 hover:text-gray-300"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
                     onClick={() => setActiveTab("specialties")}
                   >
                     <div className="flex items-center justify-center">
@@ -589,247 +1261,545 @@ const MapView: React.FC = () => {
                       Spécialités
                     </div>
                   </button>
+                  <button
+                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                      activeTab === "tourism"
+                        ? darkMode
+                          ? "border-b-2 border-green-400 text-green-400"
+                          : "border-b-2 border-green-600 text-green-600"
+                        : darkMode
+                        ? "text-gray-400 hover:text-gray-300"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                    onClick={() => setActiveTab("tourism")}
+                  >
+                    <div className="flex items-center justify-center">
+                      <Camera className="h-4 w-4 mr-1" />
+                      Tourisme
+                    </div>
+                  </button>
                 </div>
               </div>
 
-              {/* Tab content */}
               <div className="p-4">
                 {activeTab === "info" && (
-                  <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="font-medium text-gray-800 mb-3">
-                        À propos de la région
+                  <div className="space-y-4 animate-fadeIn">
+                    <div
+                      className={`p-4 rounded-lg ${
+                        darkMode ? "bg-gray-700" : "bg-gray-50"
+                      }`}
+                    >
+                      <h4
+                        className={`text-sm font-semibold mb-2 ${
+                          darkMode ? "text-gray-200" : "text-gray-700"
+                        }`}
+                      >
+                        Position géographique
                       </h4>
-                      <p className="text-gray-600 text-sm">
-                        La région {selectedRegion.name} est située au{" "}
-                        {getRegionPosition(selectedRegion.name)} du Cameroun
-                        avec une superficie de{" "}
-                        {formatNumber(selectedRegion.area)} km². Sa capitale est{" "}
-                        {selectedRegion.capital} et elle compte environ{" "}
-                        {formatNumber(selectedRegion.population)} habitants,
-                        soit
-                        {(
-                          (selectedRegion.population /
-                            cameroonData.overview.totalPopulation) *
-                          100
-                        ).toFixed(1)}
-                        % de la population totale du pays.
+                      <p
+                        className={`${
+                          darkMode ? "text-gray-300" : "text-gray-600"
+                        }`}
+                      >
+                        La région de {selectedRegion.name} est située au{" "}
+                        {getRegionPosition(selectedRegion.name)} du Cameroun. Sa
+                        capitale est {selectedRegion.capital}.
                       </p>
                     </div>
 
                     <div>
-                      <h4 className="font-medium text-gray-800 mb-2">
+                      <h4
+                        className={`text-sm font-semibold mb-2 ${
+                          darkMode ? "text-gray-200" : "text-gray-700"
+                        }`}
+                      >
                         Départements ({selectedRegion.departments.length})
                       </h4>
-                      <div className="flex flex-wrap gap-2 mt-2">
+                      <div className="grid grid-cols-2 gap-2">
                         {selectedRegion.departments.map((dept, index) => (
-                          <span
+                          <div
                             key={index}
-                            className="inline-block bg-white rounded-full px-3 py-1 text-sm font-medium text-gray-700 border border-gray-200 shadow-sm"
+                            className={`p-2 rounded ${
+                              darkMode
+                                ? "bg-gray-700 text-gray-300"
+                                : "bg-gray-50 text-gray-700"
+                            } flex items-center`}
                           >
-                            {dept}
-                          </span>
+                            <MapPin className="h-3 w-3 mr-2 flex-shrink-0" />
+                            <span className="text-sm">{dept}</span>
+                          </div>
                         ))}
+                      </div>
+                    </div>
+
+                    <div
+                      className={`p-4 rounded-lg border ${
+                        darkMode
+                          ? "bg-gray-700 border-gray-600"
+                          : "bg-white border-gray-200"
+                      }`}
+                    >
+                      <h4
+                        className={`text-sm font-semibold mb-2 ${
+                          darkMode ? "text-gray-200" : "text-gray-700"
+                        } flex items-center`}
+                      >
+                        <Users className="h-4 w-4 mr-1" />
+                        Démographie
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span
+                            className={`text-sm ${
+                              darkMode ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            Population:
+                          </span>
+                          <span
+                            className={`font-medium ${
+                              darkMode ? "text-gray-200" : "text-gray-800"
+                            }`}
+                          >
+                            {formatNumber(selectedRegion.population)} habitants
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span
+                            className={`text-sm ${
+                              darkMode ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            Superficie:
+                          </span>
+                          <span
+                            className={`font-medium ${
+                              darkMode ? "text-gray-200" : "text-gray-800"
+                            }`}
+                          >
+                            {formatNumber(selectedRegion.area)} km²
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span
+                            className={`text-sm ${
+                              darkMode ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            Densité:
+                          </span>
+                          <span
+                            className={`font-medium ${
+                              darkMode ? "text-gray-200" : "text-gray-800"
+                            }`}
+                          >
+                            {Math.round(
+                              selectedRegion.population / selectedRegion.area
+                            )}{" "}
+                            hab/km²
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span
+                            className={`text-sm ${
+                              darkMode ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            Nombre de départements:
+                          </span>
+                          <span
+                            className={`font-medium ${
+                              darkMode ? "text-gray-200" : "text-gray-800"
+                            }`}
+                          >
+                            {selectedRegion.departments.length}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {activeTab === "companies" && (
-                  <div>
-                    <h4 className="font-medium text-gray-800 mb-3">
-                      Principales entreprises
+                {activeTab === "companies" && selectedRegion.majorCompanies && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <h4
+                      className={`text-sm font-semibold mb-2 ${
+                        darkMode ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
+                      Principales entreprises (
+                      {selectedRegion.majorCompanies.length})
+                    </h4>
+                    <div className="space-y-3">
+                      {selectedRegion.majorCompanies.map((company, index) => (
+                        <div
+                          key={index}
+                          className={`p-3 rounded-lg border ${
+                            darkMode
+                              ? "bg-gray-700 border-gray-600 hover:bg-gray-650"
+                              : "bg-white border-gray-200 hover:shadow-md"
+                          } transition-all`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div
+                                className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white`}
+                                style={{
+                                  backgroundColor: [
+                                    "#3498db",
+                                    "#2ecc71",
+                                    "#e74c3c",
+                                    "#f39c12",
+                                    "#9b59b6",
+                                    "#1abc9c",
+                                    "#d35400",
+                                    "#34495e",
+                                  ][index % 8],
+                                }}
+                              >
+                                <Building2 className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <div
+                                  className={`font-medium ${
+                                    darkMode ? "text-gray-200" : "text-gray-800"
+                                  }`}
+                                >
+                                  {company.name}
+                                </div>
+                                <div
+                                  className={`text-sm ${
+                                    darkMode ? "text-gray-400" : "text-gray-500"
+                                  }`}
+                                >
+                                  {company.sector}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "jobs" && selectedRegion.jobDemand && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <h4
+                      className={`text-sm font-semibold mb-2 ${
+                        darkMode ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
+                      Secteurs d'emploi en demande
+                    </h4>
+                    <div className="space-y-2">
+                      {selectedRegion.jobDemand.map((job, index) => (
+                        <div
+                          key={index}
+                          className={`p-3 rounded-lg border ${
+                            darkMode
+                              ? "bg-gray-700 border-gray-600"
+                              : "bg-white border-gray-200"
+                          } flex items-center`}
+                        >
+                          <div
+                            className="w-2 h-10 rounded-full mr-3"
+                            style={{
+                              backgroundColor: [
+                                "#0088FE",
+                                "#00C49F",
+                                "#FFBB28",
+                                "#FF8042",
+                                "#8884d8",
+                                "#82ca9d",
+                                "#ffc658",
+                                "#8dd1e1",
+                              ][index % 8],
+                            }}
+                          ></div>
+                          <div className="flex-1">
+                            <div
+                              className={`font-medium ${
+                                darkMode ? "text-gray-200" : "text-gray-800"
+                              }`}
+                            >
+                              {job}
+                            </div>
+                          </div>
+                          <div
+                            className={`text-sm ${
+                              darkMode ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {Math.floor(Math.random() * 30) + 10}%
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "specialties" && selectedRegion.specialties && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div
+                      className={`p-4 rounded-lg border ${
+                        darkMode
+                          ? "bg-gray-700 border-gray-600"
+                          : "bg-white border-gray-200"
+                      }`}
+                    >
+                      <h4
+                        className={`text-sm font-semibold mb-3 ${
+                          darkMode ? "text-gray-200" : "text-gray-700"
+                        } flex items-center`}
+                      >
+                        <UtensilsCrossed className="h-4 w-4 mr-1" />
+                        Gastronomie
+                      </h4>
+                      <p
+                        className={`${
+                          darkMode ? "text-gray-300" : "text-gray-600"
+                        }`}
+                      >
+                        {selectedRegion.specialties.gastronomy}
+                      </p>
+                    </div>
+
+                    <div
+                      className={`p-4 rounded-lg border ${
+                        darkMode
+                          ? "bg-gray-700 border-gray-600"
+                          : "bg-white border-gray-200"
+                      }`}
+                    >
+                      <h4
+                        className={`text-sm font-semibold mb-3 ${
+                          darkMode ? "text-gray-200" : "text-gray-700"
+                        } flex items-center`}
+                      >
+                        <Briefcase className="h-4 w-4 mr-1" />
+                        Professions traditionnelles
+                      </h4>
+                      <p
+                        className={`${
+                          darkMode ? "text-gray-300" : "text-gray-600"
+                        }`}
+                      >
+                        {selectedRegion.specialties.professions}
+                      </p>
+                    </div>
+
+                    <div
+                      className={`p-4 rounded-lg border ${
+                        darkMode
+                          ? "bg-gray-700 border-gray-600"
+                          : "bg-white border-gray-200"
+                      }`}
+                    >
+                      <h4
+                        className={`text-sm font-semibold mb-3 ${
+                          darkMode ? "text-gray-200" : "text-gray-700"
+                        } flex items-center`}
+                      >
+                        <Music className="h-4 w-4 mr-1" />
+                        Divertissement et culture
+                      </h4>
+                      <p
+                        className={`${
+                          darkMode ? "text-gray-300" : "text-gray-600"
+                        }`}
+                      >
+                        {selectedRegion.specialties.entertainment}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "tourism" && selectedRegion.touristSites && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <h4
+                      className={`text-sm font-semibold mb-2 ${
+                        darkMode ? "text-gray-200" : "text-gray-700"
+                      }`}
+                    >
+                      Sites touristiques ({selectedRegion.touristSites.length})
                     </h4>
 
-                    {selectedRegion.majorCompanies &&
-                    selectedRegion.majorCompanies.length > 0 ? (
-                      <div className="space-y-3">
-                        {selectedRegion.majorCompanies.map((company, index) => (
-                          <div
-                            key={index}
-                            className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm flex items-center"
-                          >
-                            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                              <Building2 className="h-5 w-5 text-green-600" />
+                    {selectedRegion.touristSites.map((site, index) => (
+                      <div
+                        key={index}
+                        ref={
+                          selectedTouristSite?.name === site.name
+                            ? touristSiteRef
+                            : null
+                        }
+                        className={`rounded-lg border overflow-hidden transition-all duration-300 ${
+                          darkMode
+                            ? "bg-gray-700 border-gray-600"
+                            : "bg-white border-gray-200"
+                        } ${
+                          selectedTouristSite?.name === site.name
+                            ? darkMode
+                              ? "ring-2 ring-green-400"
+                              : "ring-2 ring-green-500"
+                            : ""
+                        }`}
+                      >
+                        <div
+                          className={`p-3 flex justify-between items-center cursor-pointer ${
+                            darkMode ? "hover:bg-gray-650" : "hover:bg-gray-50"
+                          }`}
+                          onClick={() =>
+                            handleTouristSiteClick(site, selectedRegion.name)
+                          }
+                        >
+                          <div className="flex items-center">
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white`}
+                            >
+                              {getTouristSiteIcon(site.type || "default")}
                             </div>
                             <div>
-                              <div className="font-medium text-gray-800">
-                                {company.name}
+                              <div
+                                className={`font-medium ${
+                                  darkMode ? "text-gray-200" : "text-gray-800"
+                                }`}
+                              >
+                                {site.name}
                               </div>
-                              <div className="text-sm text-gray-500">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                  {company.sector}
-                                </span>
-                              </div>
+                              {site.location && (
+                                <div
+                                  className={`text-sm ${
+                                    darkMode ? "text-gray-400" : "text-gray-500"
+                                  } flex items-center`}
+                                >
+                                  <MapPin className="h-3 w-3 mr-1" />
+                                  {site.location}
+                                </div>
+                              )}
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                        <div className="flex">
-                          <div className="flex-shrink-0">
-                            <Info className="h-5 w-5 text-yellow-400" />
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-sm text-yellow-700">
-                              Aucune information disponible sur les entreprises
-                              de cette région.
-                            </p>
+                          <div className="flex items-center">
+                            <ChevronDown
+                              className={`h-5 w-5 ${
+                                darkMode ? "text-gray-400" : "text-gray-500"
+                              } transition-transform ${
+                                selectedTouristSite?.name === site.name
+                                  ? "transform rotate-180"
+                                  : ""
+                              }`}
+                            />
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                )}
 
-                {activeTab === "jobs" && (
-                  <div>
-                    <h4 className="font-medium text-gray-800 mb-3">
-                      Secteurs d&apos;emploi demandés
-                    </h4>
-
-                    {selectedRegion.jobDemand &&
-                    selectedRegion.jobDemand.length > 0 ? (
-                      <div className="space-y-3">
-                        {selectedRegion.jobDemand.map((job, index) => (
+                        {selectedTouristSite?.name === site.name && (
                           <div
-                            key={index}
-                            className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm flex items-center"
+                            className={`p-4 border-t ${
+                              darkMode
+                                ? "border-gray-600 bg-gray-750"
+                                : "border-gray-200 bg-gray-50"
+                            }`}
                           >
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                              <Briefcase className="h-5 w-5 text-blue-600" />
+                            {site.image && (
+                              <div className="mb-4 rounded-lg overflow-hidden">
+                                <div
+                                  className="h-48 bg-cover bg-center rounded-lg"
+                                  style={{
+                                    backgroundImage: `url(${site.image})`,
+                                  }}
+                                ></div>
+                              </div>
+                            )}
+                            <div
+                              className={`${
+                                darkMode ? "text-gray-300" : "text-gray-600"
+                              }`}
+                            >
+                              {site.description}
                             </div>
-                            <span className="text-gray-800">{job}</span>
+
+                            <div className="mt-4 flex items-center justify-between">
+                              {site.rating && (
+                                <div className="flex items-center">
+                                  {Array.from({ length: 5 }).map((_, index) => (
+                                    <Star
+                                      key={index}
+                                      className={`h-4 w-4 ${
+                                        index < Math.floor(site.rating || 0)
+                                          ? "text-yellow-400 fill-yellow-400"
+                                          : darkMode
+                                          ? "text-gray-600"
+                                          : "text-gray-300"
+                                      }`}
+                                    />
+                                  ))}
+                                  <span
+                                    className={`ml-1 text-sm ${
+                                      darkMode
+                                        ? "text-gray-400"
+                                        : "text-gray-500"
+                                    }`}
+                                  >
+                                    {site.rating}/5
+                                  </span>
+                                </div>
+                              )}
+                              <button
+                                className={`px-3 py-1 rounded text-sm ${
+                                  darkMode
+                                    ? "bg-gray-600 hover:bg-gray-500 text-gray-200"
+                                    : "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                } transition-colors`}
+                                onClick={() => {
+                                  // Ouvrir dans Google Maps
+                                  window.open(
+                                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                                      site.name +
+                                        " " +
+                                        selectedRegion.name +
+                                        " Cameroun"
+                                    )}`,
+                                    "_blank"
+                                  );
+                                }}
+                              >
+                                Voir sur Google Maps
+                              </button>
+                            </div>
                           </div>
-                        ))}
+                        )}
                       </div>
-                    ) : (
-                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                        <div className="flex">
-                          <div className="flex-shrink-0">
-                            <Info className="h-5 w-5 text-yellow-400" />
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-sm text-yellow-700">
-                              Aucune information disponible sur les secteurs
-                              d&apos;emploi de cette région.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    ))}
                   </div>
                 )}
-
-                {activeTab === "specialties" && (
-                  <div className="space-y-4">
-                    {selectedRegion.specialties ? (
-                      <>
-                        <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                          <h4 className="font-medium text-gray-800 mb-2 flex items-center">
-                            <UtensilsCrossed className="h-5 w-5 mr-2 text-amber-600" />
-                            Gastronomie
-                          </h4>
-                          <p className="text-gray-700 text-sm">
-                            {selectedRegion.specialties.gastronomy}
-                          </p>
-                        </div>
-
-                        <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                          <h4 className="font-medium text-gray-800 mb-2 flex items-center">
-                            <Landmark className="h-5 w-5 mr-2 text-indigo-600" />
-                            Professions traditionnelles
-                          </h4>
-                          <p className="text-gray-700 text-sm">
-                            {selectedRegion.specialties.professions}
-                          </p>
-                        </div>
-
-                        <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                          <h4 className="font-medium text-gray-800 mb-2 flex items-center">
-                            <Music className="h-5 w-5 mr-2 text-purple-600" />
-                            Divertissement et culture
-                          </h4>
-                          <p className="text-gray-700 text-sm">
-                            {selectedRegion.specialties.entertainment}
-                          </p>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                        <div className="flex">
-                          <div className="flex-shrink-0">
-                            <Info className="h-5 w-5 text-yellow-400" />
-                          </div>
-                          <div className="ml-3">
-                            <p className="text-sm text-yellow-700">
-                              Aucune information disponible sur les spécialités
-                              de cette région.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Quick navigation between regions */}
-              <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 flex justify-between">
-                <button
-                  className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded flex items-center text-sm transition-colors"
-                  onClick={() => {
-                    const currentIndex = cameroonData.regions.findIndex(
-                      (r) => r.id === selectedRegion.id
-                    );
-                    const prevIndex =
-                      (currentIndex - 1 + cameroonData.regions.length) %
-                      cameroonData.regions.length;
-                    handleMarkerClick(cameroonData.regions[prevIndex]);
-                  }}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Région précédente
-                </button>
-                <button
-                  className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded flex items-center text-sm transition-colors"
-                  onClick={() => {
-                    const currentIndex = cameroonData.regions.findIndex(
-                      (r) => r.id === selectedRegion.id
-                    );
-                    const nextIndex =
-                      (currentIndex + 1) % cameroonData.regions.length;
-                    handleMarkerClick(cameroonData.regions[nextIndex]);
-                  }}
-                >
-                  Région suivante
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </button>
               </div>
             </div>
           )}
         </div>
       </div>
+
+      <style jsx global>{`
+        .dark-map {
+          filter: brightness(0.8) contrast(1.2);
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
-};
-
-const getRegionPosition = (regionName: string): string => {
-  const positions: Record<string, string> = {
-    Adamaoua: "centre-nord",
-    Centre: "centre",
-    Est: "est",
-    "Extrême-Nord": "extrême-nord",
-    Littoral: "sud-ouest",
-    Nord: "nord",
-    "Nord-Ouest": "nord-ouest",
-    Ouest: "ouest",
-    Sud: "sud",
-    "Sud-Ouest": "sud-ouest",
-  };
-
-  return positions[regionName] || "centre";
 };
 
 export default MapView;

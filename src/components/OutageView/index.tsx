@@ -335,44 +335,36 @@ const EneoOutageView: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      <div className="bg-blue-700 text-white p-4 shadow-md">
-        <div className="flex items-center justify-between">
+    <div className="flex flex-col h-screen bg-gray-100 text-gray-800 transition-colors duration-300">
+      <div className="bg-white border-gray-200 border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300">
+        <div className="flex items-center">
           <h1 className="text-xl font-bold flex items-center">
-            <Zap className="h-6 w-6 mr-2" />
+            <Zap className="h-6 w-6 mr-2 text-green-600" />
             Coupures de courant ENEO
           </h1>
-          <div className="flex space-x-2">
-            <button
-              className={`px-3 py-1 rounded-md flex items-center ${
-                viewMode === "map"
-                  ? "bg-blue-900"
-                  : "bg-blue-800 hover:bg-blue-900"
-              }`}
-              onClick={() => setViewMode("map")}
-            >
-              <MapIcon className="h-4 w-4 mr-1" />
-              Carte
-            </button>
-            <button
-              className={`px-3 py-1 rounded-md flex items-center ${
-                viewMode === "list"
-                  ? "bg-blue-900"
-                  : "bg-blue-800 hover:bg-blue-900"
-              }`}
-              onClick={() => setViewMode("list")}
-            >
-              <List className="h-4 w-4 mr-1" />
-              Liste
-            </button>
-            <button
-              className="px-3 py-1 bg-blue-800 hover:bg-blue-900 rounded-md flex items-center"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-            >
-              <Menu className="h-4 w-4 mr-1" />
-              {sidebarOpen ? "Masquer" : "Afficher"}
-            </button>
-          </div>
+        </div>
+        <div className="flex space-x-2">
+          <button
+            className={`p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center`}
+            onClick={() => setViewMode("map")}
+          >
+            <MapIcon className="h-4 w-4 mr-1" />
+            Carte
+          </button>
+          <button
+            className={`p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center`}
+            onClick={() => setViewMode("list")}
+          >
+            <List className="h-4 w-4 mr-1" />
+            Liste
+          </button>
+          <button
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            <Menu className="h-4 w-4 mr-1" />
+            {sidebarOpen ? "Masquer" : "Afficher"}
+          </button>
         </div>
       </div>
 

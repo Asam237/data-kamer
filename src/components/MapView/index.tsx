@@ -544,7 +544,7 @@ const MapView: React.FC = () => {
               <Maximize className="h-5 w-5" />
             )}
           </button>
-          <button
+          {/* <button
             className={`p-2 rounded-full ${
               darkMode
                 ? "bg-gray-700 hover:bg-gray-600"
@@ -570,7 +570,7 @@ const MapView: React.FC = () => {
                 />
               </svg>
             )}
-          </button>
+          </button> */}
         </div>
       </div>
 

@@ -32,6 +32,14 @@ import {
   Minimize,
   Eye,
   EyeOff,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudLightning,
+  Thermometer,
+  Wind,
+  Droplets,
+  RefreshCw,
 } from "lucide-react";
 
 interface Department {
@@ -48,8 +56,8 @@ interface Department {
     professions: string;
     entertainment: string;
   };
-  touristSites?: TouristSite[];
   mainImage?: string;
+  departmentCoordinates?: Record<string, [number, number]>;
 }
 
 interface Overview {
@@ -67,14 +75,22 @@ interface CameroonData {
   overview: Overview;
 }
 
-interface TouristSite {
-  name: string;
-  description: string;
-  location?: string;
-  image?: string;
-  type?: string;
-  rating?: number;
-  coordinates?: [number, number];
+interface WeatherData {
+  location: string;
+  temperature: number;
+  condition: string;
+  icon: string;
+  humidity: number;
+  windSpeed: number;
+  precipitation: number;
+  coordinates: [number, number];
+  forecast?: {
+    day: string;
+    condition: string;
+    maxTemp: number;
+    minTemp: number;
+    icon: string;
+  }[];
 }
 
 const REGION_COORDINATES: Record<string, [number, number]> = {
@@ -88,6 +104,148 @@ const REGION_COORDINATES: Record<string, [number, number]> = {
   Ouest: [5.4667, 10.4167],
   Sud: [2.9333, 11.1333],
   "Sud-Ouest": [4.1667, 9.2333],
+};
+
+const DEPARTMENT_COORDINATES: Record<
+  string,
+  Record<string, [number, number]>
+> = {
+  Adamaoua: {
+    Vina: [7.3385, 13.5898],
+    Mbéré: [6.53, 14.37],
+    Djerem: [6.465, 12.6284],
+    "Mayo-Banyo": [6.7497, 11.8037],
+    "Faro-et-Déo": [7.3722, 12.6536],
+  },
+  Centre: {
+    Mfoundi: [3.867, 11.517],
+    Lekié: [4.267, 11.2],
+    "Nyong-et-Kellé": [3.65, 10.7667],
+    "Nyong-et-Mfoumou": [3.767, 12.25],
+    "Nyong-et-So'o": [3.517, 11.5],
+    "Haute-Sanaga": [4.6708, 12.3731],
+    "Mbam-et-Inoubou": [4.75, 11.2167],
+    "Mbam-et-Kim": [4.45, 11.6333],
+    "Méfou-et-Afamba": [3.96, 11.93],
+    "Méfou-et-Akono": [3.5939, 11.3062],
+  },
+  Est: {
+    "Lom-et-Djérem": [4.5833, 13.6833],
+    Kadey: [4.4333, 14.3667],
+    "Boumba-et-Ngoko": [3.5167, 15.05],
+    "Haut-Nyong": [3.9833, 13.1833],
+  },
+  "Extrême-Nord": {
+    Diamaré: [10.5956, 14.3247],
+    "Mayo-Danay": [10.34, 15.23],
+    "Mayo-Kani": [10.1096, 14.45],
+    "Mayo-Sava": [11.0464, 14.1403],
+    "Mayo-Tsanaga": [10.7403, 13.8027],
+    "Logone-et-Chari": [12.0769, 15.0306],
+  },
+  Littoral: {
+    Wouri: [4.0511, 9.7679],
+    Nkam: [4.4569, 9.9735],
+    "Sanaga-Maritime": [3.8, 10.1333],
+    Moungo: [4.9547, 9.9404],
+  },
+  Nord: {
+    Bénoué: [9.3, 13.4],
+    "Mayo-Louti": [9.9312, 13.9476],
+    "Mayo-Rey": [8.4037, 14.1666],
+    Faro: [8.4833, 13.25],
+  },
+  "Nord-Ouest": {
+    Mezam: [5.9631, 10.1591],
+    Boyo: [6.25, 10.2667],
+    Bui: [6.2, 10.6667],
+    "Donga-Mantung": [6.4667, 10.6333],
+    Menchum: [6.3833, 10.0667],
+    Momo: [5.853, 10.0],
+    "Ngo-Ketunjia": [5.9667, 10.3667],
+  },
+  Ouest: {
+    Mifi: [5.4667, 10.4167],
+    Bamboutos: [5.6253, 10.254],
+    "Haut-Nkam": [5.157, 10.1788],
+    "Hauts-Plateaux": [5.4303, 10.3773],
+    "Koung-Khi": [5.3576, 10.4178],
+    Menoua: [5.45, 10.0667],
+    Ndé: [5.1408, 10.5186],
+    Noun: [5.729, 10.9016],
+  },
+  Sud: {
+    "Dja-et-Lobo": [2.9333, 11.9833],
+    Mvila: [2.9167, 11.15],
+    Océan: [2.95, 9.9167],
+    "Vallée-du-Ntem": [2.3833, 11.2833],
+  },
+  "Sud-Ouest": {
+    Fako: [4.0174, 9.2145],
+    "Koupé-Manengouba": [4.8448, 9.9321],
+    Lebialem: [5.5983, 9.8681],
+    Manyu: [5.75, 9.2833],
+    Meme: [4.6363, 9.4469],
+    Ndian: [4.9578, 8.8712],
+  },
+};
+
+const fetchWeatherData = async (
+  location: string,
+  coordinates: [number, number]
+): Promise<WeatherData> => {
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 300));
+  const conditions = [
+    "Ensoleillé",
+    "Partiellement nuageux",
+    "Nuageux",
+    "Pluvieux",
+    "Orageux",
+  ];
+  const icons = ["sun", "cloud-sun", "cloud", "cloud-rain", "cloud-lightning"];
+  const randomConditionIndex = Math.floor(Math.random() * conditions.length);
+
+  let baseTemp = 25;
+  if (coordinates[0] > 8) baseTemp += 5;
+  if (coordinates[0] < 5) baseTemp -= 2;
+
+  const temperature = baseTemp + Math.floor(Math.random() * 10) - 5;
+
+  const forecast = [];
+  const days = [
+    "Lundi",
+    "Mardi",
+    "Mercredi",
+    "Jeudi",
+    "Vendredi",
+    "Samedi",
+    "Dimanche",
+  ];
+  const today = new Date().getDay();
+
+  for (let i = 0; i <= 2; i++) {
+    const dayIndex = (today + i) % 7;
+    const condIndex = Math.floor(Math.random() * conditions.length);
+    forecast.push({
+      day: days[dayIndex],
+      condition: conditions[condIndex],
+      maxTemp: temperature + Math.floor(Math.random() * 5),
+      minTemp: temperature - Math.floor(Math.random() * 5),
+      icon: icons[condIndex],
+    });
+  }
+
+  return {
+    location,
+    temperature,
+    condition: conditions[randomConditionIndex],
+    icon: icons[randomConditionIndex],
+    humidity: 50 + Math.floor(Math.random() * 40),
+    windSpeed: 5 + Math.floor(Math.random() * 20),
+    precipitation: Math.floor(Math.random() * 100),
+    coordinates,
+    forecast,
+  };
 };
 
 const getRegionColor = (id: number): string => {
@@ -106,41 +264,27 @@ const getRegionColor = (id: number): string => {
   return colors[(id - 1) % colors.length];
 };
 
-const getTouristSiteIcon = (type: string) => {
-  switch (type) {
-    case "nature":
-      return <PalmtreeIcon className="h-5 w-5 text-green-600" />;
-    case "culture":
-      return <Landmark className="h-5 w-5 text-purple-600" />;
-    case "montagne":
-      return <Mountain className="h-5 w-5 text-gray-700" />;
-    case "plage":
-      return <Sun className="h-5 w-5 text-yellow-500" />;
-    case "historique":
-      return <Globe className="h-5 w-5 text-blue-600" />;
-    case "urbain":
-      return <Building2 className="h-5 w-5 text-gray-600" />;
+const getWeatherIcon = (condition: string) => {
+  switch (condition) {
+    case "Ensoleillé":
+      return <Sun className="h-6 w-6 text-orange-500" />;
+    case "Partiellement nuageux":
+      return (
+        <div className="relative">
+          <Cloud className="h-6 w-6 text-blue-500" />
+          <Sun className="h-4 w-4 text-orange-500 absolute -top-1 -right-1" />
+        </div>
+      );
+    case "Nuageux":
+      return <Cloud className="h-6 w-6 text-blue-500" />;
+    case "Pluvieux":
+      return <CloudRain className="h-6 w-6 text-blue-500" />;
+    case "Orageux":
+      return <CloudLightning className="h-6 w-6 text-blue-500" />;
+    case "Neigeux":
+      return <CloudSnow className="h-6 w-6 text-blue-500" />;
     default:
-      return <Compass className="h-5 w-5 text-blue-500" />;
-  }
-};
-
-const getTouristSiteColor = (type: string): string => {
-  switch (type) {
-    case "nature":
-      return "#10b981";
-    case "culture":
-      return "#8b5cf6";
-    case "montagne":
-      return "#6b7280";
-    case "plage":
-      return "#f59e0b";
-    case "historique":
-      return "#3b82f6";
-    case "urbain":
-      return "#64748b";
-    default:
-      return "#3b82f6";
+      return <Cloud className="h-6 w-6 text-orange-500" />;
   }
 };
 
@@ -156,7 +300,7 @@ const MapView: React.FC = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<
-    "info" | "companies" | "jobs" | "specialties" | "tourism"
+    "info" | "companies" | "jobs" | "specialties" | "weather"
   >("info");
   const [mapStyle, setMapStyle] = useState<"default" | "satellite">("default");
   const [showTooltip, setShowTooltip] = useState(false);
@@ -165,18 +309,25 @@ const MapView: React.FC = () => {
     0, 0,
   ]);
   const [darkMode, setDarkMode] = useState(false);
-  const [showTouristSites, setShowTouristSites] = useState(false);
-  const [selectedTouristSite, setSelectedTouristSite] =
-    useState<TouristSite | null>(null);
   const [immersiveMode, setImmersiveMode] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showPopulation, setShowPopulation] = useState(true);
   const [showArea, setShowArea] = useState(true);
   const [showDepartments, setShowDepartments] = useState(true);
   const [showCompanies, setShowCompanies] = useState(true);
+  const [showWeather, setShowWeather] = useState(true);
+  const [weatherData, setWeatherData] = useState<Record<string, WeatherData>>(
+    {}
+  );
+  const [loadingWeather, setLoadingWeather] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(
+    null
+  );
+  const [departmentWeatherData, setDepartmentWeatherData] =
+    useState<WeatherData | null>(null);
 
   const mapRef = useRef<HTMLDivElement>(null);
-  const touristSiteRef = useRef<HTMLDivElement>(null);
+  const weatherRef = useRef<HTMLDivElement>(null);
 
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -189,15 +340,16 @@ const MapView: React.FC = () => {
         }
         const data = await response.json();
 
-        const filteredData = {
-          regions: data.regions,
-          overview: {
-            ...data.overview,
-            totalUniversities: undefined,
-          },
+        // Ajouter les coordonnées des départements
+        const enhancedData = {
+          ...data,
+          regions: data.regions.map((region: Department) => ({
+            ...region,
+            departmentCoordinates: DEPARTMENT_COORDINATES[region.name] || {},
+          })),
         };
 
-        setCameroonData(filteredData);
+        setCameroonData(enhancedData);
         setLoading(false);
       } catch (err) {
         setError(
@@ -213,12 +365,6 @@ const MapView: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedTouristSite && touristSiteRef.current) {
-      touristSiteRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [selectedTouristSite]);
-
-  useEffect(() => {
     if (isAnimating) {
       const timer = setTimeout(() => {
         setIsAnimating(false);
@@ -227,6 +373,58 @@ const MapView: React.FC = () => {
     }
   }, [isAnimating]);
 
+  // Charger les données météo pour tous les départements d'une région
+  useEffect(() => {
+    const loadRegionWeather = async () => {
+      if (selectedRegion && activeTab === "weather" && showWeather) {
+        setLoadingWeather(true);
+
+        const weatherPromises = selectedRegion.departments.map(async (dept) => {
+          const coordinates =
+            selectedRegion.departmentCoordinates?.[dept] ||
+            DEPARTMENT_COORDINATES[selectedRegion.name]?.[dept] ||
+            REGION_COORDINATES[selectedRegion.name];
+
+          const data = await fetchWeatherData(dept, coordinates);
+          return [dept, data];
+        });
+
+        const weatherResults = await Promise.all(weatherPromises);
+        const newWeatherData: Record<string, WeatherData> = {};
+
+        weatherResults.forEach(([dept, data]) => {
+          newWeatherData[dept as string] = data as WeatherData;
+        });
+
+        setWeatherData(newWeatherData);
+        setLoadingWeather(false);
+      }
+    };
+
+    loadRegionWeather();
+  }, [selectedRegion, activeTab, showWeather]);
+
+  // Charger les données météo pour un département spécifique
+  useEffect(() => {
+    const loadDepartmentWeather = async () => {
+      if (
+        selectedRegion &&
+        selectedDepartment &&
+        weatherData[selectedDepartment]
+      ) {
+        setDepartmentWeatherData(weatherData[selectedDepartment]);
+
+        if (weatherRef.current) {
+          weatherRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      } else {
+        setDepartmentWeatherData(null);
+      }
+    };
+
+    loadDepartmentWeather();
+  }, [selectedDepartment, weatherData, selectedRegion]);
+
   const handleMarkerClick = (region: Department) => {
     setIsAnimating(true);
     setSelectedRegion(region);
@@ -234,17 +432,21 @@ const MapView: React.FC = () => {
     setZoom(8);
     setDetailsOpen(true);
     setActiveTab("info");
-    setSelectedTouristSite(null);
+    setSelectedDepartment(null);
+    setDepartmentWeatherData(null);
   };
 
-  const handleTouristSiteClick = (site: TouristSite, regionName: string) => {
-    setSelectedTouristSite(site);
-    if (site.coordinates) {
-      setCenter(site.coordinates);
-      setZoom(10);
-    } else {
-      setCenter(REGION_COORDINATES[regionName]);
-      setZoom(8);
+  const handleDepartmentClick = (dept: string) => {
+    setSelectedDepartment(dept);
+
+    // Si on a des coordonnées pour ce département, centrer la carte dessus
+    const deptCoordinates =
+      selectedRegion?.departmentCoordinates?.[dept] ||
+      DEPARTMENT_COORDINATES[selectedRegion?.name || ""]?.[dept];
+
+    if (deptCoordinates) {
+      setCenter(deptCoordinates);
+      setZoom(9);
     }
   };
 
@@ -274,8 +476,9 @@ const MapView: React.FC = () => {
     setZoom(6);
     setSelectedRegion(null);
     setDetailsOpen(false);
-    setSelectedTouristSite(null);
     setImmersiveMode(false);
+    setSelectedDepartment(null);
+    setDepartmentWeatherData(null);
   };
 
   const toggleMapStyle = () => {
@@ -303,6 +506,37 @@ const MapView: React.FC = () => {
     }
   };
 
+  const refreshWeather = async () => {
+    if (selectedRegion) {
+      setLoadingWeather(true);
+
+      const weatherPromises = selectedRegion.departments.map(async (dept) => {
+        const coordinates =
+          selectedRegion.departmentCoordinates?.[dept] ||
+          DEPARTMENT_COORDINATES[selectedRegion.name]?.[dept] ||
+          REGION_COORDINATES[selectedRegion.name];
+
+        const data = await fetchWeatherData(dept, coordinates);
+        return [dept, data];
+      });
+
+      const weatherResults = await Promise.all(weatherPromises);
+      const newWeatherData: Record<string, WeatherData> = {};
+
+      weatherResults.forEach(([dept, data]) => {
+        newWeatherData[dept as string] = data as WeatherData;
+      });
+
+      setWeatherData(newWeatherData);
+
+      if (selectedDepartment) {
+        setDepartmentWeatherData(newWeatherData[selectedDepartment]);
+      }
+
+      setLoadingWeather(false);
+    }
+  };
+
   const filteredRegions = cameroonData?.regions.filter(
     (region) =>
       region.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -314,7 +548,8 @@ const MapView: React.FC = () => {
 
   const closeDetails = () => {
     setDetailsOpen(false);
-    setSelectedTouristSite(null);
+    setSelectedDepartment(null);
+    setDepartmentWeatherData(null);
   };
 
   const formatNumber = (num: number): string => {
@@ -351,6 +586,23 @@ const MapView: React.FC = () => {
         return "sud-ouest";
       default:
         return "";
+    }
+  };
+
+  const getWeatherConditionColor = (condition: string): string => {
+    switch (condition) {
+      case "Ensoleillé":
+        return "#f59e0b"; // yellow-500
+      case "Partiellement nuageux":
+        return "#60a5fa"; // blue-400
+      case "Nuageux":
+        return "#6b7280"; // gray-500
+      case "Pluvieux":
+        return "#3b82f6"; // blue-500
+      case "Orageux":
+        return "#8b5cf6"; // purple-500
+      default:
+        return "#6b7280"; // gray-500
     }
   };
 
@@ -505,17 +757,13 @@ const MapView: React.FC = () => {
                 ? "bg-gray-700 hover:bg-gray-600"
                 : "bg-gray-100 hover:bg-gray-200"
             } transition-colors`}
-            onClick={() => setShowTouristSites(!showTouristSites)}
-            title={
-              showTouristSites
-                ? "Masquer les sites touristiques"
-                : "Afficher les sites touristiques"
-            }
+            onClick={() => setShowWeather(!showWeather)}
+            title={showWeather ? "Masquer la météo" : "Afficher la météo"}
           >
-            {showTouristSites ? (
-              <EyeOff className="h-5 w-5" />
+            {showWeather ? (
+              <Cloud className="h-5 w-5" />
             ) : (
-              <Eye className="h-5 w-5" />
+              <Sun className="h-5 w-5" />
             )}
           </button>
           <button
@@ -544,7 +792,7 @@ const MapView: React.FC = () => {
               <Maximize className="h-5 w-5" />
             )}
           </button>
-          {/* <button
+          <button
             className={`p-2 rounded-full ${
               darkMode
                 ? "bg-gray-700 hover:bg-gray-600"
@@ -570,7 +818,7 @@ const MapView: React.FC = () => {
                 />
               </svg>
             )}
-          </button> */}
+          </button>
         </div>
       </div>
 
@@ -645,25 +893,23 @@ const MapView: React.FC = () => {
                 </label>
               </div>
 
-              {showTouristSites && (
-                <div className="mt-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={showTouristSites}
-                    onChange={() => setShowTouristSites(!showTouristSites)}
-                    id="showTouristSites"
-                    className="mr-2"
-                  />
-                  <label
-                    htmlFor="showTouristSites"
-                    className={`text-sm font-medium ${
-                      darkMode ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    Afficher les sites touristiques
-                  </label>
-                </div>
-              )}
+              <div className="mt-3 flex items-center">
+                <input
+                  type="checkbox"
+                  checked={showWeather}
+                  onChange={() => setShowWeather(!showWeather)}
+                  id="showWeather"
+                  className="mr-2"
+                />
+                <label
+                  htmlFor="showWeather"
+                  className={`text-sm font-medium ${
+                    darkMode ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Afficher la météo
+                </label>
+              </div>
             </div>
 
             <div className="overflow-y-auto flex-1 p-3">
@@ -910,23 +1156,31 @@ const MapView: React.FC = () => {
                   />
                 ))}
 
-              {showTouristSites &&
+              {/* Affichage des marqueurs météo pour les départements */}
+              {showWeather &&
                 selectedRegion &&
-                selectedRegion.touristSites &&
-                selectedRegion.touristSites.map(
-                  (site, index) =>
-                    site.coordinates && (
+                Object.entries(weatherData).map(([dept, data]) => {
+                  const deptCoordinates =
+                    selectedRegion.departmentCoordinates?.[dept] ||
+                    DEPARTMENT_COORDINATES[selectedRegion.name]?.[dept];
+
+                  if (deptCoordinates) {
+                    return (
                       <Marker
-                        key={`tourist-site-${index}`}
+                        key={`weather-${dept}`}
                         width={30}
-                        anchor={site.coordinates}
-                        onClick={() =>
-                          handleTouristSiteClick(site, selectedRegion.name)
-                        }
-                        color={getTouristSiteColor(site.type || "default")}
-                      />
-                    )
-                )}
+                        anchor={deptCoordinates}
+                        onClick={() => handleDepartmentClick(dept)}
+                        color={getWeatherConditionColor(data.condition)}
+                      >
+                        <div className="flex items-center justify-center w-full h-full">
+                          {/* {getWeatherIcon(data.condition)} */}
+                        </div>
+                      </Marker>
+                    );
+                  }
+                  return null;
+                })}
 
               {showTooltip && tooltipRegion && !detailsOpen && (
                 <Overlay
@@ -945,11 +1199,13 @@ const MapView: React.FC = () => {
                 </Overlay>
               )}
 
-              {showTouristSites &&
-                selectedTouristSite &&
-                selectedTouristSite.coordinates && (
+              {/* Affichage des tooltips météo pour les départements */}
+              {showWeather &&
+                selectedRegion &&
+                selectedDepartment &&
+                weatherData[selectedDepartment] && (
                   <Overlay
-                    anchor={selectedTouristSite.coordinates}
+                    anchor={weatherData[selectedDepartment].coordinates}
                     offset={[0, -20]}
                   >
                     <div
@@ -960,10 +1216,13 @@ const MapView: React.FC = () => {
                       }`}
                     >
                       <div className="flex items-center">
-                        {getTouristSiteIcon(
-                          selectedTouristSite.type || "default"
+                        {getWeatherIcon(
+                          weatherData[selectedDepartment].condition
                         )}
-                        <span className="ml-1">{selectedTouristSite.name}</span>
+                        <span className="ml-1">
+                          {selectedDepartment}:{" "}
+                          {weatherData[selectedDepartment].temperature}°C
+                        </span>
                       </div>
                     </div>
                   </Overlay>
@@ -1048,26 +1307,26 @@ const MapView: React.FC = () => {
                     Région sélectionnée
                   </span>
                 </div>
-                {showTouristSites && (
+                {showWeather && (
                   <>
                     <div className="flex items-center">
-                      <div className="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+                      <div className="w-4 h-4 bg-yellow-500 rounded-full mr-2"></div>
                       <span
                         className={`text-xs ${
                           darkMode ? "text-gray-300" : "text-gray-700"
                         }`}
                       >
-                        Sites naturels
+                        Ensoleillé
                       </span>
                     </div>
                     <div className="flex items-center">
-                      <div className="w-4 h-4 bg-purple-500 rounded-full mr-2"></div>
+                      <div className="w-4 h-4 bg-blue-400 rounded-full mr-2"></div>
                       <span
                         className={`text-xs ${
                           darkMode ? "text-gray-300" : "text-gray-700"
                         }`}
                       >
-                        Sites culturels
+                        Nuageux/Pluvieux
                       </span>
                     </div>
                   </>
@@ -1131,670 +1390,739 @@ const MapView: React.FC = () => {
                       >
                         Habitants
                       </div>
-                    </div>
-                    <div>
-                      <div
-                        className={`text-lg font-bold ${
-                          darkMode ? "text-gray-100" : "text-gray-800"
-                        }`}
-                      >
-                        {formatNumber(selectedRegion.area)}
-                      </div>
-                      <div
-                        className={`text-xs ${
-                          darkMode ? "text-gray-400" : "text-gray-500"
-                        }`}
-                      >
-                        km²
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        className={`text-lg font-bold ${
-                          darkMode ? "text-gray-100" : "text-gray-800"
-                        }`}
-                      >
-                        {Math.round(
-                          selectedRegion.population / selectedRegion.area
-                        )}
-                      </div>
-                      <div
-                        className={`text-xs ${
-                          darkMode ? "text-gray-400" : "text-gray-500"
-                        }`}
-                      >
-                        hab/km²
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        className={`text-lg font-bold ${
-                          darkMode ? "text-gray-100" : "text-gray-800"
-                        }`}
-                      >
-                        {selectedRegion.departments.length}
-                      </div>
-                      <div
-                        className={`text-xs ${
-                          darkMode ? "text-gray-400" : "text-gray-500"
-                        }`}
-                      >
-                        Départements
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  className={`flex border-b z-50 ${
-                    darkMode ? "border-gray-700" : "border-gray-200"
-                  }`}
-                >
-                  <button
-                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                      activeTab === "info"
-                        ? darkMode
-                          ? "border-b-2 border-green-400 text-green-400"
-                          : "border-b-2 border-green-600 text-green-600"
-                        : darkMode
-                        ? "text-gray-400 hover:text-gray-300"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab("info")}
-                  >
-                    <div className="flex items-center justify-center">
-                      <Info className="h-4 w-4 mr-1" />
-                      Infos
-                    </div>
-                  </button>
-                  <button
-                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                      activeTab === "companies"
-                        ? darkMode
-                          ? "border-b-2 border-green-400 text-green-400"
-                          : "border-b-2 border-green-600 text-green-600"
-                        : darkMode
-                        ? "text-gray-400 hover:text-gray-300"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab("companies")}
-                  >
-                    <div className="flex items-center justify-center">
-                      <Building2 className="h-4 w-4 mr-1" />
-                      Entreprises
-                    </div>
-                  </button>
-                  <button
-                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                      activeTab === "jobs"
-                        ? darkMode
-                          ? "border-b-2 border-green-400 text-green-400"
-                          : "border-b-2 border-green-600 text-green-600"
-                        : darkMode
-                        ? "text-gray-400 hover:text-gray-300"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab("jobs")}
-                  >
-                    <div className="flex items-center justify-center">
-                      <Briefcase className="h-4 w-4 mr-1" />
-                      Emplois
-                    </div>
-                  </button>
-                  <button
-                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                      activeTab === "specialties"
-                        ? darkMode
-                          ? "border-b-2 border-green-400 text-green-400"
-                          : "border-b-2 border-green-600 text-green-600"
-                        : darkMode
-                        ? "text-gray-400 hover:text-gray-300"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab("specialties")}
-                  >
-                    <div className="flex items-center justify-center">
-                      <UtensilsCrossed className="h-4 w-4 mr-1" />
-                      Spécialités
-                    </div>
-                  </button>
-                  <button
-                    className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                      activeTab === "tourism"
-                        ? darkMode
-                          ? "border-b-2 border-green-400 text-green-400"
-                          : "border-b-2 border-green-600 text-green-600"
-                        : darkMode
-                        ? "text-gray-400 hover:text-gray-300"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab("tourism")}
-                  >
-                    <div className="flex items-center justify-center">
-                      <Camera className="h-4 w-4 mr-1" />
-                      Tourisme
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-4">
-                {activeTab === "info" && (
-                  <div className="space-y-4 animate-fadeIn">
-                    <div
-                      className={`p-4 rounded-lg ${
-                        darkMode ? "bg-gray-700" : "bg-gray-50"
-                      }`}
-                    >
-                      <h4
-                        className={`text-sm font-semibold mb-2 ${
-                          darkMode ? "text-gray-200" : "text-gray-700"
-                        }`}
-                      >
-                        Position géographique
-                      </h4>
-                      <p
-                        className={`${
-                          darkMode ? "text-gray-300" : "text-gray-600"
-                        }`}
-                      >
-                        La région de {selectedRegion.name} est située au{" "}
-                        {getRegionPosition(selectedRegion.name)} du Cameroun. Sa
-                        capitale est {selectedRegion.capital}.
-                      </p>
-                    </div>
-
-                    <div>
-                      <h4
-                        className={`text-sm font-semibold mb-2 ${
-                          darkMode ? "text-gray-200" : "text-gray-700"
-                        }`}
-                      >
-                        Départements ({selectedRegion.departments.length})
-                      </h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {selectedRegion.departments.map((dept, index) => (
-                          <div
-                            key={index}
-                            className={`p-2 rounded ${
-                              darkMode
-                                ? "bg-gray-700 text-gray-300"
-                                : "bg-gray-50 text-gray-700"
-                            } flex items-center`}
-                          >
-                            <MapPin className="h-3 w-3 mr-2 flex-shrink-0" />
-                            <span className="text-sm">{dept}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div
-                      className={`p-4 rounded-lg border ${
-                        darkMode
-                          ? "bg-gray-700 border-gray-600"
-                          : "bg-white border-gray-200"
-                      }`}
-                    >
-                      <h4
-                        className={`text-sm font-semibold mb-2 ${
-                          darkMode ? "text-gray-200" : "text-gray-700"
-                        } flex items-center`}
-                      >
-                        <Users className="h-4 w-4 mr-1" />
-                        Démographie
-                      </h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span
-                            className={`text-sm ${
-                              darkMode ? "text-gray-400" : "text-gray-500"
-                            }`}
-                          >
-                            Population:
-                          </span>
-                          <span
-                            className={`font-medium ${
-                              darkMode ? "text-gray-200" : "text-gray-800"
-                            }`}
-                          >
-                            {formatNumber(selectedRegion.population)} habitants
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span
-                            className={`text-sm ${
-                              darkMode ? "text-gray-400" : "text-gray-500"
-                            }`}
-                          >
-                            Superficie:
-                          </span>
-                          <span
-                            className={`font-medium ${
-                              darkMode ? "text-gray-200" : "text-gray-800"
-                            }`}
-                          >
-                            {formatNumber(selectedRegion.area)} km²
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span
-                            className={`text-sm ${
-                              darkMode ? "text-gray-400" : "text-gray-500"
-                            }`}
-                          >
-                            Densité:
-                          </span>
-                          <span
-                            className={`font-medium ${
-                              darkMode ? "text-gray-200" : "text-gray-800"
-                            }`}
-                          >
-                            {Math.round(
-                              selectedRegion.population / selectedRegion.area
-                            )}{" "}
-                            hab/km²
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span
-                            className={`text-sm ${
-                              darkMode ? "text-gray-400" : "text-gray-500"
-                            }`}
-                          >
-                            Nombre de départements:
-                          </span>
-                          <span
-                            className={`font-medium ${
-                              darkMode ? "text-gray-200" : "text-gray-800"
-                            }`}
-                          >
-                            {selectedRegion.departments.length}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === "companies" && selectedRegion.majorCompanies && (
-                  <div className="space-y-4 animate-fadeIn">
-                    <h4
-                      className={`text-sm font-semibold mb-2 ${
-                        darkMode ? "text-gray-200" : "text-gray-700"
-                      }`}
-                    >
-                      Principales entreprises (
-                      {selectedRegion.majorCompanies.length})
-                    </h4>
-                    <div className="space-y-3">
-                      {selectedRegion.majorCompanies.map((company, index) => (
+                      <b>Superficie</b>
+                      <div>
                         <div
-                          key={index}
-                          className={`p-3 rounded-lg border ${
-                            darkMode
-                              ? "bg-gray-700 border-gray-600 hover:bg-gray-650"
-                              : "bg-white border-gray-200 hover:shadow-md"
-                          } transition-all`}
+                          className={`text-lg font-bold ${
+                            darkMode ? "text-gray-100" : "text-gray-800"
+                          }`}
                         >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white`}
-                                style={{
-                                  backgroundColor: [
-                                    "#3498db",
-                                    "#2ecc71",
-                                    "#e74c3c",
-                                    "#f39c12",
-                                    "#9b59b6",
-                                    "#1abc9c",
-                                    "#d35400",
-                                    "#34495e",
-                                  ][index % 8],
-                                }}
-                              >
-                                <Building2 className="h-5 w-5" />
-                              </div>
-                              <div>
-                                <div
-                                  className={`font-medium ${
-                                    darkMode ? "text-gray-200" : "text-gray-800"
-                                  }`}
-                                >
-                                  {company.name}
-                                </div>
-                                <div
-                                  className={`text-sm ${
-                                    darkMode ? "text-gray-400" : "text-gray-500"
-                                  }`}
-                                >
-                                  {company.sector}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                          {formatNumber(selectedRegion.area)}
                         </div>
-                      ))}
+                        <div
+                          className={`text-xs ${
+                            darkMode ? "text-gray-400" : "text-gray-500"
+                          }`}
+                        >
+                          km²
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          className={`text-lg font-bold ${
+                            darkMode ? "text-gray-100" : "text-gray-800"
+                          }`}
+                        >
+                          {Math.round(
+                            selectedRegion.population / selectedRegion.area
+                          )}
+                        </div>
+                        <div
+                          className={`text-xs ${
+                            darkMode ? "text-gray-400" : "text-gray-500"
+                          }`}
+                        >
+                          hab/km²
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          className={`text-lg font-bold ${
+                            darkMode ? "text-gray-100" : "text-gray-800"
+                          }`}
+                        >
+                          {selectedRegion.departments.length}
+                        </div>
+                        <div
+                          className={`text-xs ${
+                            darkMode ? "text-gray-400" : "text-gray-500"
+                          }`}
+                        >
+                          Départements
+                        </div>
+                      </div>
                     </div>
                   </div>
-                )}
 
-                {activeTab === "jobs" && selectedRegion.jobDemand && (
-                  <div className="space-y-4 animate-fadeIn">
-                    <h4
-                      className={`text-sm font-semibold mb-2 ${
-                        darkMode ? "text-gray-200" : "text-gray-700"
+                  <div
+                    className={`flex border-b z-50 ${
+                      darkMode ? "border-gray-700" : "border-gray-200"
+                    }`}
+                  >
+                    <button
+                      className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                        activeTab === "info"
+                          ? darkMode
+                            ? "border-b-2 border-green-400 text-green-400"
+                            : "border-b-2 border-green-600 text-green-600"
+                          : darkMode
+                          ? "text-gray-400 hover:text-gray-300"
+                          : "text-gray-500 hover:text-gray-700"
                       }`}
+                      onClick={() => setActiveTab("info")}
                     >
-                      Secteurs d&apos;emploi en demande
-                    </h4>
-                    <div className="space-y-2">
-                      {selectedRegion.jobDemand.map((job, index) => (
-                        <div
-                          key={index}
-                          className={`p-3 rounded-lg border ${
-                            darkMode
-                              ? "bg-gray-700 border-gray-600"
-                              : "bg-white border-gray-200"
+                      <div className="flex items-center justify-center">
+                        <Info className="h-4 w-4 mr-1" />
+                        Infos
+                      </div>
+                    </button>
+                    <button
+                      className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                        activeTab === "companies"
+                          ? darkMode
+                            ? "border-b-2 border-green-400 text-green-400"
+                            : "border-b-2 border-green-600 text-green-600"
+                          : darkMode
+                          ? "text-gray-400 hover:text-gray-300"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                      onClick={() => setActiveTab("companies")}
+                    >
+                      <div className="flex items-center justify-center">
+                        <Building2 className="h-4 w-4 mr-1" />
+                        Entreprises
+                      </div>
+                    </button>
+                    <button
+                      className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                        activeTab === "jobs"
+                          ? darkMode
+                            ? "border-b-2 border-green-400 text-green-400"
+                            : "border-b-2 border-green-600 text-green-600"
+                          : darkMode
+                          ? "text-gray-400 hover:text-gray-300"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                      onClick={() => setActiveTab("jobs")}
+                    >
+                      <div className="flex items-center justify-center">
+                        <Briefcase className="h-4 w-4 mr-1" />
+                        Emplois
+                      </div>
+                    </button>
+                    <button
+                      className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                        activeTab === "weather"
+                          ? darkMode
+                            ? "border-b-2 border-green-400 text-green-400"
+                            : "border-b-2 border-green-600 text-green-600"
+                          : darkMode
+                          ? "text-gray-400 hover:text-gray-300"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                      onClick={() => setActiveTab("weather")}
+                    >
+                      <div className="flex items-center justify-center">
+                        <Cloud className="h-4 w-4 mr-1" />
+                        Météo
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  {activeTab === "info" && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div
+                        className={`p-4 rounded-lg ${
+                          darkMode ? "bg-gray-700" : "bg-gray-50"
+                        }`}
+                      >
+                        <h4
+                          className={`text-sm font-semibold mb-2 ${
+                            darkMode ? "text-gray-200" : "text-gray-700"
+                          }`}
+                        >
+                          Position géographique
+                        </h4>
+                        <p
+                          className={`${
+                            darkMode ? "text-gray-300" : "text-gray-600"
+                          }`}
+                        >
+                          La région de {selectedRegion.name} est située au{" "}
+                          {getRegionPosition(selectedRegion.name)} du Cameroun.
+                          Sa capitale est {selectedRegion.capital}.
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4
+                          className={`text-sm font-semibold mb-2 ${
+                            darkMode ? "text-gray-200" : "text-gray-700"
+                          }`}
+                        >
+                          Départements ({selectedRegion.departments.length})
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {selectedRegion.departments.map((dept, index) => (
+                            <div
+                              key={index}
+                              className={`p-2 rounded ${
+                                darkMode
+                                  ? "bg-gray-700 text-gray-300"
+                                  : "bg-gray-50 text-gray-700"
+                              } flex items-center`}
+                            >
+                              <MapPin className="h-3 w-3 mr-2 flex-shrink-0" />
+                              <span className="text-sm">{dept}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div
+                        className={`p-4 rounded-lg border ${
+                          darkMode
+                            ? "bg-gray-700 border-gray-600"
+                            : "bg-white border-gray-200"
+                        }`}
+                      >
+                        <h4
+                          className={`text-sm font-semibold mb-2 ${
+                            darkMode ? "text-gray-200" : "text-gray-700"
                           } flex items-center`}
                         >
-                          <div
-                            className="w-2 h-10 rounded-full mr-3"
-                            style={{
-                              backgroundColor: [
-                                "#0088FE",
-                                "#00C49F",
-                                "#FFBB28",
-                                "#FF8042",
-                                "#8884d8",
-                                "#82ca9d",
-                                "#ffc658",
-                                "#8dd1e1",
-                              ][index % 8],
-                            }}
-                          ></div>
-                          <div className="flex-1">
-                            <div
+                          <Users className="h-4 w-4 mr-1" />
+                          Démographie
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span
+                              className={`text-sm ${
+                                darkMode ? "text-gray-400" : "text-gray-500"
+                              }`}
+                            >
+                              Population:
+                            </span>
+                            <span
                               className={`font-medium ${
                                 darkMode ? "text-gray-200" : "text-gray-800"
                               }`}
                             >
-                              {job}
-                            </div>
+                              {formatNumber(selectedRegion.population)}{" "}
+                              habitants
+                            </span>
                           </div>
-                          <div
-                            className={`text-sm ${
-                              darkMode ? "text-gray-400" : "text-gray-500"
-                            }`}
-                          >
-                            {Math.floor(Math.random() * 30) + 10}%
+                          <div className="flex justify-between">
+                            <span
+                              className={`text-sm ${
+                                darkMode ? "text-gray-400" : "text-gray-500"
+                              }`}
+                            >
+                              Superficie:
+                            </span>
+                            <span
+                              className={`font-medium ${
+                                darkMode ? "text-gray-200" : "text-gray-800"
+                              }`}
+                            >
+                              {formatNumber(selectedRegion.area)} km²
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span
+                              className={`text-sm ${
+                                darkMode ? "text-gray-400" : "text-gray-500"
+                              }`}
+                            >
+                              Densité:
+                            </span>
+                            <span
+                              className={`font-medium ${
+                                darkMode ? "text-gray-200" : "text-gray-800"
+                              }`}
+                            >
+                              {Math.round(
+                                selectedRegion.population / selectedRegion.area
+                              )}{" "}
+                              hab/km²
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span
+                              className={`text-sm ${
+                                darkMode ? "text-gray-400" : "text-gray-500"
+                              }`}
+                            >
+                              Nombre de départements:
+                            </span>
+                            <span
+                              className={`font-medium ${
+                                darkMode ? "text-gray-200" : "text-gray-800"
+                              }`}
+                            >
+                              {selectedRegion.departments.length}
+                            </span>
                           </div>
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {activeTab === "specialties" && selectedRegion.specialties && (
-                  <div className="space-y-4 animate-fadeIn">
-                    <div
-                      className={`p-4 rounded-lg border ${
-                        darkMode
-                          ? "bg-gray-700 border-gray-600"
-                          : "bg-white border-gray-200"
-                      }`}
-                    >
-                      <h4
-                        className={`text-sm font-semibold mb-3 ${
-                          darkMode ? "text-gray-200" : "text-gray-700"
-                        } flex items-center`}
-                      >
-                        <UtensilsCrossed className="h-4 w-4 mr-1" />
-                        Gastronomie
-                      </h4>
-                      <p
-                        className={`${
-                          darkMode ? "text-gray-300" : "text-gray-600"
-                        }`}
-                      >
-                        {selectedRegion.specialties.gastronomy}
-                      </p>
-                    </div>
-
-                    <div
-                      className={`p-4 rounded-lg border ${
-                        darkMode
-                          ? "bg-gray-700 border-gray-600"
-                          : "bg-white border-gray-200"
-                      }`}
-                    >
-                      <h4
-                        className={`text-sm font-semibold mb-3 ${
-                          darkMode ? "text-gray-200" : "text-gray-700"
-                        } flex items-center`}
-                      >
-                        <Briefcase className="h-4 w-4 mr-1" />
-                        Professions traditionnelles
-                      </h4>
-                      <p
-                        className={`${
-                          darkMode ? "text-gray-300" : "text-gray-600"
-                        }`}
-                      >
-                        {selectedRegion.specialties.professions}
-                      </p>
-                    </div>
-
-                    <div
-                      className={`p-4 rounded-lg border ${
-                        darkMode
-                          ? "bg-gray-700 border-gray-600"
-                          : "bg-white border-gray-200"
-                      }`}
-                    >
-                      <h4
-                        className={`text-sm font-semibold mb-3 ${
-                          darkMode ? "text-gray-200" : "text-gray-700"
-                        } flex items-center`}
-                      >
-                        <Music className="h-4 w-4 mr-1" />
-                        Divertissement et culture
-                      </h4>
-                      <p
-                        className={`${
-                          darkMode ? "text-gray-300" : "text-gray-600"
-                        }`}
-                      >
-                        {selectedRegion.specialties.entertainment}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === "tourism" && selectedRegion.touristSites && (
-                  <div className="space-y-4 animate-fadeIn">
-                    <h4
-                      className={`text-sm font-semibold mb-2 ${
-                        darkMode ? "text-gray-200" : "text-gray-700"
-                      }`}
-                    >
-                      Sites touristiques ({selectedRegion.touristSites.length})
-                    </h4>
-
-                    {selectedRegion.touristSites.map((site, index) => (
-                      <div
-                        key={index}
-                        ref={
-                          selectedTouristSite?.name === site.name
-                            ? touristSiteRef
-                            : null
-                        }
-                        className={`rounded-lg border overflow-hidden transition-all duration-300 ${
-                          darkMode
-                            ? "bg-gray-700 border-gray-600"
-                            : "bg-white border-gray-200"
-                        } ${
-                          selectedTouristSite?.name === site.name
-                            ? darkMode
-                              ? "ring-2 ring-green-400"
-                              : "ring-2 ring-green-500"
-                            : ""
-                        }`}
-                      >
-                        <div
-                          className={`p-3 flex justify-between items-center cursor-pointer ${
-                            darkMode ? "hover:bg-gray-650" : "hover:bg-gray-50"
+                  {activeTab === "companies" &&
+                    selectedRegion.majorCompanies && (
+                      <div className="space-y-4 animate-fadeIn">
+                        <h4
+                          className={`text-sm font-semibold mb-2 ${
+                            darkMode ? "text-gray-200" : "text-gray-700"
                           }`}
-                          onClick={() =>
-                            handleTouristSiteClick(site, selectedRegion.name)
-                          }
                         >
-                          <div className="flex items-center">
+                          Principales entreprises (
+                          {selectedRegion.majorCompanies.length})
+                        </h4>
+                        <div className="space-y-3">
+                          {selectedRegion.majorCompanies.map(
+                            (company, index) => (
+                              <div
+                                key={index}
+                                className={`p-3 rounded-lg border ${
+                                  darkMode
+                                    ? "bg-gray-700 border-gray-600 hover:bg-gray-650"
+                                    : "bg-white border-gray-200 hover:shadow-md"
+                                } transition-all`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center">
+                                    <div
+                                      className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white`}
+                                      style={{
+                                        backgroundColor: [
+                                          "#3498db",
+                                          "#2ecc71",
+                                          "#e74c3c",
+                                          "#f39c12",
+                                          "#9b59b6",
+                                          "#1abc9c",
+                                          "#d35400",
+                                          "#34495e",
+                                        ][index % 8],
+                                      }}
+                                    >
+                                      <Building2 className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                      <div
+                                        className={`font-medium ${
+                                          darkMode
+                                            ? "text-gray-200"
+                                            : "text-gray-800"
+                                        }`}
+                                      >
+                                        {company.name}
+                                      </div>
+                                      <div
+                                        className={`text-sm ${
+                                          darkMode
+                                            ? "text-gray-400"
+                                            : "text-gray-500"
+                                        }`}
+                                      >
+                                        {company.sector}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                  {activeTab === "jobs" && selectedRegion.jobDemand && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <h4
+                        className={`text-sm font-semibold mb-2 ${
+                          darkMode ? "text-gray-200" : "text-gray-700"
+                        }`}
+                      >
+                        Secteurs d&apos;emploi en demande
+                      </h4>
+                      <div className="space-y-2">
+                        {selectedRegion.jobDemand.map((job, index) => (
+                          <div
+                            key={index}
+                            className={`p-3 rounded-lg border ${
+                              darkMode
+                                ? "bg-gray-700 border-gray-600"
+                                : "bg-white border-gray-200"
+                            } flex items-center`}
+                          >
                             <div
-                              className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white`}
-                            >
-                              {getTouristSiteIcon(site.type || "default")}
-                            </div>
-                            <div>
+                              className="w-2 h-10 rounded-full mr-3"
+                              style={{
+                                backgroundColor: [
+                                  "#0088FE",
+                                  "#00C49F",
+                                  "#FFBB28",
+                                  "#FF8042",
+                                  "#8884d8",
+                                  "#82ca9d",
+                                  "#ffc658",
+                                  "#8dd1e1",
+                                ][index % 8],
+                              }}
+                            ></div>
+                            <div className="flex-1">
                               <div
                                 className={`font-medium ${
                                   darkMode ? "text-gray-200" : "text-gray-800"
                                 }`}
                               >
-                                {site.name}
+                                {job}
                               </div>
-                              {site.location && (
-                                <div
-                                  className={`text-sm ${
-                                    darkMode ? "text-gray-400" : "text-gray-500"
-                                  } flex items-center`}
-                                >
-                                  <MapPin className="h-3 w-3 mr-1" />
-                                  {site.location}
-                                </div>
-                              )}
                             </div>
-                          </div>
-                          <div className="flex items-center">
-                            <ChevronDown
-                              className={`h-5 w-5 ${
-                                darkMode ? "text-gray-400" : "text-gray-500"
-                              } transition-transform ${
-                                selectedTouristSite?.name === site.name
-                                  ? "transform rotate-180"
-                                  : ""
-                              }`}
-                            />
-                          </div>
-                        </div>
-
-                        {selectedTouristSite?.name === site.name && (
-                          <div
-                            className={`p-4 border-t ${
-                              darkMode
-                                ? "border-gray-600 bg-gray-750"
-                                : "border-gray-200 bg-gray-50"
-                            }`}
-                          >
-                            {site.image && (
-                              <div className="mb-4 rounded-lg overflow-hidden">
-                                <div
-                                  className="h-48 bg-cover bg-center rounded-lg"
-                                  style={{
-                                    backgroundImage: `url(${site.image})`,
-                                  }}
-                                ></div>
-                              </div>
-                            )}
                             <div
-                              className={`${
-                                darkMode ? "text-gray-300" : "text-gray-600"
+                              className={`text-sm ${
+                                darkMode ? "text-gray-400" : "text-gray-500"
                               }`}
                             >
-                              {site.description}
-                            </div>
-
-                            <div className="mt-4 flex items-center justify-between">
-                              {site.rating && (
-                                <div className="flex items-center">
-                                  {Array.from({ length: 5 }).map((_, index) => (
-                                    <Star
-                                      key={index}
-                                      className={`h-4 w-4 ${
-                                        index < Math.floor(site.rating || 0)
-                                          ? "text-yellow-400 fill-yellow-400"
-                                          : darkMode
-                                          ? "text-gray-600"
-                                          : "text-gray-300"
-                                      }`}
-                                    />
-                                  ))}
-                                  <span
-                                    className={`ml-1 text-sm ${
-                                      darkMode
-                                        ? "text-gray-400"
-                                        : "text-gray-500"
-                                    }`}
-                                  >
-                                    {site.rating}/5
-                                  </span>
-                                </div>
-                              )}
-                              <button
-                                className={`px-3 py-1 rounded text-sm ${
-                                  darkMode
-                                    ? "bg-gray-600 hover:bg-gray-500 text-gray-200"
-                                    : "bg-gray-200 hover:bg-gray-300 text-gray-800"
-                                } transition-colors`}
-                                onClick={() => {
-                                  // Ouvrir dans Google Maps
-                                  window.open(
-                                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                                      site.name +
-                                        " " +
-                                        selectedRegion.name +
-                                        " Cameroun"
-                                    )}`,
-                                    "_blank"
-                                  );
-                                }}
-                              >
-                                Voir sur Google Maps
-                              </button>
+                              {Math.floor(Math.random() * 30) + 10}%
                             </div>
                           </div>
-                        )}
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </div>
+                  )}
+
+                  {/* Nouvel onglet Météo */}
+                  {activeTab === "weather" && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4
+                          className={`text-sm font-semibold ${
+                            darkMode ? "text-gray-200" : "text-gray-700"
+                          }`}
+                        >
+                          Météo par département
+                        </h4>
+                        <button
+                          onClick={refreshWeather}
+                          className={`p-2 rounded ${
+                            darkMode
+                              ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
+                              : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                          } flex items-center text-xs`}
+                          disabled={loadingWeather}
+                        >
+                          {loadingWeather ? (
+                            <div className="animate-spin h-4 w-4 border-2 border-t-transparent border-blue-500 rounded-full mr-1"></div>
+                          ) : (
+                            <RefreshCw className="h-3 w-3 mr-1" />
+                          )}
+                          Actualiser
+                        </button>
+                      </div>
+
+                      {loadingWeather ? (
+                        <div className="flex justify-center items-center py-8">
+                          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
+                          <p
+                            className={`ml-3 ${
+                              darkMode ? "text-gray-300" : "text-gray-600"
+                            }`}
+                          >
+                            Chargement des données météo...
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          {selectedDepartment && departmentWeatherData && (
+                            <div
+                              ref={weatherRef}
+                              className={`p-4 rounded-lg border mb-6 ${
+                                darkMode
+                                  ? "bg-gray-700 border-gray-600"
+                                  : "bg-white border-gray-200"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between mb-3">
+                                <h3
+                                  className={`font-semibold ${
+                                    darkMode ? "text-gray-100" : "text-gray-800"
+                                  }`}
+                                >
+                                  {selectedDepartment}
+                                </h3>
+                                <button
+                                  onClick={() => {
+                                    setSelectedDepartment(null);
+                                    setDepartmentWeatherData(null);
+                                  }}
+                                  className={`p-1 rounded-full ${
+                                    darkMode
+                                      ? "hover:bg-gray-600"
+                                      : "hover:bg-gray-200"
+                                  }`}
+                                >
+                                  <X className="h-4 w-4" />
+                                </button>
+                              </div>
+
+                              <div className="flex items-center mb-4">
+                                <div className="mr-4">
+                                  {getWeatherIcon(
+                                    departmentWeatherData.condition
+                                  )}
+                                </div>
+                                <div>
+                                  <div
+                                    className={`text-2xl font-bold ${
+                                      darkMode
+                                        ? "text-gray-100"
+                                        : "text-gray-800"
+                                    }`}
+                                  >
+                                    {departmentWeatherData.temperature}°C
+                                  </div>
+                                  <div
+                                    className={`${
+                                      darkMode
+                                        ? "text-gray-300"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    {departmentWeatherData.condition}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-3 gap-3 mb-4">
+                                <div
+                                  className={`p-2 rounded ${
+                                    darkMode ? "bg-gray-800" : "bg-gray-50"
+                                  }`}
+                                >
+                                  <div className="flex items-center">
+                                    <Wind className="h-4 w-4 mr-1 text-blue-400" />
+                                    <span
+                                      className={`text-xs ${
+                                        darkMode
+                                          ? "text-gray-400"
+                                          : "text-gray-500"
+                                      }`}
+                                    >
+                                      Vent
+                                    </span>
+                                  </div>
+                                  <div
+                                    className={`font-medium ${
+                                      darkMode
+                                        ? "text-gray-200"
+                                        : "text-gray-800"
+                                    }`}
+                                  >
+                                    {departmentWeatherData.windSpeed} km/h
+                                  </div>
+                                </div>
+                                <div
+                                  className={`p-2 rounded ${
+                                    darkMode ? "bg-gray-800" : "bg-gray-50"
+                                  }`}
+                                >
+                                  <div className="flex items-center">
+                                    <Droplets className="h-4 w-4 mr-1 text-blue-400" />
+                                    <span
+                                      className={`text-xs ${
+                                        darkMode
+                                          ? "text-gray-400"
+                                          : "text-gray-500"
+                                      }`}
+                                    >
+                                      Humidité
+                                    </span>
+                                  </div>
+                                  <div
+                                    className={`font-medium ${
+                                      darkMode
+                                        ? "text-gray-200"
+                                        : "text-gray-800"
+                                    }`}
+                                  >
+                                    {departmentWeatherData.humidity}%
+                                  </div>
+                                </div>
+                                <div
+                                  className={`p-2 rounded ${
+                                    darkMode ? "bg-gray-800" : "bg-gray-50"
+                                  }`}
+                                >
+                                  <div className="flex items-center">
+                                    <CloudRain className="h-4 w-4 mr-1 text-blue-400" />
+                                    <span
+                                      className={`text-xs ${
+                                        darkMode
+                                          ? "text-gray-400"
+                                          : "text-gray-500"
+                                      }`}
+                                    >
+                                      Précip.
+                                    </span>
+                                  </div>
+                                  <div
+                                    className={`font-medium ${
+                                      darkMode
+                                        ? "text-gray-200"
+                                        : "text-gray-800"
+                                    }`}
+                                  >
+                                    {departmentWeatherData.precipitation}%
+                                  </div>
+                                </div>
+                              </div>
+
+                              {departmentWeatherData.forecast && (
+                                <div>
+                                  <h4
+                                    className={`text-sm font-medium mb-2 ${
+                                      darkMode
+                                        ? "text-gray-300"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    Prévisions pour les prochains jours
+                                  </h4>
+                                  <div className="grid grid-cols-3 gap-2">
+                                    {departmentWeatherData.forecast.map(
+                                      (day, index) => (
+                                        <div
+                                          key={index}
+                                          className={`p-2 rounded text-center ${
+                                            darkMode
+                                              ? "bg-gray-800"
+                                              : "bg-gray-50"
+                                          }`}
+                                        >
+                                          <div
+                                            className={`text-sm font-medium mb-1text-gray-700}`}
+                                          >
+                                            {day.day}
+                                          </div>
+                                          <div className="flex justify-center mb-1">
+                                            {day.icon === "sun" && (
+                                              <Sun className="h-5 w-5 text-orange-500" />
+                                            )}
+                                            {day.icon === "cloud-sun" && (
+                                              <div className="relative">
+                                                <Cloud className="h-5 w-5 text-blue-500" />
+                                                <Sun className="h-3 w-3 text-orange-500 absolute -top-1 -right-1" />
+                                              </div>
+                                            )}
+                                            {day.icon === "cloud" && (
+                                              <Cloud className="h-5 w-5 text-blue-500" />
+                                            )}
+                                            {day.icon === "cloud-rain" && (
+                                              <CloudRain className="h-5 w-5 text-orange-500" />
+                                            )}
+                                            {day.icon === "cloud-lightning" && (
+                                              <CloudLightning className="h-5 w-5 text-blue-500" />
+                                            )}
+                                          </div>
+                                          <div className={`text-sm`}>
+                                            {day.maxTemp}° / {day.minTemp}°
+                                          </div>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Liste des départements avec leur météo */}
+                          <div className="grid grid-cols-1 gap-3">
+                            {Object.entries(weatherData).map(([dept, data]) => (
+                              <div
+                                key={dept}
+                                className={`p-3 rounded-lg border cursor-pointer ${
+                                  selectedDepartment === dept
+                                    ? darkMode
+                                      ? "bg-blue-900 border-blue-700"
+                                      : "bg-blue-50 border-blue-200"
+                                    : darkMode
+                                    ? "bg-gray-700 border-gray-600 hover:bg-gray-650"
+                                    : "bg-white border-gray-200 hover:bg-gray-50"
+                                } transition-all`}
+                                onClick={() => handleDepartmentClick(dept)}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center">
+                                    <div
+                                      className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white`}
+                                    >
+                                      {getWeatherIcon(data.condition)}
+                                    </div>
+                                    <div>
+                                      <div
+                                        className={`font-medium ${
+                                          selectedDepartment === dept
+                                            ? darkMode
+                                              ? "text-blue-100"
+                                              : "text-blue-800"
+                                            : darkMode
+                                            ? "text-gray-200"
+                                            : "text-gray-800"
+                                        }`}
+                                      >
+                                        {dept}
+                                      </div>
+                                      <div
+                                        className={`text-sm ${
+                                          selectedDepartment === dept
+                                            ? darkMode
+                                              ? "text-blue-200"
+                                              : "text-blue-600"
+                                            : darkMode
+                                            ? "text-gray-400"
+                                            : "text-gray-500"
+                                        }`}
+                                      >
+                                        {data.condition}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <div
+                                      className={`text-2xl font-bold ${
+                                        selectedDepartment === dept
+                                          ? darkMode
+                                            ? "text-blue-100"
+                                            : "text-blue-800"
+                                          : darkMode
+                                          ? "text-gray-200"
+                                          : "text-gray-800"
+                                      }`}
+                                    >
+                                      {data.temperature}°C
+                                    </div>
+                                    <ChevronRight
+                                      className={`h-5 w-5 ml-2 ${
+                                        selectedDepartment === dept
+                                          ? darkMode
+                                            ? "text-blue-300"
+                                            : "text-blue-500"
+                                          : darkMode
+                                          ? "text-gray-500"
+                                          : "text-gray-400"
+                                      }`}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
         </div>
       </div>
-
-      <style jsx global>{`
-        .dark-map {
-          filter: brightness(0.8) contrast(1.2);
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 };

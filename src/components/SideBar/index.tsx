@@ -32,12 +32,12 @@ const navigation: NavigationItem[] = [
     icon: Home,
     description: "Vue d'ensemble des données",
   },
-  {
-    name: "Régions",
-    key: "regions",
-    icon: MapPin,
-    description: "Exploration des régions",
-  },
+  // {
+  //   name: "Régions",
+  //   key: "regions",
+  //   icon: MapPin,
+  //   description: "Exploration des régions",
+  // },
   // {
   //   name: "Universités",
   //   key: "universities",
@@ -45,16 +45,16 @@ const navigation: NavigationItem[] = [
   //   description: "Institutions d'enseignement",
   // },
   {
-    name: "Coupures",
-    key: "outages",
-    icon: Zap,
-    description: "Coupures de courant ENEO",
-  },
-  {
     name: "Carte",
     key: "map",
     icon: Map,
     description: "Données géographiques",
+  },
+  {
+    name: "Coupures",
+    key: "outages",
+    icon: Zap,
+    description: "Coupures de courant ENEO",
   },
   {
     name: "Statistiques",

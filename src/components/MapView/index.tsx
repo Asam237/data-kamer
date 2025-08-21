@@ -792,33 +792,6 @@ const MapView: React.FC = () => {
               <Maximize className="h-5 w-5" />
             )}
           </button>
-          <button
-            className={`p-2 rounded-full ${
-              darkMode
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-100 hover:bg-gray-200"
-            } transition-colors`}
-            onClick={toggleDarkMode}
-            title={darkMode ? "Mode clair" : "Mode sombre"}
-          >
-            {darkMode ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                />
-              </svg>
-            )}
-          </button>
         </div>
       </div>
 

@@ -1,0 +1,989 @@
+{
+  "regions": [
+    {
+      "id": 1,
+      "name": "Adamaoua",
+      "capital": "Ngaoundéré",
+      "population": 884289,
+      "area": 63701,
+      "departments": ["Djérem", "Faro-et-Déo", "Mayo-Banyo", "Mbéré", "Vina"],
+      "majorCompanies": [
+        {
+          "name": "SODECOTON",
+          "sector": "Agriculture"
+        },
+        {
+          "name": "Brasseries du Cameroun",
+          "sector": "Boissons"
+        },
+        {
+          "name": "Dangote Cement",
+          "sector": "Construction"
+        }
+      ],
+      "jobDemand": ["Élevage", "Agriculture", "Agroalimentaire", "Tourisme"],
+      "specialties": {
+        "gastronomy": "Kilishi (viande séchée), Lait frais, Fromage peul",
+        "professions": "Éleveurs, Agriculteurs, Commerçants de bétail",
+        "entertainment": "Festivals culturels peuls, Courses de chevaux, Tourisme de montagne"
+      },
+      "touristSites": [
+        {
+          "name": "Parc National de la Bénoué",
+          "description": "Vaste parc national offrant des safaris et l'observation de la faune sauvage",
+          "location": "Sud de Ngaoundéré",
+          "image": "/images/regions/adamaoua/benoue_park.jpg"
+        },
+        {
+          "name": "Chutes de Tello",
+          "description": "Magnifiques chutes d'eau entourées d'une végétation luxuriante",
+          "location": "Près de Ngaoundéré",
+          "image": "/images/regions/adamaoua/tello_falls.jpg"
+        },
+        {
+          "name": "Lac Tison",
+          "description": "Lac volcanique offrant un paysage pittoresque et des activités de pêche",
+          "location": "Ngaoundéré",
+          "image": "/images/regions/adamaoua/lac_tison.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/adamaoua/adamaoua_region.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Centre",
+      "capital": "Yaoundé",
+      "population": 3098044,
+      "area": 68953,
+      "departments": [
+        "Haute-Sanaga",
+        "Lekié",
+        "Mbam-et-Inoubou",
+        "Mbam-et-Kim",
+        "Méfou-et-Afamba",
+        "Méfou-et-Akono",
+        "Mfoundi",
+        "Nyong-et-Kéllé",
+        "Nyong-et-Mfoumou",
+        "Nyong-et-So'o"
+      ],
+      "majorCompanies": [
+        {
+          "name": "ENEO",
+          "sector": "Énergie"
+        },
+        {
+          "name": "MTN Cameroon",
+          "sector": "Télécommunications"
+        },
+        {
+          "name": "CAMTEL",
+          "sector": "Télécommunications"
+        },
+        {
+          "name": "Orange Cameroun",
+          "sector": "Télécommunications"
+        },
+        {
+          "name": "BICEC",
+          "sector": "Banque"
+        }
+      ],
+      "jobDemand": [
+        "Administration publique",
+        "Télécommunications",
+        "Banque/Finance",
+        "Éducation",
+        "Services"
+      ],
+      "specialties": {
+        "gastronomy": "Okok, Poulet DG, Ndolè, Koki",
+        "professions": "Fonctionnaires, Diplomates, Enseignants, Banquiers",
+        "entertainment": "Musées nationaux, Festivals culturels, Cinéma, Théâtre"
+      },
+      "touristSites": [
+        {
+          "name": "Monument de la Réunification",
+          "description": "Monument historique symbolisant l'unification du Cameroun anglophone et francophone",
+          "location": "Yaoundé",
+          "image": "/images/regions/centre/reunification_monument.jpg"
+        },
+        {
+          "name": "Musée National du Cameroun",
+          "description": "Musée présentant l'histoire, l'art et la culture camerounaise",
+          "location": "Yaoundé",
+          "image": "/images/regions/centre/national_museum.jpg"
+        },
+        {
+          "name": "Cathédrale Notre-Dame-des-Victoires",
+          "description": "Imposante cathédrale catholique au cœur de Yaoundé",
+          "location": "Yaoundé",
+          "image": "/images/regions/centre/cathedral.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/centre/centre_region.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Est",
+      "capital": "Bertoua",
+      "population": 771755,
+      "area": 109002,
+      "departments": [
+        "Boumba-et-Ngoko",
+        "Haut-Nyong",
+        "Kadey",
+        "Lom-et-Djérem"
+      ],
+      "majorCompanies": [
+        {
+          "name": "PALLISCO",
+          "sector": "Exploitation forestière"
+        },
+        {
+          "name": "SFID",
+          "sector": "Bois"
+        },
+        {
+          "name": "COTCO",
+          "sector": "Pétrole"
+        },
+        {
+          "name": "CamIron",
+          "sector": "Mines"
+        }
+      ],
+      "jobDemand": ["Foresterie", "Mines", "Agriculture", "Conservation"],
+      "specialties": {
+        "gastronomy": "Gibier, Manioc, Poisson d'eau douce, Chenilles comestibles",
+        "professions": "Forestiers, Mineurs, Agriculteurs, Gardes forestiers",
+        "entertainment": "Écotourisme, Safaris, Danses traditionnelles des peuples de la forêt"
+      },
+      "touristSites": [
+        {
+          "name": "Parc National de Lobéké",
+          "description": "Réserve de biosphère abritant gorilles, éléphants et de nombreuses espèces d'oiseaux",
+          "location": "Sud-Est de la région",
+          "image": "/images/regions/est/lobeke_park.jpg"
+        },
+        {
+          "name": "Réserve de Dja",
+          "description": "Site du patrimoine mondial de l'UNESCO, forêt tropicale préservée",
+          "location": "Sud de la région",
+          "image": "/images/regions/est/dja_reserve.jpg"
+        },
+        {
+          "name": "Chutes de Nachtigal",
+          "description": "Impressionnantes chutes d'eau sur le fleuve Sanaga",
+          "location": "Près de Bertoua",
+          "image": "/images/regions/est/nachtigal_falls.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/est/est_region.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Extrême-Nord",
+      "capital": "Maroua",
+      "population": 3111792,
+      "area": 34263,
+      "departments": [
+        "Diamaré",
+        "Logone-et-Chari",
+        "Mayo-Danay",
+        "Mayo-Kani",
+        "Mayo-Sava",
+        "Mayo-Tsanaga"
+      ],
+      "majorCompanies": [
+        {
+          "name": "SODECOTON",
+          "sector": "Agriculture"
+        },
+        {
+          "name": "SEMRY",
+          "sector": "Riziculture"
+        },
+        {
+          "name": "CICAM",
+          "sector": "Textile"
+        }
+      ],
+      "jobDemand": [
+        "Agriculture",
+        "Artisanat",
+        "Commerce transfrontalier",
+        "Tourisme"
+      ],
+      "specialties": {
+        "gastronomy": "Folléré, Kilibu (bouillie de mil), Viande séchée",
+        "professions": "Artisans (poterie, vannerie, cuir), Agriculteurs, Pêcheurs",
+        "entertainment": "Artisanat local, Marchés traditionnels, Festivals culturels"
+      },
+      "touristSites": [
+        {
+          "name": "Parc National de Waza",
+          "description": "L'un des parcs les plus célèbres du Cameroun, riche en faune sauvage africaine",
+          "location": "Nord de Maroua",
+          "image": "/images/regions/extreme_nord/waza_park.jpg"
+        },
+        {
+          "name": "Monts Mandara",
+          "description": "Chaîne de montagnes avec villages traditionnels et architecture unique",
+          "location": "Ouest de la région",
+          "image": "/images/regions/extreme_nord/mandara_mountains.jpg"
+        },
+        {
+          "name": "Marché de Maroua",
+          "description": "Marché coloré offrant artisanat local, textiles et produits régionaux",
+          "location": "Maroua",
+          "image": "/images/regions/extreme_nord/maroua_market.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/extreme_nord/extreme_nord_region.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Littoral",
+      "capital": "Douala",
+      "population": 2510283,
+      "area": 20248,
+      "departments": ["Moungo", "Nkam", "Sanaga-Maritime", "Wouri"],
+      "majorCompanies": [
+        {
+          "name": "SABC",
+          "sector": "Boissons"
+        },
+        {
+          "name": "CAMRAIL",
+          "sector": "Transport ferroviaire"
+        },
+        {
+          "name": "Port Autonome de Douala",
+          "sector": "Transport maritime"
+        },
+        {
+          "name": "ALUCAM",
+          "sector": "Aluminium"
+        },
+        {
+          "name": "SOCAPALM",
+          "sector": "Agriculture"
+        }
+      ],
+      "jobDemand": [
+        "Logistique/Transport",
+        "Industrie",
+        "Commerce international",
+        "Services financiers",
+        "Pétrole/Gaz"
+      ],
+      "specialties": {
+        "gastronomy": "Ndolè, Poisson braisé, Miondo, Bobolo",
+        "professions": "Commerçants, Industriels, Transitaires, Banquiers, Marins",
+        "entertainment": "Plages, Vie nocturne, Festivals musicaux, Expositions d'art"
+      },
+      "touristSites": [
+        {
+          "name": "Plage de Limbé",
+          "description": "Plage de sable noir volcanique avec vue sur le mont Cameroun",
+          "location": "Limbé",
+          "image": "/images/regions/littoral/limbe_beach.jpg"
+        },
+        {
+          "name": "Jardin Botanique de Limbé",
+          "description": "L'un des plus anciens jardins botaniques d'Afrique avec une riche collection de plantes",
+          "location": "Limbé",
+          "image": "/images/regions/littoral/limbe_botanical_garden.jpg"
+        },
+        {
+          "name": "Ekom-Nkam Falls",
+          "description": "Spectaculaires chutes d'eau dans une forêt tropicale luxuriante",
+          "location": "Melong",
+          "image": "/images/regions/littoral/ekom_nkam_falls.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/littoral/littoral_region.jpg"
+    },
+    {
+      "id": 6,
+      "name": "Nord",
+      "capital": "Garoua",
+      "population": 1687859,
+      "area": 66090,
+      "departments": ["Bénoué", "Faro", "Mayo-Louti", "Mayo-Rey"],
+      "majorCompanies": [
+        {
+          "name": "SODECOTON",
+          "sector": "Agriculture"
+        },
+        {
+          "name": "Brasseries du Cameroun",
+          "sector": "Boissons"
+        },
+        {
+          "name": "CIMENCAM",
+          "sector": "Ciment"
+        }
+      ],
+      "jobDemand": ["Agriculture", "Élevage", "Commerce", "Construction"],
+      "specialties": {
+        "gastronomy": "Kilishi, Kossam (lait caillé), Couscous de maïs",
+        "professions": "Éleveurs, Agriculteurs, Artisans du cuir",
+        "entertainment": "Courses de chevaux, Lutte traditionnelle, Festivals culturels"
+      },
+      "touristSites": [
+        {
+          "name": "Parc National de Bouba Ndjida",
+          "description": "Vaste parc national abritant des éléphants, lions et de nombreuses espèces d'antilopes",
+          "location": "Est de Garoua",
+          "image": "/pictures/bn.jpg"
+        },
+        {
+          "name": "Lamido Palace",
+          "description": "Palais traditionnel du chef local (Lamido) avec architecture unique",
+          "location": "Garoua",
+          "image": "/images/regions/nord/lamido_palace.jpg"
+        },
+        {
+          "name": "Fleuve Bénoué",
+          "description": "Important cours d'eau offrant des possibilités de pêche et d'observation de la faune",
+          "location": "Garoua",
+          "image": "/images/regions/nord/benoue_river.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/nord/nord_region.jpg"
+    },
+    {
+      "id": 7,
+      "name": "Nord-Ouest",
+      "capital": "Bamenda",
+      "population": 1728953,
+      "area": 17300,
+      "departments": [
+        "Boyo",
+        "Bui",
+        "Donga-Mantung",
+        "Menchum",
+        "Mezam",
+        "Momo",
+        "Ngo-Ketunjia"
+      ],
+      "majorCompanies": [
+        {
+          "name": "Ndawara Tea Estate",
+          "sector": "Agriculture"
+        },
+        {
+          "name": "Cameroon Development Corporation",
+          "sector": "Agriculture"
+        },
+        {
+          "name": "Guinness Cameroon",
+          "sector": "Boissons"
+        }
+      ],
+      "jobDemand": ["Agriculture", "Artisanat", "Éducation", "Commerce"],
+      "specialties": {
+        "gastronomy": "Achu, Fufu and Njama-njama, Corn chaff",
+        "professions": "Agriculteurs, Artisans, Enseignants, Commerçants",
+        "entertainment": "Danses traditionnelles, Festivals culturels, Tourisme de montagne"
+      },
+      "touristSites": [
+        {
+          "name": "Lac Awing",
+          "description": "Lac de cratère entouré de collines verdoyantes et de villages traditionnels",
+          "location": "Près de Bamenda",
+          "image": "/images/regions/nord_ouest/lake_awing.jpg"
+        },
+        {
+          "name": "Palais Royal de Bafut",
+          "description": "Résidence traditionnelle du Fon de Bafut, site historique important",
+          "location": "Bafut",
+          "image": "/images/regions/nord_ouest/bafut_palace.jpg"
+        },
+        {
+          "name": "Lacs jumeaux de Manengouba",
+          "description": "Deux lacs de cratère (mâle et femelle) offrant des randonnées spectaculaires",
+          "location": "Mont Manengouba",
+          "image": "/images/regions/nord_ouest/manengouba_lakes.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/nord_ouest/nord_ouest_region.jpg"
+    },
+    {
+      "id": 8,
+      "name": "Ouest",
+      "capital": "Bafoussam",
+      "population": 1720047,
+      "area": 13892,
+      "departments": [
+        "Bamboutos",
+        "Haut-Nkam",
+        "Hauts-Plateaux",
+        "Koung-Khi",
+        "Menoua",
+        "Mifi",
+        "Ndé",
+        "Noun"
+      ],
+      "majorCompanies": [
+        {
+          "name": "SABC",
+          "sector": "Boissons"
+        },
+        {
+          "name": "SOCAPALM",
+          "sector": "Agriculture"
+        },
+        {
+          "name": "UNALOR",
+          "sector": "Aviculture"
+        },
+        {
+          "name": "SIC CACAO",
+          "sector": "Agroalimentaire"
+        }
+      ],
+      "jobDemand": [
+        "Agriculture",
+        "Commerce",
+        "Artisanat",
+        "Transport",
+        "Agroalimentaire"
+      ],
+      "specialties": {
+        "gastronomy": "Taro, Poulet DG, Kondré, Nkui",
+        "professions": "Agriculteurs, Commerçants, Artisans, Entrepreneurs",
+        "entertainment": "Funérailles traditionnelles, Festivals culturels, Marchés colorés"
+      },
+      "touristSites": [
+        {
+          "name": "Chefferie de Bandjoun",
+          "description": "Centre culturel traditionnel avec musée d'art et architecture bamiléké",
+          "location": "Bandjoun",
+          "image": "/images/regions/ouest/bandjoun_chefferie.jpg"
+        },
+        {
+          "name": "Chutes de la Métché",
+          "description": "Cascades pittoresques dans un cadre naturel préservé",
+          "location": "Près de Dschang",
+          "image": "/images/regions/ouest/metche_falls.jpg"
+        },
+        {
+          "name": "Musée des Civilisations",
+          "description": "Musée présentant l'histoire et la culture des peuples de l'Ouest camerounais",
+          "location": "Dschang",
+          "image": "/images/regions/ouest/civilisations_museum.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/ouest/ouest_region.jpg"
+    },
+    {
+      "id": 9,
+      "name": "Sud",
+      "capital": "Ebolowa",
+      "population": 634855,
+      "area": 47191,
+      "departments": ["Dja-et-Lobo", "Mvila", "Océan", "Vallée-du-Ntem"],
+      "majorCompanies": [
+        {
+          "name": "HEVECAM",
+          "sector": "Caoutchouc"
+        },
+        {
+          "name": "SOCAPALM",
+          "sector": "Agriculture"
+        },
+        {
+          "name": "SAFACAM",
+          "sector": "Agriculture"
+        },
+        {
+          "name": "CamIron",
+          "sector": "Mines"
+        }
+      ],
+      "jobDemand": ["Agriculture", "Foresterie", "Mines", "Tourisme"],
+      "specialties": {
+        "gastronomy": "Okok, Gibier, Kwem (feuilles de manioc), Sauce jaune",
+        "professions": "Agriculteurs, Forestiers, Pêcheurs, Chasseurs",
+        "entertainment": "Danses traditionnelles, Écotourisme, Pêche sportive"
+      },
+      "touristSites": [
+        {
+          "name": "Plages de Kribi",
+          "description": "Magnifiques plages de sable doré bordées de cocotiers",
+          "location": "Kribi",
+          "image": "/images/regions/sud/kribi_beaches.jpg"
+        },
+        {
+          "name": "Chutes de la Lobé",
+          "description": "Rare phénomène naturel où une rivière se jette directement dans l'océan",
+          "location": "Kribi",
+          "image": "/images/regions/sud/lobe_falls.jpg"
+        },
+        {
+          "name": "Campo Ma'an National Park",
+          "description": "Parc national abritant des éléphants de forêt, gorilles et chimpanzés",
+          "location": "Sud de Kribi",
+          "image": "/images/regions/sud/campo_maan_park.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/sud/sud_region.jpg"
+    },
+    {
+      "id": 10,
+      "name": "Sud-Ouest",
+      "capital": "Buea",
+      "population": 1318079,
+      "area": 25410,
+      "departments": [
+        "Fako",
+        "Koupé-Manengouba",
+        "Lebialem",
+        "Manyu",
+        "Meme",
+        "Ndian"
+      ],
+      "majorCompanies": [
+        {
+          "name": "CDC (Cameroon Development Corporation)",
+          "sector": "Agriculture"
+        },
+        {
+          "name": "PAMOL",
+          "sector": "Huile de palme"
+        },
+        {
+          "name": "SONARA",
+          "sector": "Pétrole"
+        },
+        {
+          "name": "Guinness Cameroon",
+          "sector": "Boissons"
+        }
+      ],
+      "jobDemand": ["Agriculture", "Tourisme", "Pétrole", "Pêche", "Services"],
+      "specialties": {
+        "gastronomy": "Eru and Water fufu, Ekwang, Mbanga soup, Poisson braisé",
+        "professions": "Agriculteurs, Pêcheurs, Guides touristiques, Employés pétroliers",
+        "entertainment": "Tourisme de montagne (Mont Cameroun), Plages, Festivals culturels"
+      },
+      "touristSites": [
+        {
+          "name": "Mont Cameroun",
+          "description": "Plus haut sommet d'Afrique de l'Ouest (4,100m), volcan actif offrant des randonnées",
+          "location": "Buea",
+          "image": "/images/regions/sud_ouest/mount_cameroon.jpg"
+        },
+        {
+          "name": "Korup National Park",
+          "description": "L'une des plus anciennes forêts tropicales d'Afrique, riche biodiversité",
+          "location": "Nord-ouest de la région",
+          "image": "/images/regions/sud_ouest/korup_park.jpg"
+        },
+        {
+          "name": "Limbe Wildlife Centre",
+          "description": "Centre de réhabilitation pour primates et autres animaux sauvages",
+          "location": "Limbé",
+          "image": "/images/regions/sud_ouest/limbe_wildlife_centre.jpg"
+        }
+      ],
+      "mainImage": "/images/regions/sud_ouest/sud_ouest_region.jpg"
+    }
+  ],
+  "universities": [
+    {
+      "id": 1,
+      "name": "Université de Yaoundé I",
+      "region": "Centre",
+      "founded": 1962,
+      "type": "Public",
+      "students": 45000,
+      "website": "https://www.uy1.uninet.cm",
+      "description": "La plus ancienne université du Cameroun, spécialisée dans les sciences exactes, la médecine et les sciences de l'ingénieur.",
+      "faculties": [
+        "Faculté des Sciences",
+        "Faculté de Médecine et des Sciences Biomédicales",
+        "École Nationale Supérieure Polytechnique",
+        "École Normale Supérieure",
+        "Institut Universitaire de Technologie",
+        "Faculté des arts, lettres et sciences humaines",
+        "Faculté des Sciences de l'Éducation",
+        "École Doctorale"
+      ],
+      "mainImage": "/images/universities/université_de_yaoundé_i.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_yaoundé_i_campus.jpg",
+        "/images/universities/université_de_yaoundé_i_library.jpg",
+        "/images/universities/université_de_yaoundé_i_students.jpg"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Université de Yaoundé II",
+      "region": "Centre",
+      "founded": 1993,
+      "type": "Public",
+      "students": 35000,
+      "website": "https://www.univ-yaounde2.cm",
+      "description": "Université spécialisée dans les sciences sociales, le droit, les sciences économiques et de gestion.",
+      "faculties": [
+        "Faculté des Sciences Juridiques et Politiques",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Institut des Relations Internationales du Cameroun",
+        "École Supérieure des Sciences et Techniques de l'Information et de la Communication",
+        "Institut de Formation et de Recherche Démographique (IFORD)",
+        "Chaire Santé et Globalisation"
+      ],
+      "mainImage": "/images/universities/université_de_yaoundé_ii.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_yaoundé_ii_campus.jpg",
+        "/images/universities/université_de_yaoundé_ii_library.jpg",
+        "/images/universities/université_de_yaoundé_ii_students.jpg"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Université de Douala",
+      "region": "Littoral",
+      "founded": 1993,
+      "type": "Public",
+      "students": 40000,
+      "website": "https://www.univ-douala.com",
+      "description": "Université pluridisciplinaire située dans la capitale économique du Cameroun.",
+      "faculties": [
+        "Faculté des Sciences",
+        "Faculté des Sciences Juridiques et Politiques",
+        "Faculté des Lettres et Sciences Humaines",
+        "Faculté des Sciences Économiques et de Gestion Appliquée",
+        "Faculté de Médecine et des Sciences Pharmaceutiques",
+        "École Nationale Supérieure Polytechnique",
+        "Institut Universitaire de Technologie",
+        "Ecole Normale Supérieure d'Enseignement Technique",
+        "Institut Universitaire de Technologie",
+        "Institut des Beaux-Arts",
+        "Institut des Sciences Halieutiques"
+      ],
+      "mainImage": "/images/universities/université_de_douala.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_douala_campus.jpg",
+        "/images/universities/université_de_douala_library.jpg",
+        "/images/universities/université_de_douala_students.jpg"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Université de Dschang",
+      "region": "Ouest",
+      "founded": 1993,
+      "type": "Public",
+      "students": 28000,
+      "website": "https://www.univ-dschang.org",
+      "description": "Université reconnue pour ses programmes en agriculture, sciences vétérinaires et architecture.",
+      "faculties": [
+        "Faculté d'Agronomie et des Sciences Agricoles",
+        "Faculté des Sciences",
+        "Faculté des Lettres et Sciences Humaines",
+        "École Nationale Supérieure des Sciences Agro-Industrielles",
+        "Institut Universitaire de Technologie"
+      ],
+      "mainImage": "/images/universities/université_de_dschang.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_dschang_campus.jpg",
+        "/images/universities/université_de_dschang_library.jpg",
+        "/images/universities/université_de_dschang_students.jpg"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Université de Ngaoundéré",
+      "region": "Adamaoua",
+      "founded": 1993,
+      "type": "Public",
+      "students": 22000,
+      "website": "https://www.univ-ndere.cm",
+      "description": "Université du Grand Nord, offrant des formations adaptées aux besoins de développement de la région.",
+      "faculties": [
+        "Faculté des Sciences",
+        "Faculté des Arts, Lettres et Sciences Humaines",
+        "École Nationale Supérieure Polytechnique",
+        "École Normale Supérieure d'Enseignement Technique",
+        "Institut Universitaire de Technologie"
+      ],
+      "mainImage": "/images/universities/université_de_ngaoundéré.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_ngaoundéré_campus.jpg",
+        "/images/universities/université_de_ngaoundéré_library.jpg",
+        "/images/universities/université_de_ngaoundéré_students.jpg"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Université de Buea",
+      "region": "Sud-Ouest",
+      "founded": 1993,
+      "type": "Public",
+      "students": 25000,
+      "website": "https://www.ubuea.cm",
+      "description": "Première université anglophone du Cameroun, située au pied du Mont Cameroun.",
+      "faculties": [
+        "Faculty of Science",
+        "Faculty of Arts",
+        "Faculty of Social and Management Sciences",
+        "Faculty of Education",
+        "Faculty of Engineering and Technology"
+      ],
+      "mainImage": "/images/universities/université_de_buea.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_buea_campus.jpg",
+        "/images/universities/université_de_buea_library.jpg",
+        "/images/universities/université_de_buea_students.jpg"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Université de Maroua",
+      "region": "Extrême-Nord",
+      "founded": 2008,
+      "type": "Public",
+      "students": 18000,
+      "website": "https://www.univ-maroua.cm",
+      "description": "Université récente dédiée au développement du Grand Nord camerounais.",
+      "faculties": [
+        "Faculté des Sciences",
+        "École Normale Supérieure",
+        "Institut Supérieur du Sahel",
+        "Faculté des Arts, Lettres et Sciences Humaines"
+      ],
+      "mainImage": "/images/universities/université_de_maroua.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_maroua_campus.jpg",
+        "/images/universities/université_de_maroua_library.jpg",
+        "/images/universities/université_de_maroua_students.jpg"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Université de Bamenda",
+      "region": "Nord-Ouest",
+      "founded": 2010,
+      "type": "Public",
+      "students": 15000,
+      "website": "https://www.uniba.cm",
+      "description": "Université anglophone récente, contribuant au développement de la région du Nord-Ouest.",
+      "faculties": [
+        "Faculty of Science",
+        "Faculty of Arts",
+        "Higher Teacher Training College",
+        "Faculty of Engineering and Technology"
+      ],
+      "mainImage": "/images/universities/université_de_bamenda.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_bamenda_campus.jpg",
+        "/images/universities/université_de_bamenda_library.jpg",
+        "/images/universities/université_de_bamenda_students.jpg"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Université de Bertoua",
+      "region": "Est",
+      "founded": 2022,
+      "type": "Public",
+      "students": 10000,
+      "website": "https://www.univ-bertoua.cm",
+      "description": "Université publique créée par le décret N°2022/008 du 05 Janvier 2022, située dans la région de l'Est du Cameroun.",
+      "faculties": [
+        "L'Ecole Normale Supérieure (ENS) à Bertoua",
+        "L'Ecole Supérieure des Sciences de l'Urbanisme et du Tourisme (ESSUT)",
+        "L'Institut Supérieur d'Agriculture, du Bois, de l'Eau et de l'Environnement,(ISABEE)",
+        "L'Ecole Supérieure de Transformation des Mines et des Ressources Energétiques (ESTM)",
+        "La Faculté des Arts, Lettres et Sciences Humaines",
+        "La Faculté des Sciences",
+        "La Faculté des Sciences Économiques et de Gestion",
+        "La Faculté des Sciences Juridiques et Politiques"
+      ],
+      "mainImage": "/images/universities/université_de_bertoua.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_bertoua_campus.jpg",
+        "/images/universities/université_de_bertoua_library.jpg",
+        "/images/universities/université_de_bertoua_students.jpg"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Université d'Ebolowa",
+      "region": "Sud",
+      "founded": 2022,
+      "type": "Public",
+      "students": 4800,
+      "website": "https://unv-ebolowa.cm/",
+      "description": "Université publique située dans la région du Sud du Cameroun, créée dans le cadre de la décentralisation de l'enseignement supérieur.",
+      "faculties": ["Informations sur les facultés"],
+      "mainImage": "/images/universities/université_d'ebolowa.jpg",
+      "galleryImages": [
+        "/images/universities/université_d'ebolowa_campus.jpg",
+        "/images/universities/université_d'ebolowa_library.jpg",
+        "/images/universities/université_d'ebolowa_students.jpg"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Université de Garoua",
+      "region": "Nord",
+      "founded": 2022,
+      "type": "Public",
+      "students": 3500,
+      "website": "http://univ-garoua.cm/",
+      "description": "Université publique située dans la région du Nord du Cameroun.",
+      "faculties": [
+        "Faculté des Sciences Juridiques et Politiques",
+        "Faculté des Sciences Économiques et Gestion",
+        "École Supérieure des Sciences Économiques et Commerciales",
+        "Faculté de Médecine et des Sciences Biomédicales",
+        "Faculté des Sciences",
+        "Faculté des Sciences de l'Éducation"
+      ],
+      "mainImage": "/images/universities/université_de_garoua.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_garoua_campus.jpg",
+        "/images/universities/université_de_garoua_library.jpg",
+        "/images/universities/université_de_garoua_students.jpg"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Université Catholique d'Afrique Centrale (UCAC)",
+      "region": "Centre",
+      "founded": 1989,
+      "type": "Privé",
+      "students": 8000,
+      "website": "https://ucac-icy.net/",
+      "description": "Établissement sous-régional d'enseignement supérieur alliant excellence académique et formation humaine intégrale.",
+      "faculties": [
+        "Faculté de Philosophie",
+        "Faculté de Théologie",
+        "Faculté des Sciences Sociales et de Gestion",
+        "Faculté de Médecine et des Sciences Biomédicales",
+        "École Supérieure de Technologie"
+      ],
+      "mainImage": "/images/universities/université_catholique_d'afrique_centrale_(ucac).jpg",
+      "galleryImages": [
+        "/images/universities/université_catholique_d'afrique_centrale_(ucac)_campus.jpg",
+        "/images/universities/université_catholique_d'afrique_centrale_(ucac)_library.jpg",
+        "/images/universities/université_catholique_d'afrique_centrale_(ucac)_students.jpg"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Université des Montagnes",
+      "region": "Ouest",
+      "founded": 2000,
+      "type": "Privé",
+      "students": 5000,
+      "website": "https://www.udesmontagnes.org",
+      "description": "Université privée située à Bangangté, reconnue pour ses programmes en médecine et ingénierie.",
+      "faculties": [
+        "Faculté de Médecine et des Sciences Biomédicales",
+        "Faculté des Sciences de l'Ingénieur",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Arts, Lettres et Sciences Humaines"
+      ],
+      "mainImage": "/images/universities/université_des_montagnes.jpg",
+      "galleryImages": [
+        "/images/universities/université_des_montagnes_campus.jpg",
+        "/images/universities/université_des_montagnes_library.jpg",
+        "/images/universities/université_des_montagnes_students.jpg"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Université Adventiste Cosendai",
+      "region": "Centre",
+      "founded": 2007,
+      "type": "Privé",
+      "students": 1200,
+      "website": "https://uacosendai-edu.net/",
+      "description": "Université privée confessionnelle située à Nanga-Eboko, offrant une formation diversifiée dans un cadre serein.",
+      "faculties": [
+        "Faculté de Théologie",
+        "Faculté des Sciences de l'Éducation",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Sciences de la Santé"
+      ],
+      "mainImage": "/images/universities/université_adventiste_cosendai.jpg",
+      "galleryImages": [
+        "/images/universities/université_adventiste_cosendai_campus.jpg",
+        "/images/universities/université_adventiste_cosendai_library.jpg",
+        "/images/universities/université_adventiste_cosendai_students.jpg"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Université Protestante d'Afrique Centrale",
+      "region": "Centre",
+      "founded": 2009,
+      "type": "Privé",
+      "students": 3000,
+      "website": "https://www.upac.cm",
+      "description": "Université protestante offrant des formations dans diverses disciplines avec une approche chrétienne.",
+      "faculties": [
+        "Faculté de Théologie",
+        "Faculté des Sciences de l'Éducation",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Sciences et Technologies"
+      ],
+      "mainImage": "/images/universities/université_protestante_d'afrique_centrale.jpg",
+      "galleryImages": [
+        "/images/universities/université_protestante_d'afrique_centrale_campus.jpg",
+        "/images/universities/université_protestante_d'afrique_centrale_library.jpg",
+        "/images/universities/université_protestante_d'afrique_centrale_students.jpg"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Université de l'Équateur",
+      "region": "Sud",
+      "founded": 2012,
+      "type": "Privé",
+      "students": 2500,
+      "website": "https://www.ude-cameroun.org",
+      "description": "Université privée située à Ebolowa, contribuant au développement de la région du Sud.",
+      "faculties": [
+        "Faculté des Sciences Juridiques et Politiques",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Sciences de la Santé",
+        "Faculté des Sciences et Technologies"
+      ],
+      "mainImage": "/images/universities/université_de_l'équateur.jpg",
+      "galleryImages": [
+        "/images/universities/université_de_l'équateur_campus.jpg",
+        "/images/universities/université_de_l'équateur_library.jpg",
+        "/images/universities/université_de_l'équateur_students.jpg"
+      ]
+    }
+  ],
+  "overview": {
+    "totalPopulation": 27914536,
+    "totalArea": 475442,
+    "totalRegions": 10,
+    "totalDepartments": 58,
+    "totalUniversities": 11,
+    "capital": "Yaoundé",
+    "officialLanguages": ["Français", "Anglais"],
+    "currency": "Franc CFA",
+    "images": {
+      "flag": "/images/flag.jpg",
+      "map": "/images/map.jpg",
+      "nationalEmblem": "/images/national_emblem.jpg",
+      "gallery": [
+        "/images/gallery/nature.jpg",
+        "/images/gallery/culture.jpg",
+        "/images/gallery/cities.jpg",
+        "/images/gallery/wildlife.jpg"
+      ]
+    }
+  }
+}

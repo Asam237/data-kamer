@@ -8,87 +8,40 @@ import {
   FunnelIcon,
   EyeIcon,
 } from "@heroicons/react/24/outline";
-import { University } from "../../../types";
+import { useUniversities } from "@/hooks/useUniversities";
+import { useRegions } from "@/hooks/useRegions";
+import { University } from "@/services/universities.service";
 
 interface UniversitiesViewProps {}
 
 interface FilterState {
-  region: string;
+  region: number | undefined;
   foundedAfter: number;
-  type: string;
+  type: 'Public' | 'Privée' | undefined;
 }
 
 const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
-  const [universities, setUniversities] = useState<University[]>([]);
-  const [filteredUniversities, setFilteredUniversities] = useState<
-    University[]
-  >([]);
+  const { regions } = useRegions();
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedUniversity, setSelectedUniversity] =
     useState<University | null>(null);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [filters, setFilters] = useState<FilterState>({
-    region: "",
+    region: undefined,
     foundedAfter: 0,
-    type: "",
+    type: undefined,
   });
 
-  // Fetch universities data
-  useEffect(() => {
-    fetchUniversities();
-  }, []);
-
-  // Apply filters and search
-  useEffect(() => {
-    applyFiltersAndSearch();
-  }, [universities, searchTerm, filters]);
-
-  const fetchUniversities = async (): Promise<void> => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch("/api/universities");
-
-      if (!response.ok) {
-        throw new Error("Erreur lors du chargement des universités");
-      }
-
-      const data: University[] = await response.json();
-      setUniversities(data);
-      setFilteredUniversities(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue");
-      console.error("Erreur lors du chargement des universités:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const applyFiltersAndSearch = (): void => {
-    let filtered = universities.filter((university) => {
-      const matchesSearch =
-        university.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        university.region.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesRegion =
-        !filters.region || university.region === filters.region;
-      const matchesFoundedAfter =
-        !filters.foundedAfter || university.founded >= filters.foundedAfter;
-      const matchesType = !filters.type || university.type === filters.type;
-
-      return (
-        matchesSearch && matchesRegion && matchesFoundedAfter && matchesType
-      );
-    });
-
-    setFilteredUniversities(filtered);
-  };
+  // Use the hook with filters
+  const { universities, loading, error, refetch } = useUniversities({
+    region: filters.region,
+    type: filters.type,
+    search: searchTerm,
+  });
 
   const handleFilterChange = (
     key: keyof FilterState,
-    value: string | number
+    value: string | number | undefined
   ): void => {
     setFilters((prev) => ({
       ...prev,
@@ -98,30 +51,45 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
 
   const clearFilters = (): void => {
     setFilters({
-      region: "",
+      region: undefined,
       foundedAfter: 0,
-      type: "",
+      type: undefined,
     });
     setSearchTerm("");
   };
 
-  const uniqueRegions = useMemo(() => {
-    return Array.from(new Set(universities.map((uni) => uni.region))).sort();
-  }, [universities]);
+  // Filter universities based on search and founded after
+  const filteredUniversities = useMemo(() => {
+    return universities.filter((university) => {
+      const matchesSearch = !searchTerm || 
+        university.name.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesFoundedAfter = !filters.foundedAfter || 
+        (university.founded && university.founded >= filters.foundedAfter);
+
+      return matchesSearch && matchesFoundedAfter;
+    });
+  }, [universities, searchTerm, filters.foundedAfter]);
 
   const stats = useMemo(() => {
+    const total = filteredUniversities.length;
+    const publicCount = filteredUniversities.filter((uni) => uni.type === "Public").length;
+    const privateCount = filteredUniversities.filter((uni) => uni.type === "Privée").length;
+    
+    const universitiesWithFoundedDate = filteredUniversities.filter(uni => uni.founded);
+    const averageAge = universitiesWithFoundedDate.length > 0
+      ? Math.round(
+          new Date().getFullYear() -
+          universitiesWithFoundedDate.reduce((sum, uni) => sum + (uni.founded || 0), 0) /
+          universitiesWithFoundedDate.length
+        )
+      : 0;
+
     return {
-      total: universities.length,
-      public: universities.filter((uni) => uni.type === "Public").length,
-      private: universities.filter((uni) => uni.type === "Privé").length,
-      averageAge:
-        universities.length > 0
-          ? Math.round(
-              new Date().getFullYear() -
-                universities.reduce((sum, uni) => sum + uni.founded, 0) /
-                  universities.length
-            )
-          : 0,
+      total,
+      public: publicCount,
+      private: privateCount,
+      averageAge,
     };
   }, [universities]);
 
@@ -141,7 +109,7 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <p className="text-red-700">Erreur : {error}</p>
         <button
-          onClick={fetchUniversities}
+          onClick={refetch}
           className="mt-2 px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
         >
           Réessayer
@@ -248,9 +216,9 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               >
                 <option value="">Toutes les régions</option>
-                {uniqueRegions.map((region) => (
-                  <option key={region} value={region}>
-                    {region}
+                {regions.map((region) => (
+                  <option key={region.id} value={region.id}>
+                    {region.name}
                   </option>
                 ))}
               </select>
@@ -318,6 +286,7 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
           <UniversityCard
             key={university.id}
             university={university}
+            regions={regions}
             onViewDetails={setSelectedUniversity}
           />
         ))}
@@ -338,6 +307,7 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
       {selectedUniversity && (
         <UniversityModal
           university={selectedUniversity}
+          regions={regions}
           onClose={() => setSelectedUniversity(null)}
         />
       )}
@@ -348,15 +318,18 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
 // University Card Component
 interface UniversityCardProps {
   university: University;
+  regions: any[];
   onViewDetails: (university: University) => void;
 }
 
 const UniversityCard: React.FC<UniversityCardProps> = ({
   university,
+  regions,
   onViewDetails,
 }) => {
   const currentYear = new Date().getFullYear();
-  const age = currentYear - university.founded;
+  const age = university.founded ? currentYear - university.founded : 0;
+  const regionName = regions.find(r => r.id === university.region)?.name || 'Région inconnue';
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
@@ -367,7 +340,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
           </h3>
           <div className="flex items-center text-sm text-gray-600 mb-2">
             <MapPinIcon className="w-4 h-4 mr-1" />
-            {university.region}
+            {regionName}
           </div>
         </div>
         <span
@@ -377,19 +350,21 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
               : "bg-blue-100 text-blue-700"
           }`}
         >
-          {university.type || "Public"}
+          {university.type}
         </span>
       </div>
 
       <div className="space-y-3">
-        <div className="flex items-center text-sm text-gray-600">
-          <CalendarIcon className="w-4 h-4 mr-2" />
-          <span>
-            Fondée en {university.founded} ({age} ans)
-          </span>
-        </div>
+        {university.founded && (
+          <div className="flex items-center text-sm text-gray-600">
+            <CalendarIcon className="w-4 h-4 mr-2" />
+            <span>
+              Fondée en {university.founded} ({age} ans)
+            </span>
+          </div>
+        )}
 
-        {university.students && (
+        {university.students > 0 && (
           <div className="flex items-center text-sm text-gray-600">
             <UsersIcon className="w-4 h-4 mr-2" />
             <span>{university.students.toLocaleString()} étudiants</span>
@@ -407,7 +382,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
                   key={index}
                   className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
                 >
-                  {faculty}
+                  {faculty.name}
                 </span>
               ))}
               {university.faculties.length > 2 && (
@@ -436,15 +411,18 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
 // University Modal Component
 interface UniversityModalProps {
   university: University;
+  regions: any[];
   onClose: () => void;
 }
 
 const UniversityModal: React.FC<UniversityModalProps> = ({
   university,
+  regions,
   onClose,
 }) => {
   const currentYear = new Date().getFullYear();
-  const age = currentYear - university.founded;
+  const age = university.founded ? currentYear - university.founded : 0;
+  const regionName = regions.find(r => r.id === university.region)?.name || 'Région inconnue';
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 max-h-[100vh]">
@@ -457,7 +435,7 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
               </h2>
               <div className="flex items-center text-gray-600">
                 <MapPinIcon className="w-5 h-5 mr-2" />
-                <span className="text-lg">{university.region}</span>
+                <span className="text-lg">{regionName}</span>
               </div>
             </div>
             <button
@@ -485,21 +463,23 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
               <div>
                 <p className="text-sm font-medium text-gray-600">Type</p>
                 <p className="text-lg text-gray-900">
-                  {university.type || "Public"}
+                  {university.type}
                 </p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Année de fondation
-                </p>
-                <p className="text-lg text-gray-900">
-                  {university.founded} ({age} ans)
-                </p>
-              </div>
+              {university.founded && (
+                <div>
+                  <p className="text-sm font-medium text-gray-600">
+                    Année de fondation
+                  </p>
+                  <p className="text-lg text-gray-900">
+                    {university.founded} ({age} ans)
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="space-y-4">
-              {university.students && (
+              {university.students > 0 && (
                 <div>
                   <p className="text-sm font-medium text-gray-600">
                     Nombre d&apos;étudiants
@@ -544,7 +524,7 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {university.faculties.map((faculty, index) => (
                   <div key={index} className="px-3 py-2 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">{faculty}</span>
+                    <span className="text-sm text-gray-700">{faculty.name}</span>
                   </div>
                 ))}
               </div>

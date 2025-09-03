@@ -6,40 +6,14 @@ import {
   UserGroupIcon,
   DocumentIcon,
 } from "@heroicons/react/24/outline";
+import { useRegions } from "@/hooks/useRegions";
+import { Region } from "@/services/regions.service";
 
-// Enhanced Region type with more detailed information
-type Region = {
-  id: number | string;
-  name: string;
-  capital: string;
-  population: number;
-  area: number;
-  departments: string[];
-  description?: string;
-  economicActivities?: string[];
-};
 
 export default function RegionsView() {
-  const [regions, setRegions] = useState<Region[]>([]);
+  const { regions, loading, error, refetch } = useRegions();
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
-
-  useEffect(() => {
-    fetchRegions();
-  }, []);
-
-  const fetchRegions = async () => {
-    try {
-      const response = await fetch("/api/regions");
-      const data: Region[] = await response.json();
-      setRegions(data);
-    } catch (error) {
-      console.error("Error loading regions:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Memoized filtered regions to improve performance
   const filteredRegions = useMemo(() => {
@@ -102,29 +76,29 @@ export default function RegionsView() {
             </div>
           </div>
 
-          {region.description && (
+          {region.specialties?.gastronomy && (
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <InformationCircleIcon className="w-6 h-6 text-purple-500" />
-                <h3 className="text-lg font-semibold">Description</h3>
+                <h3 className="text-lg font-semibold">Gastronomie</h3>
               </div>
-              <p className="text-gray-600">{region.description}</p>
+              <p className="text-gray-600">{region.specialties.gastronomy}</p>
             </div>
           )}
 
-          {region.economicActivities && (
+          {region.major_companies && region.major_companies.length > 0 && (
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <DocumentIcon className="w-6 h-6 text-orange-500" />
-                <h3 className="text-lg font-semibold">Economic Activities</h3>
+                <h3 className="text-lg font-semibold">Grandes Entreprises</h3>
               </div>
               <div className="flex flex-wrap gap-2">
-                {region.economicActivities.map((activity, index) => (
+                {region.major_companies.map((company, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
                   >
-                    {activity}
+                    {company.name} ({company.sector})
                   </span>
                 ))}
               </div>
@@ -146,6 +120,22 @@ export default function RegionsView() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center bg-red-50 p-8 rounded-lg">
+          <p className="text-xl text-red-600 mb-4">Erreur de chargement</p>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={refetch}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -213,7 +203,7 @@ export default function RegionsView() {
                           key={index}
                           className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
                         >
-                          {dept}
+                          {dept.name}
                         </span>
                       ))}
                       {region.departments.length > 3 && (

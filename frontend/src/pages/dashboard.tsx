@@ -6,7 +6,9 @@ import RegionsView from "../components/RegionsView";
 import UniversitiesView from "../components/UniversitiesView";
 import StatsView from "../components/StatsView";
 import SettingsView from "../components/SettingsView";
-import cameroonData from "../../data/cameroon.json";
+import { useOverview } from "@/hooks/useOverview";
+import { useRegions } from "@/hooks/useRegions";
+import { useUniversities } from "@/hooks/useUniversities";
 import MapView from "@/components/MapView";
 import { Monitor } from "lucide-react";
 import EneoOutageView from "@/components/OutageView";
@@ -22,7 +24,9 @@ type ViewType =
 
 const DashboardPage = () => {
   const [activeView, setActiveView] = useState<ViewType>("dashboard");
-  const [data, setData] = useState(cameroonData);
+  const { overview } = useOverview();
+  const { regions } = useRegions();
+  const { universities } = useUniversities();
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -85,6 +89,12 @@ const DashboardPage = () => {
     );
   }
 
+  // Créer un objet de données compatible avec StatsView
+  const statsData = overview && regions && universities ? {
+    regions,
+    universities,
+    overview
+  } : null;
   const renderView = () => {
     const viewProps = {
       initial: { opacity: 0, y: 20 },
@@ -97,7 +107,7 @@ const DashboardPage = () => {
       case "dashboard":
         return (
           <motion.div {...viewProps}>
-            <Dashboard data={data.overview} />
+            <Dashboard />
           </motion.div>
         );
       case "regions":
@@ -115,7 +125,7 @@ const DashboardPage = () => {
       case "stats":
         return (
           <motion.div {...viewProps}>
-            <StatsView data={data} />
+            {statsData && <StatsView data={statsData} />}
           </motion.div>
         );
       case "outages":
@@ -133,7 +143,7 @@ const DashboardPage = () => {
       default:
         return (
           <motion.div {...viewProps}>
-            <Dashboard data={data.overview} />
+            <Dashboard />
           </motion.div>
         );
     }

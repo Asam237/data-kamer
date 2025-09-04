@@ -17,7 +17,7 @@ interface UniversitiesViewProps {}
 interface FilterState {
   region: number | undefined;
   foundedAfter: number;
-  type: 'Public' | 'Privée' | undefined;
+  type: "Public" | "Privé" | undefined;
 }
 
 const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
@@ -61,10 +61,12 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
   // Filter universities based on search and founded after
   const filteredUniversities = useMemo(() => {
     return universities.filter((university) => {
-      const matchesSearch = !searchTerm || 
+      const matchesSearch =
+        !searchTerm ||
         university.name.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesFoundedAfter = !filters.foundedAfter || 
+
+      const matchesFoundedAfter =
+        !filters.foundedAfter ||
         (university.founded && university.founded >= filters.foundedAfter);
 
       return matchesSearch && matchesFoundedAfter;
@@ -73,17 +75,27 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = () => {
 
   const stats = useMemo(() => {
     const total = filteredUniversities.length;
-    const publicCount = filteredUniversities.filter((uni) => uni.type === "Public").length;
-    const privateCount = filteredUniversities.filter((uni) => uni.type === "Privée").length;
-    
-    const universitiesWithFoundedDate = filteredUniversities.filter(uni => uni.founded);
-    const averageAge = universitiesWithFoundedDate.length > 0
-      ? Math.round(
-          new Date().getFullYear() -
-          universitiesWithFoundedDate.reduce((sum, uni) => sum + (uni.founded || 0), 0) /
-          universitiesWithFoundedDate.length
-        )
-      : 0;
+    const publicCount = filteredUniversities.filter(
+      (uni) => uni.type === "Public"
+    ).length;
+    const privateCount = filteredUniversities.filter(
+      (uni) => uni.type === "Privé"
+    ).length;
+
+    const universitiesWithFoundedDate = filteredUniversities.filter(
+      (uni) => uni.founded
+    );
+    const averageAge =
+      universitiesWithFoundedDate.length > 0
+        ? Math.round(
+            new Date().getFullYear() -
+              universitiesWithFoundedDate.reduce(
+                (sum, uni) => sum + (uni.founded || 0),
+                0
+              ) /
+                universitiesWithFoundedDate.length
+          )
+        : 0;
 
     return {
       total,
@@ -329,7 +341,8 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
 }) => {
   const currentYear = new Date().getFullYear();
   const age = university.founded ? currentYear - university.founded : 0;
-  const regionName = regions.find(r => r.id === university.region)?.name || 'Région inconnue';
+  const regionName =
+    regions.find((r) => r.id === university.region)?.name || "Région inconnue";
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-all duration-200 hover:-translate-y-1">
@@ -422,7 +435,8 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
 }) => {
   const currentYear = new Date().getFullYear();
   const age = university.founded ? currentYear - university.founded : 0;
-  const regionName = regions.find(r => r.id === university.region)?.name || 'Région inconnue';
+  const regionName =
+    regions.find((r) => r.id === university.region)?.name || "Région inconnue";
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 max-h-[100vh]">
@@ -462,9 +476,7 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
             <div className="space-y-4">
               <div>
                 <p className="text-sm font-medium text-gray-600">Type</p>
-                <p className="text-lg text-gray-900">
-                  {university.type}
-                </p>
+                <p className="text-lg text-gray-900">{university.type}</p>
               </div>
               {university.founded && (
                 <div>
@@ -524,7 +536,9 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {university.faculties.map((faculty, index) => (
                   <div key={index} className="px-3 py-2 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-700">{faculty.name}</span>
+                    <span className="text-sm text-gray-700">
+                      {faculty.name}
+                    </span>
                   </div>
                 ))}
               </div>

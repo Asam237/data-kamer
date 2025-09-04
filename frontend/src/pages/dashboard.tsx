@@ -90,11 +90,14 @@ const DashboardPage = () => {
   }
 
   // Créer un objet de données compatible avec StatsView
-  const statsData = overview && regions && universities ? {
-    regions,
-    universities,
-    overview
-  } : null;
+  const statsData =
+    overview && regions && universities
+      ? {
+          regions,
+          universities,
+          overview,
+        }
+      : null;
   const renderView = () => {
     const viewProps = {
       initial: { opacity: 0, y: 20 },
@@ -125,7 +128,7 @@ const DashboardPage = () => {
       case "stats":
         return (
           <motion.div {...viewProps}>
-            {statsData && <StatsView data={statsData} />}
+            <StatsView />
           </motion.div>
         );
       case "outages":

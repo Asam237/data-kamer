@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-_a_=696w2$2e)q(-5pzjd*0mjl4se@&sr4d%to5#nn6$s29g1e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.herokuapp.com']
 
 
 # Application definition
@@ -51,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 # CORS settings
@@ -137,6 +138,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

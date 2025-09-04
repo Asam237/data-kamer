@@ -153,7 +153,8 @@ const Dashboard: React.FC = () => {
   const stats: StatCardProps[] = [
     {
       title: "Population Totale",
-      value: overview.totalPopulation,
+      // value: overview.totalPopulation,
+      value: 27914536,
       icon: Users,
       color: {
         text: "text-blue-600",

@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
-import { UniversitiesService, University } from '@/services/universities.service';
-import { ApiError } from '@/lib/api';
+import { useState, useEffect } from "react";
+import {
+  UniversitiesService,
+  University,
+} from "@/services/universities.service";
+import { ApiError } from "@/lib/api";
 
 interface UseUniversitiesState {
   universities: University[];
@@ -11,14 +14,16 @@ interface UseUniversitiesState {
 
 interface UseUniversitiesFilters {
   region?: number;
-  type?: 'Public' | 'Privée';
+  type?: "Public" | "Privé";
   search?: string;
 }
 
 /**
  * Hook personnalisé pour gérer les universités
  */
-export const useUniversities = (filters?: UseUniversitiesFilters): UseUniversitiesState => {
+export const useUniversities = (
+  filters?: UseUniversitiesFilters
+): UseUniversitiesState => {
   const [universities, setUniversities] = useState<University[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,26 +32,29 @@ export const useUniversities = (filters?: UseUniversitiesFilters): UseUniversiti
     try {
       setLoading(true);
       setError(null);
-      
+
       let data: University[];
-      
+
       if (filters?.search) {
         data = await UniversitiesService.searchUniversities(filters.search);
       } else if (filters?.region) {
-        data = await UniversitiesService.getUniversitiesByRegion(filters.region);
+        data = await UniversitiesService.getUniversitiesByRegion(
+          filters.region
+        );
       } else if (filters?.type) {
         data = await UniversitiesService.getUniversitiesByType(filters.type);
       } else {
         data = await UniversitiesService.getAllUniversities();
       }
-      
+
       setUniversities(data);
     } catch (err) {
-      const errorMessage = err instanceof ApiError 
-        ? err.message 
-        : 'Erreur lors du chargement des universités';
+      const errorMessage =
+        err instanceof ApiError
+          ? err.message
+          : "Erreur lors du chargement des universités";
       setError(errorMessage);
-      console.error('Erreur dans useUniversities:', err);
+      console.error("Erreur dans useUniversities:", err);
     } finally {
       setLoading(false);
     }
@@ -80,11 +88,12 @@ export const useUniversity = (id: number) => {
         const data = await UniversitiesService.getUniversityById(id);
         setUniversity(data);
       } catch (err) {
-        const errorMessage = err instanceof ApiError 
-          ? err.message 
-          : 'Erreur lors du chargement de l\'université';
+        const errorMessage =
+          err instanceof ApiError
+            ? err.message
+            : "Erreur lors du chargement de l'université";
         setError(errorMessage);
-        console.error('Erreur dans useUniversity:', err);
+        console.error("Erreur dans useUniversity:", err);
       } finally {
         setLoading(false);
       }

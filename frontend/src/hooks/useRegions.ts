@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { RegionsService, Region } from '@/services/regions.service';
-import { ApiError } from '@/lib/api';
+import { useState, useEffect } from "react";
+import { RegionsService, Region } from "@/services/regions.service";
+import { ApiError } from "@/lib/api";
 
 interface UseRegionsState {
   regions: Region[];
@@ -24,11 +24,12 @@ export const useRegions = (): UseRegionsState => {
       const data = await RegionsService.getAllRegions();
       setRegions(data);
     } catch (err) {
-      const errorMessage = err instanceof ApiError 
-        ? err.message 
-        : 'Erreur lors du chargement des régions';
+      const errorMessage =
+        err instanceof ApiError
+          ? err.message
+          : "Erreur lors du chargement des régions";
       setError(errorMessage);
-      console.error('Erreur dans useRegions:', err);
+      console.error("Erreur dans useRegions:", err);
     } finally {
       setLoading(false);
     }
@@ -62,11 +63,12 @@ export const useRegion = (id: number) => {
         const data = await RegionsService.getRegionById(id);
         setRegion(data);
       } catch (err) {
-        const errorMessage = err instanceof ApiError 
-          ? err.message 
-          : 'Erreur lors du chargement de la région';
+        const errorMessage =
+          err instanceof ApiError
+            ? err.message
+            : "Erreur lors du chargement de la région";
         setError(errorMessage);
-        console.error('Erreur dans useRegion:', err);
+        console.error("Erreur dans useRegion:", err);
       } finally {
         setLoading(false);
       }

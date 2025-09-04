@@ -105,7 +105,11 @@ const StatCard: React.FC<StatCardProps> = ({
 );
 
 const Dashboard: React.FC = () => {
-  const { overview, loading: overviewLoading, error: overviewError } = useOverview();
+  const {
+    overview,
+    loading: overviewLoading,
+    error: overviewError,
+  } = useOverview();
   const { regions, loading: regionsLoading } = useRegions();
   const { universities, loading: universitiesLoading } = useUniversities();
 
@@ -196,18 +200,14 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  const populationData = regions.map((region) => ({
+  const populationData = regions?.map((region) => ({
     name: region.name,
     population: region.population,
     area: region.area,
   }));
 
-  const publicCount = universities.filter(
-    (u) => u.type === "Public"
-  ).length;
-  const privateCount = universities.filter(
-    (u) => u.type === "Privée"
-  ).length;
+  const publicCount = universities.filter((u) => u.type === "Public").length;
+  const privateCount = universities.filter((u) => u.type === "Privé").length;
   const universityData = [
     { name: "Public", value: publicCount, color: "#3B82F6" },
     { name: "Privé", value: privateCount, color: "#10B981" },
@@ -218,7 +218,7 @@ const Dashboard: React.FC = () => {
     { year: "2019", population: 25876000 },
     { year: "2020", population: 26545000 },
     { year: "2021", population: 27224000 },
-    { year: "2022", population: overview.totalPopulation },
+    { year: "2022", population: 27914536 },
   ];
 
   return (

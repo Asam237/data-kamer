@@ -3,7 +3,9 @@
  */
 
 // Configuration de base de l'API
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://datakamer-api-8a8fcdd99b2e.herokuapp.com";
 
 // Types pour les réponses API
 export interface ApiResponse<T> {
@@ -36,10 +38,10 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
     const config: RequestInit = {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
       ...options,
@@ -47,7 +49,7 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new ApiError(
@@ -62,9 +64,11 @@ class ApiClient {
       if (error instanceof ApiError) {
         throw error;
       }
-      
+
       throw new ApiError(
-        error instanceof Error ? error.message : 'Une erreur inconnue est survenue',
+        error instanceof Error
+          ? error.message
+          : "Une erreur inconnue est survenue",
         0,
         error
       );
@@ -75,25 +79,25 @@ class ApiClient {
    * Méthodes HTTP
    */
   async get<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'GET' });
+    return this.request<T>(endpoint, { method: "GET" });
   }
 
   async post<T>(endpoint: string, data?: any): Promise<T> {
     return this.request<T>(endpoint, {
-      method: 'POST',
+      method: "POST",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
   async put<T>(endpoint: string, data?: any): Promise<T> {
     return this.request<T>(endpoint, {
-      method: 'PUT',
+      method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
   async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'DELETE' });
+    return this.request<T>(endpoint, { method: "DELETE" });
   }
 }
 
@@ -102,12 +106,8 @@ export const apiClient = new ApiClient();
 
 // Classe d'erreur personnalisée
 export class ApiError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-    public details?: any
-  ) {
+  constructor(message: string, public status: number, public details?: any) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }

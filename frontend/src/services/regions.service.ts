@@ -1,4 +1,4 @@
-import { apiClient, ApiError } from '@/lib/api';
+import { apiClient, ApiError } from "@/lib/api";
 
 // Types pour les régions (basés sur votre modèle Django)
 export interface Region {
@@ -55,7 +55,7 @@ export interface TouristSite {
  * Service pour gérer les régions
  */
 export class RegionsService {
-  private static readonly BASE_ENDPOINT = '/regions';
+  private static readonly BASE_ENDPOINT = "/regions";
 
   /**
    * Récupérer toutes les régions
@@ -64,7 +64,7 @@ export class RegionsService {
     try {
       return await apiClient.get<Region[]>(`${this.BASE_ENDPOINT}/`);
     } catch (error) {
-      console.error('Erreur lors de la récupération des régions:', error);
+      console.error("Erreur lors de la récupération des régions:", error);
       throw error;
     }
   }
@@ -76,7 +76,10 @@ export class RegionsService {
     try {
       return await apiClient.get<Region>(`${this.BASE_ENDPOINT}/${id}/`);
     } catch (error) {
-      console.error(`Erreur lors de la récupération de la région ${id}:`, error);
+      console.error(
+        `Erreur lors de la récupération de la région ${id}:`,
+        error
+      );
       throw error;
     }
   }
@@ -86,9 +89,11 @@ export class RegionsService {
    */
   static async searchRegions(query: string): Promise<Region[]> {
     try {
-      return await apiClient.get<Region[]>(`${this.BASE_ENDPOINT}/?search=${encodeURIComponent(query)}`);
+      return await apiClient.get<Region[]>(
+        `${this.BASE_ENDPOINT}/?search=${encodeURIComponent(query)}`
+      );
     } catch (error) {
-      console.error('Erreur lors de la recherche de régions:', error);
+      console.error("Erreur lors de la recherche de régions:", error);
       throw error;
     }
   }
@@ -104,9 +109,12 @@ export class RegionsService {
   }> {
     try {
       const regions = await this.getAllRegions();
-      
+
       const totalRegions = regions.length;
-      const totalPopulation = regions.reduce((sum, region) => sum + region.population, 0);
+      const totalPopulation = regions.reduce(
+        (sum, region) => sum + region.population,
+        0
+      );
       const totalArea = regions.reduce((sum, region) => sum + region.area, 0);
       const averageDensity = Math.round(totalPopulation / totalArea);
 
@@ -117,7 +125,10 @@ export class RegionsService {
         averageDensity,
       };
     } catch (error) {
-      console.error('Erreur lors du calcul des statistiques des régions:', error);
+      console.error(
+        "Erreur lors du calcul des statistiques des régions:",
+        error
+      );
       throw error;
     }
   }

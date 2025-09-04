@@ -13,32 +13,33 @@ from .serializers import (
 # ----------------------
 # Région
 # ----------------------
-class RegionViewSet(viewsets.ModelViewSet):
+# Changer ReadOnlyModelViewSet par ModelViewSet pour autoriser le CRUD
+class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
 
 
-class DepartmentViewSet(viewsets.ModelViewSet):
+class DepartmentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
 
 
-class CompanyViewSet(viewsets.ModelViewSet):
+class CompanyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
 
 
-class JobDemandViewSet(viewsets.ModelViewSet):
+class JobDemandViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = JobDemand.objects.all()
     serializer_class = JobDemandSerializer
 
 
-class SpecialtyViewSet(viewsets.ModelViewSet):
+class SpecialtyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Specialty.objects.all()
     serializer_class = SpecialtySerializer
 
 
-class TouristSiteViewSet(viewsets.ModelViewSet):
+class TouristSiteViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = TouristSite.objects.all()
     serializer_class = TouristSiteSerializer
 
@@ -46,17 +47,17 @@ class TouristSiteViewSet(viewsets.ModelViewSet):
 # ----------------------
 # Université
 # ----------------------
-class UniversityViewSet(viewsets.ModelViewSet):
+class UniversityViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = University.objects.all()
     serializer_class = UniversitySerializer
 
 
-class FacultyViewSet(viewsets.ModelViewSet):
+class FacultyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Faculty.objects.all()
     serializer_class = FacultySerializer
 
 
-class UniversityGalleryViewSet(viewsets.ModelViewSet):
+class UniversityGalleryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = UniversityGallery.objects.all()
     serializer_class = UniversityGallerySerializer
 

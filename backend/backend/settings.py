@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-_a_=696w2$2e)q(-5pzjd*0mjl4se@&sr4d%to5#nn6$s29g1e
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.herokuapp.com']
+ALLOWED_HOSTS = ['.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "datakamer_api",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -58,20 +59,62 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://data-kamer.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
 # REST Framework configuration
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 20,
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'DataKamer API',
+    'DESCRIPTION': 'API moderne et sécurisée pour la gestion des données DataKamer.',
+    'VERSION': '1.0.0',
+    'CONTACT': {
+        'name': 'Équipe DataKamer',
+        'email': 'abbasaliaboubakar@gmail.com',
+    },
+    'LICENSE': {
+        'name': 'MIT License',
+    },
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': '/api/',
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SORT_OPERATIONS': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': False,
+        'defaultModelsExpandDepth': 2,
+        'defaultModelExpandDepth': 2,
+        'displayRequestDuration': True,
+        'docExpansion': 'list',
+        'filter': True,
+        'showExtensions': True,
+        'showCommonExtensions': True,
+    },
+    'REDOC_UI_SETTINGS': {
+        'nativeScrollbars': True,
+        'theme': {
+            'colors': {
+                'primary': {
+                    'main': '#3b82f6'
+                }
+            }
+        }
+    }
+}
+
 ROOT_URLCONF = "backend.urls"
 
 TEMPLATES = [

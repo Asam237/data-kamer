@@ -5,3 +5,4 @@ django-filter==24.2
 Pillow==10.4.0
 gunicorn
 whitenoise
+drf-spectacular

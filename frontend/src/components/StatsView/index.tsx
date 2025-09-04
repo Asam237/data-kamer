@@ -89,7 +89,7 @@ const StatsView: React.FC<StatsViewProps> = () => {
             Chargement des données...
           </p>
           <p className="text-gray-500 mt-2">
-            Récupération des informations sur les coupures ENEO
+            Récupération des informations sur les statistiques
           </p>
         </div>
       </div>

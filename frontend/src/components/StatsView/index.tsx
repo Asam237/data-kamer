@@ -82,8 +82,16 @@ const StatsView: React.FC<StatsViewProps> = () => {
   // Affichage du loading
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <LoadingSpinner size="lg" message="Chargement des statistiques..." />
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mx-auto mb-6"></div>
+          <p className="text-xl font-semibold text-gray-700">
+            Chargement des données...
+          </p>
+          <p className="text-gray-500 mt-2">
+            Récupération des informations sur les coupures ENEO
+          </p>
+        </div>
       </div>
     );
   }

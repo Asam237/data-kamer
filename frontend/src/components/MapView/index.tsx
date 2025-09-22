@@ -50,6 +50,7 @@ interface Department {
   area: number;
   departments: string[];
   majorCompanies?: { name: string; sector: string }[];
+  touristSites?: any;
   jobDemand?: string[];
   specialties?: {
     gastronomy: string;
@@ -300,7 +301,7 @@ const MapView: React.FC = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<
-    "info" | "companies" | "jobs" | "specialties" | "weather"
+    "info" | "companies" | "tourist" | "specialties" | "weather"
   >("info");
   const [mapStyle, setMapStyle] = useState<"default" | "satellite">("default");
   const [showTooltip, setShowTooltip] = useState(false);
@@ -1453,12 +1454,12 @@ const MapView: React.FC = () => {
                     >
                       <div className="flex items-center justify-center">
                         <Building2 className="h-4 w-4 mr-1" />
-                        Entreprises
+                        Entr.
                       </div>
                     </button>
                     <button
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                        activeTab === "jobs"
+                        activeTab === "specialties"
                           ? darkMode
                             ? "border-b-2 border-green-400 text-green-400"
                             : "border-b-2 border-green-600 text-green-600"
@@ -1466,11 +1467,28 @@ const MapView: React.FC = () => {
                           ? "text-gray-400 hover:text-gray-300"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
-                      onClick={() => setActiveTab("jobs")}
+                      onClick={() => setActiveTab("specialties")}
                     >
                       <div className="flex items-center justify-center">
-                        <Briefcase className="h-4 w-4 mr-1" />
-                        Emplois
+                        <Building2 className="h-4 w-4 mr-1" />
+                        Spéc.
+                      </div>
+                    </button>
+                    <button
+                      className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                        activeTab === "tourist"
+                          ? darkMode
+                            ? "border-b-2 border-green-400 text-green-400"
+                            : "border-b-2 border-green-600 text-green-600"
+                          : darkMode
+                          ? "text-gray-400 hover:text-gray-300"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                      onClick={() => setActiveTab("tourist")}
+                    >
+                      <div className="flex items-center justify-center">
+                        <Building2 className="h-4 w-4 mr-1" />
+                        Tours.
                       </div>
                     </button>
                     <button
@@ -1633,6 +1651,147 @@ const MapView: React.FC = () => {
                     </div>
                   )}
 
+                  {activeTab === "specialties" &&
+                    selectedRegion.specialties && (
+                      <div className="space-y-6 animate-fadeIn">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3
+                            className={`text-xl font-bold ${
+                              darkMode ? "text-gray-100" : "text-gray-800"
+                            }`}
+                          >
+                            Spécialités de la région 🏞️
+                          </h3>
+                        </div>
+
+                        {/* Section Gastronomie */}
+                        <div
+                          className={`p-5 rounded-xl transition-all duration-300 ${
+                            darkMode
+                              ? "bg-gray-800"
+                              : "bg-gray-50 hover:bg-white"
+                          }`}
+                        >
+                          <div className="flex items-center mb-3">
+                            <div className="bg-red-500 p-2 rounded-full mr-3 text-white">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.5-1.5l-4.25 4.25a1 1 0 01-.707.293H12a1 1 0 01-1-1v-1.293a1 1 0 01.293-.707l4.25-4.25a2 2 0 112.828 2.828z"
+                                />
+                              </svg>
+                            </div>
+                            <h4
+                              className={`text-lg font-semibold ${
+                                darkMode ? "text-gray-200" : "text-gray-700"
+                              }`}
+                            >
+                              Gastronomie 🍽️
+                            </h4>
+                          </div>
+                          <p
+                            className={`text-sm leading-relaxed ${
+                              darkMode ? "text-gray-400" : "text-gray-600"
+                            }`}
+                          >
+                            {selectedRegion.specialties.gastronomy}
+                          </p>
+                        </div>
+
+                        {/* Section Professions */}
+                        <div
+                          className={`p-5 rounded-xl transition-all duration-300 ${
+                            darkMode
+                              ? "bg-gray-800"
+                              : "bg-gray-50 hover:bg-white"
+                          }`}
+                        >
+                          <div className="flex items-center mb-3">
+                            <div className="bg-blue-500 p-2 rounded-full mr-3 text-white">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-1.282-8.45-3.525m16.9 0c.305.772.455 1.58.45 2.395a10 10 0 11-10-10c.815-.005 1.623.145 2.395.45"
+                                />
+                              </svg>
+                            </div>
+                            <h4
+                              className={`text-lg font-semibold ${
+                                darkMode ? "text-gray-200" : "text-gray-700"
+                              }`}
+                            >
+                              Métiers et Professions 👨‍🌾
+                            </h4>
+                          </div>
+                          <p
+                            className={`text-sm leading-relaxed ${
+                              darkMode ? "text-gray-400" : "text-gray-600"
+                            }`}
+                          >
+                            {selectedRegion.specialties.professions}
+                          </p>
+                        </div>
+
+                        {/* Section Divertissement */}
+                        <div
+                          className={`p-5 rounded-xl transition-all duration-300 ${
+                            darkMode
+                              ? "bg-gray-800"
+                              : "bg-gray-50 hover:bg-white"
+                          }`}
+                        >
+                          <div className="flex items-center mb-3">
+                            <div className="bg-green-500 p-2 rounded-full mr-3 text-white">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M14.752 11.125l3.248-3.25m0 0l-3.248-3.25m3.248 3.25H9.752M6.752 20.125l-3.248-3.25m0 0l3.248-3.25m-3.248 3.25h9.25"
+                                />
+                              </svg>
+                            </div>
+                            <h4
+                              className={`text-lg font-semibold ${
+                                darkMode ? "text-gray-200" : "text-gray-700"
+                              }`}
+                            >
+                              Divertissement et Culture 🎭
+                            </h4>
+                          </div>
+                          <p
+                            className={`text-sm leading-relaxed ${
+                              darkMode ? "text-gray-400" : "text-gray-600"
+                            }`}
+                          >
+                            {selectedRegion.specialties.entertainment}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                   {activeTab === "companies" &&
                     selectedRegion.majorCompanies && (
                       <div className="space-y-4 animate-fadeIn">
@@ -1703,58 +1862,68 @@ const MapView: React.FC = () => {
                       </div>
                     )}
 
-                  {activeTab === "jobs" && selectedRegion.jobDemand && (
-                    <div className="space-y-4 animate-fadeIn">
-                      <h4
-                        className={`text-sm font-semibold mb-2 ${
-                          darkMode ? "text-gray-200" : "text-gray-700"
-                        }`}
-                      >
-                        Secteurs d&apos;emploi en demande
-                      </h4>
-                      <div className="space-y-2">
-                        {selectedRegion.jobDemand.map((job, index) => (
-                          <div
-                            key={index}
-                            className={`p-3 rounded-lg border ${
-                              darkMode
-                                ? "bg-gray-700 border-gray-600"
-                                : "bg-white border-gray-200"
-                            } flex items-center`}
-                          >
+                  {activeTab === "tourist" && selectedRegion.touristSites && (
+                    <div className="space-y-6 animate-fadeIn">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3
+                          className={`text-xl font-bold ${
+                            darkMode ? "text-gray-100" : "text-gray-800"
+                          }`}
+                        >
+                          Sites touristiques 🗺️
+                        </h3>
+                      </div>
+                      <div className="space-y-4">
+                        {selectedRegion.touristSites.map(
+                          (site: any, index: any) => (
                             <div
-                              className="w-2 h-10 rounded-full mr-3"
-                              style={{
-                                backgroundColor: [
-                                  "#0088FE",
-                                  "#00C49F",
-                                  "#FFBB28",
-                                  "#FF8042",
-                                  "#8884d8",
-                                  "#82ca9d",
-                                  "#ffc658",
-                                  "#8dd1e1",
-                                ][index % 8],
-                              }}
-                            ></div>
-                            <div className="flex-1">
-                              <div
-                                className={`font-medium ${
-                                  darkMode ? "text-gray-200" : "text-gray-800"
-                                }`}
-                              >
-                                {job}
+                              key={index}
+                              className={`relative p-5 rounded-xl transition-all duration-300 bg-gray-50 border}
+          `}
+                            >
+                              {/* Contenu de la carte */}
+                              <div className="relative z-20">
+                                <div className="flex items-center mb-3">
+                                  <h4
+                                    className={`text-lg font-semibold ${
+                                      darkMode
+                                        ? "text-gray-200"
+                                        : "text-gray-700"
+                                    }`}
+                                  >
+                                    {site.name}
+                                  </h4>
+                                </div>
+                                <p
+                                  className={`text-sm leading-relaxed ${
+                                    darkMode ? "text-gray-400" : "text-gray-600"
+                                  } mb-4`}
+                                >
+                                  {site.description}
+                                </p>
+                                <div
+                                  className={`mt-2 text-xs flex items-center ${
+                                    darkMode ? "text-gray-500" : "text-gray-500"
+                                  }`}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-4 w-4 mr-1 text-indigo-400"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M5.057 5.188a8 8 0 1011.386 0L15.343 4.5A8 8 0 005.057 5.188zM10 12a2 2 0 100-4 2 2 0 000 4z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                  <span>{site.location}</span>
+                                </div>
                               </div>
                             </div>
-                            <div
-                              className={`text-sm ${
-                                darkMode ? "text-gray-400" : "text-gray-500"
-                              }`}
-                            >
-                              {Math.floor(Math.random() * 30) + 10}%
-                            </div>
-                          </div>
-                        ))}
+                          )
+                        )}
                       </div>
                     </div>
                   )}

@@ -119,19 +119,27 @@
           "name": "Monument de la Réunification",
           "description": "Monument historique symbolisant l'unification du Cameroun anglophone et francophone",
           "location": "Yaoundé",
-          "image": "/images/regions/centre/reunification_monument.jpg"
+          "image": "/pictures/touristiques/centre/mr_1.webp",
+          "images": [
+            "/pictures/touristiques/centre/mr_1.webp",
+            "/pictures/touristiques/centre/mr_2.webp"
+          ]
         },
         {
           "name": "Musée National du Cameroun",
           "description": "Musée présentant l'histoire, l'art et la culture camerounaise",
           "location": "Yaoundé",
-          "image": "/images/regions/centre/national_museum.jpg"
+          "image": "/pictures/touristiques/centre/mn_1.webp",
+          "images": [
+            "/pictures/touristiques/centre/mn_1.webp",
+            "/pictures/touristiques/centre/mn_2.webp"
+          ]
         },
         {
           "name": "Cathédrale Notre-Dame-des-Victoires",
           "description": "Imposante cathédrale catholique au cœur de Yaoundé",
           "location": "Yaoundé",
-          "image": "/images/regions/centre/cathedral.jpg"
+          "image": "/pictures/touristiques/centre/cy_1.webp"
         }
       ],
       "mainImage": "/images/regions/centre/centre_region.jpg"

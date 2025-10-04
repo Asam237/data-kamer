@@ -182,25 +182,38 @@
       },
       "touristSites": [
         {
-          "name": "Parc National de Lobéké",
-          "description": "Réserve de biosphère abritant gorilles, éléphants et de nombreuses espèces d'oiseaux",
-          "location": "Sud-Est de la région",
-          "image": "/images/regions/est/lobeke_park.jpg"
-        },
-        {
           "name": "Réserve de Dja",
           "description": "Site du patrimoine mondial de l'UNESCO, forêt tropicale préservée",
           "location": "Sud de la région",
-          "image": "/images/regions/est/dja_reserve.jpg"
+          "image": "/pictures/touristiques/est/rd_1.webp",
+          "images": [
+            "/pictures/touristiques/est/rd_1.webp",
+            "/pictures/touristiques/est/rd_2.webp"
+          ]
+        },
+        {
+          "name": "Parc National de Lobéké",
+          "description": "Réserve de biosphère abritant gorilles, éléphants et de nombreuses espèces d'oiseaux",
+          "location": "Sud-Est de la région",
+          "image": "/pictures/touristiques/est/pl_1.webp",
+          "images": [
+            "/pictures/touristiques/est/pl_1.webp",
+            "/pictures/touristiques/est/pl_2.webp",
+            "/pictures/touristiques/est/pl_3.webp"
+          ]
         },
         {
           "name": "Chutes de Nachtigal",
           "description": "Impressionnantes chutes d'eau sur le fleuve Sanaga",
           "location": "Près de Bertoua",
-          "image": "/images/regions/est/nachtigal_falls.jpg"
+          "image": "/pictures/touristiques/est/cn_1.webp"
         }
       ],
-      "mainImage": "/images/regions/est/est_region.jpg"
+      "mainImage": "/images/regions/est/est_region.jpg",
+      "images": [
+        "/pictures/touristiques/est/cn_1.webp",
+        "/pictures/touristiques/est/cn_2.webp"
+      ]
     },
     {
       "id": 4,

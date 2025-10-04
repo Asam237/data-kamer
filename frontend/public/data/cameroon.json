@@ -29,25 +29,38 @@
       },
       "touristSites": [
         {
+          "name": "Lac Tison",
+          "description": "Lac volcanique offrant un paysage pittoresque et des activités de pêche",
+          "location": "Ngaoundéré",
+          "image": "/pictures/touristiques/adamoua/tt_1.webp",
+          "images": [
+            "/pictures/touristiques/adamoua/tt_1.webp",
+            "/pictures/touristiques/adamoua/tt_2.webp",
+            "/pictures/touristiques/adamoua/tt_3.webp"
+          ]
+        },
+        {
           "name": "Parc National de la Bénoué",
           "description": "Vaste parc national offrant des safaris et l'observation de la faune sauvage",
           "location": "Sud de Ngaoundéré",
-          "image": "/images/regions/adamaoua/benoue_park.jpg"
+          "image": "/pictures/touristiques/adamoua/pb_1.webp",
+          "images": [
+            "/pictures/touristiques/adamoua/pb_1.webp",
+            "/pictures/touristiques/adamoua/pb_2.webp",
+            "/pictures/touristiques/adamoua/pb_3.webp"
+          ]
         },
         {
           "name": "Chutes de Tello",
           "description": "Magnifiques chutes d'eau entourées d'une végétation luxuriante",
           "location": "Près de Ngaoundéré",
-          "image": "/images/regions/adamaoua/tello_falls.jpg"
-        },
-        {
-          "name": "Lac Tison",
-          "description": "Lac volcanique offrant un paysage pittoresque et des activités de pêche",
-          "location": "Ngaoundéré",
-          "image": "/images/regions/adamaoua/lac_tison.jpg"
+          "image": "/pictures/touristiques/adamaoua/ct_1.webp",
+          "images": [
+            "/pictures/touristiques/adamoua/ct_1.webp",
+            "/pictures/touristiques/adamoua/ct_2.webp"
+          ]
         }
-      ],
-      "mainImage": "/images/regions/adamaoua/adamaoua_region.jpg"
+      ]
     },
     {
       "id": 2,

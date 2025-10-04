@@ -9,37 +9,23 @@ import {
   Layers,
   Menu,
   Info,
-  ChevronDown,
   Building2,
-  Briefcase,
-  UtensilsCrossed,
-  Landmark,
-  Music,
   Search,
   X,
   ChevronRight,
-  Camera,
-  Compass,
-  Mountain,
-  PalmtreeIcon,
   Globe,
   Sun,
-  Heart,
-  Share2,
-  Star,
   MapPin,
   Maximize,
   Minimize,
-  Eye,
-  EyeOff,
   Cloud,
   CloudRain,
   CloudSnow,
   CloudLightning,
-  Thermometer,
   Wind,
   Droplets,
   RefreshCw,
+  ChevronLeft,
 } from "lucide-react";
 
 interface Department {
@@ -51,13 +37,11 @@ interface Department {
   departments: string[];
   majorCompanies?: { name: string; sector: string }[];
   touristSites?: any;
-  jobDemand?: string[];
   specialties?: {
     gastronomy: string;
     professions: string;
     entertainment: string;
   };
-  mainImage?: string;
   departmentCoordinates?: Record<string, [number, number]>;
 }
 
@@ -306,16 +290,7 @@ const MapView: React.FC = () => {
   const [mapStyle, setMapStyle] = useState<"default" | "satellite">("default");
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipRegion, setTooltipRegion] = useState<Department | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState<[number, number]>([
-    0, 0,
-  ]);
-  const [darkMode, setDarkMode] = useState(false);
   const [immersiveMode, setImmersiveMode] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [showPopulation, setShowPopulation] = useState(true);
-  const [showArea, setShowArea] = useState(true);
-  const [showDepartments, setShowDepartments] = useState(true);
-  const [showCompanies, setShowCompanies] = useState(true);
   const [showWeather, setShowWeather] = useState(true);
   const [weatherData, setWeatherData] = useState<Record<string, WeatherData>>(
     {}
@@ -327,10 +302,35 @@ const MapView: React.FC = () => {
   const [departmentWeatherData, setDepartmentWeatherData] =
     useState<WeatherData | null>(null);
 
-  const mapRef = useRef<HTMLDivElement>(null);
   const weatherRef = useRef<HTMLDivElement>(null);
 
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const [showCarousel, setShowCarousel] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [selectedSite, setSelectedSite] = useState<any>(null);
+
+  const openCarousel = (site: any, index: number = 0) => {
+    setSelectedSite(site);
+    setCurrentImageIndex(index);
+    setShowCarousel(true);
+  };
+
+  const nextImage = () => {
+    if (selectedSite) {
+      const allImages = selectedSite.images || [selectedSite.image];
+      setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (selectedSite) {
+      const allImages = selectedSite.images || [selectedSite.image];
+      setCurrentImageIndex(
+        (prev) => (prev - 1 + allImages.length) % allImages.length
+      );
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -341,7 +341,6 @@ const MapView: React.FC = () => {
         }
         const data = await response.json();
 
-        // Ajouter les coordonnées des départements
         const enhancedData = {
           ...data,
           regions: data.regions.map((region: Department) => ({
@@ -374,7 +373,6 @@ const MapView: React.FC = () => {
     }
   }, [isAnimating]);
 
-  // Charger les données météo pour tous les départements d'une région
   useEffect(() => {
     const loadRegionWeather = async () => {
       if (selectedRegion && activeTab === "weather" && showWeather) {
@@ -405,7 +403,6 @@ const MapView: React.FC = () => {
     loadRegionWeather();
   }, [selectedRegion, activeTab, showWeather]);
 
-  // Charger les données météo pour un département spécifique
   useEffect(() => {
     const loadDepartmentWeather = async () => {
       if (
@@ -440,7 +437,6 @@ const MapView: React.FC = () => {
   const handleDepartmentClick = (dept: string) => {
     setSelectedDepartment(dept);
 
-    // Si on a des coordonnées pour ce département, centrer la carte dessus
     const deptCoordinates =
       selectedRegion?.departmentCoordinates?.[dept] ||
       DEPARTMENT_COORDINATES[selectedRegion?.name || ""]?.[dept];
@@ -456,7 +452,6 @@ const MapView: React.FC = () => {
     position: [number, number]
   ) => {
     setTooltipRegion(region);
-    setTooltipPosition(position);
     setShowTooltip(true);
   };
 
@@ -486,24 +481,12 @@ const MapView: React.FC = () => {
     setMapStyle(mapStyle === "default" ? "satellite" : "default");
   };
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
-
   const toggleImmersiveMode = () => {
     setImmersiveMode(!immersiveMode);
     if (!immersiveMode) {
       setSidebarOpen(false);
     } else {
       setSidebarOpen(true);
-    }
-  };
-
-  const toggleFavorite = (siteName: string) => {
-    if (favorites.includes(siteName)) {
-      setFavorites(favorites.filter((name) => name !== siteName));
-    } else {
-      setFavorites([...favorites, siteName]);
     }
   };
 
@@ -593,41 +576,29 @@ const MapView: React.FC = () => {
   const getWeatherConditionColor = (condition: string): string => {
     switch (condition) {
       case "Ensoleillé":
-        return "#f59e0b"; // yellow-500
+        return "#f59e0b";
       case "Partiellement nuageux":
-        return "#60a5fa"; // blue-400
+        return "#60a5fa";
       case "Nuageux":
-        return "#6b7280"; // gray-500
+        return "#6b7280";
       case "Pluvieux":
-        return "#3b82f6"; // blue-500
+        return "#3b82f6";
       case "Orageux":
-        return "#8b5cf6"; // purple-500
+        return "#8b5cf6";
       default:
-        return "#6b7280"; // gray-500
+        return "#6b7280";
     }
   };
 
   if (loading) {
     return (
-      <div
-        className={`flex items-center justify-center h-screen ${
-          darkMode ? "bg-gray-900" : "bg-gray-50"
-        }`}
-      >
+      <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
-          <div
-            className={`animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 ${
-              darkMode ? "border-green-400" : "border-green-600"
-            } mx-auto mb-6`}
-          ></div>
-          <p
-            className={`text-xl font-semibold ${
-              darkMode ? "text-gray-100" : "text-gray-700"
-            }`}
-          >
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mx-auto mb-6"></div>
+          <p className="text-xl font-semibold text-gray-700">
             Chargement des données...
           </p>
-          <p className={`${darkMode ? "text-gray-300" : "text-gray-500"} mt-2`}>
+          <p className="text-gray-500 mt-2">
             Préparation de la carte interactive du Cameroun
           </p>
         </div>
@@ -637,16 +608,8 @@ const MapView: React.FC = () => {
 
   if (error) {
     return (
-      <div
-        className={`flex items-center justify-center h-screen ${
-          darkMode ? "bg-gray-900" : "bg-gray-50"
-        }`}
-      >
-        <div
-          className={`${
-            darkMode ? "bg-gray-800 border-red-400" : "bg-white border-red-500"
-          } border-l-4 shadow-lg rounded-lg p-6 max-w-md`}
-        >
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="bg-white border-red-500 border-l-4 shadow-lg rounded-lg p-6 max-w-md">
           <div className="flex items-center">
             <div className="flex-shrink-0 text-red-500">
               <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
@@ -658,28 +621,14 @@ const MapView: React.FC = () => {
               </svg>
             </div>
             <div className="ml-4">
-              <h2
-                className={`text-lg font-bold ${
-                  darkMode ? "text-gray-100" : "text-gray-800"
-                } mb-1`}
-              >
+              <h2 className="text-lg font-bold text-gray-800 mb-1">
                 Erreur de chargement
               </h2>
-              <p className={`${darkMode ? "text-gray-300" : "text-gray-600"}`}>
-                {error}
-              </p>
-              <p
-                className={`mt-4 text-sm ${
-                  darkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
+              <p className="text-gray-600">{error}</p>
+              <p className="mt-4 text-sm text-gray-500">
                 Assurez-vous que le fichier JSON est correctement placé dans le
                 dossier{" "}
-                <code
-                  className={`${
-                    darkMode ? "bg-gray-700" : "bg-gray-100"
-                  } px-2 py-1 rounded text-sm`}
-                >
+                <code className="bg-gray-100 px-2 py-1 rounded text-sm">
                   public/data/cameroon.json
                 </code>
               </p>
@@ -698,17 +647,9 @@ const MapView: React.FC = () => {
 
   if (!cameroonData) {
     return (
-      <div
-        className={`flex items-center justify-center h-screen ${
-          darkMode ? "bg-gray-900" : "bg-gray-50"
-        }`}
-      >
+      <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
-          <p
-            className={`text-xl font-semibold ${
-              darkMode ? "text-gray-100" : "text-gray-700"
-            }`}
-          >
+          <p className="text-xl font-semibold text-gray-700">
             Aucune donnée disponible
           </p>
           <button
@@ -723,41 +664,23 @@ const MapView: React.FC = () => {
   }
 
   return (
-    <div
-      className={`flex flex-col h-screen ${
-        darkMode ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-800"
-      } transition-colors duration-300`}
-    >
-      <div
-        className={`${
-          darkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-        } border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300`}
-      >
+    <div className="flex flex-col h-screen bg-gray-100 text-gray-800 transition-colors duration-300">
+      <div className="bg-white border-gray-200 border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300">
         <div className="flex items-center">
           <button
-            className={`mr-3 p-2 rounded-full ${
-              darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
-            } transition-colors`}
+            className="mr-3 p-2 rounded-full hover:bg-gray-100 transition-colors"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             <Menu className="h-5 w-5" />
           </button>
           <h1 className="text-xl font-bold flex items-center">
-            <Globe
-              className={`h-6 w-6 mr-2 ${
-                darkMode ? "text-green-400" : "text-green-600"
-              }`}
-            />
+            <Globe className="h-6 w-6 mr-2 text-green-600" />
             Carte Interactive du Cameroun
           </h1>
         </div>
         <div className="flex items-center space-x-3">
           <button
-            className={`p-2 rounded-full ${
-              darkMode
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-100 hover:bg-gray-200"
-            } transition-colors`}
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
             onClick={() => setShowWeather(!showWeather)}
             title={showWeather ? "Masquer la météo" : "Afficher la météo"}
           >
@@ -768,22 +691,14 @@ const MapView: React.FC = () => {
             )}
           </button>
           <button
-            className={`p-2 rounded-full ${
-              darkMode
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-100 hover:bg-gray-200"
-            } transition-colors`}
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
             onClick={toggleMapStyle}
             title={mapStyle === "default" ? "Vue satellite" : "Vue carte"}
           >
             <Layers className="h-5 w-5" />
           </button>
           <button
-            className={`p-2 rounded-full ${
-              darkMode
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-100 hover:bg-gray-200"
-            } transition-colors`}
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
             onClick={toggleImmersiveMode}
             title={immersiveMode ? "Mode normal" : "Mode immersif"}
           >
@@ -798,28 +713,10 @@ const MapView: React.FC = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {sidebarOpen && !immersiveMode && (
-          <div
-            className={`w-80 ${
-              darkMode
-                ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
-            } border-r shadow-lg overflow-hidden flex flex-col z-10 transition-all duration-300`}
-          >
-            <div
-              className={`${
-                darkMode ? "bg-gray-700" : "bg-gray-50"
-              } border-b p-4`}
-            >
-              <h2
-                className={`font-bold ${
-                  darkMode ? "text-gray-100" : "text-gray-800"
-                } flex items-center`}
-              >
-                <MapIcon
-                  className={`h-5 w-5 mr-2 ${
-                    darkMode ? "text-green-400" : "text-green-600"
-                  }`}
-                />
+          <div className="w-80 bg-white border-gray-200 border-r shadow-lg overflow-hidden flex flex-col z-10 transition-all duration-300">
+            <div className="bg-gray-50 border-b p-4">
+              <h2 className="font-bold text-gray-800 flex items-center">
+                <MapIcon className="h-5 w-5 mr-2 text-green-600" />
                 Régions du Cameroun ({cameroonData.regions.length})
               </h2>
 
@@ -830,11 +727,7 @@ const MapView: React.FC = () => {
                     placeholder="Rechercher une région..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className={`w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                      darkMode
-                        ? "bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400"
-                        : "bg-white border-gray-300 text-gray-800 placeholder-gray-500"
-                    }`}
+                    className="w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white border-gray-300 text-gray-800 placeholder-gray-500"
                   />
                   {searchTerm ? (
                     <button
@@ -859,9 +752,7 @@ const MapView: React.FC = () => {
                 />
                 <label
                   htmlFor="showRegions"
-                  className={`text-sm font-medium ${
-                    darkMode ? "text-gray-300" : "text-gray-700"
-                  }`}
+                  className="text-sm font-medium text-gray-700"
                 >
                   Afficher les marqueurs sur la carte
                 </label>
@@ -877,9 +768,7 @@ const MapView: React.FC = () => {
                 />
                 <label
                   htmlFor="showWeather"
-                  className={`text-sm font-medium ${
-                    darkMode ? "text-gray-300" : "text-gray-700"
-                  }`}
+                  className="text-sm font-medium text-gray-700"
                 >
                   Afficher la météo
                 </label>
@@ -892,18 +781,10 @@ const MapView: React.FC = () => {
                   {filteredRegions.map((region) => (
                     <li
                       key={region.id}
-                      className={`cursor-pointer rounded-lg overflow-hidden transition-all duration-200 ${
-                        darkMode
-                          ? `border ${
-                              selectedRegion?.id === region.id
-                                ? "border-green-500 bg-gray-700"
-                                : "border-gray-700 hover:border-gray-600 bg-gray-800 hover:bg-gray-700"
-                            }`
-                          : `border ${
-                              selectedRegion?.id === region.id
-                                ? "border-green-500 shadow-md"
-                                : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
-                            }`
+                      className={`cursor-pointer rounded-lg overflow-hidden transition-all duration-200 border ${
+                        selectedRegion?.id === region.id
+                          ? "border-green-500 shadow-md"
+                          : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
                       }`}
                       onClick={() => handleMarkerClick(region)}
                     >
@@ -917,61 +798,33 @@ const MapView: React.FC = () => {
                           {region.id}
                         </div>
                         <div className="flex-1">
-                          <div
-                            className={`font-medium ${
-                              darkMode ? "text-gray-100" : "text-gray-800"
-                            }`}
-                          >
+                          <div className="font-medium text-gray-800">
                             {region.name}
                           </div>
-                          <div
-                            className={`text-sm ${
-                              darkMode ? "text-gray-400" : "text-gray-500"
-                            } flex items-center`}
-                          >
+                          <div className="text-sm text-gray-500 flex items-center">
                             <Home className="h-3 w-3 mr-1" />
                             {region.capital}
                           </div>
                         </div>
-                        <ChevronRight
-                          className={`h-4 w-4 ${
-                            darkMode ? "text-gray-500" : "text-gray-400"
-                          }`}
-                        />
+                        <ChevronRight className="h-4 w-4 text-gray-400" />
                       </div>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <div className="text-center py-8">
-                  <div
-                    className={`${
-                      darkMode ? "text-gray-500" : "text-gray-400"
-                    } mb-2`}
-                  >
+                  <div className="text-gray-400 mb-2">
                     <Search className="h-12 w-12 mx-auto" />
                   </div>
-                  <p
-                    className={`${
-                      darkMode ? "text-gray-300" : "text-gray-600"
-                    } font-medium`}
-                  >
+                  <p className="text-gray-600 font-medium">
                     Aucune région trouvée
                   </p>
-                  <p
-                    className={`${
-                      darkMode ? "text-gray-400" : "text-gray-500"
-                    } text-sm mt-1`}
-                  >
+                  <p className="text-gray-500 text-sm mt-1">
                     Essayez avec un autre terme de recherche
                   </p>
                   {searchTerm && (
                     <button
-                      className={`mt-4 px-4 py-2 ${
-                        darkMode
-                          ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                          : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                      } rounded transition-colors text-sm`}
+                      className="mt-4 px-4 py-2 bg-gray-200 text-gray-800 hover:bg-gray-300 rounded transition-colors text-sm"
                       onClick={() => setSearchTerm("")}
                     >
                       Effacer la recherche
@@ -981,106 +834,32 @@ const MapView: React.FC = () => {
               )}
             </div>
 
-            <div
-              className={`${
-                darkMode
-                  ? "bg-gray-700 border-gray-600"
-                  : "bg-gray-50 border-gray-200"
-              } border-t p-4`}
-            >
-              <h3
-                className={`text-sm font-semibold ${
-                  darkMode ? "text-gray-200" : "text-gray-700"
-                } mb-2`}
-              >
+            <div className="bg-gray-50 border-gray-200 border-t p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">
                 Aperçu du Cameroun
               </h3>
               <div className="grid grid-cols-2 gap-2">
-                <div
-                  className={`${
-                    darkMode ? "bg-gray-800" : "bg-white"
-                  } p-2 rounded border ${
-                    darkMode ? "border-gray-700" : "border-gray-200"
-                  } hover:shadow-md transition-shadow duration-200`}
-                >
-                  <div
-                    className={`text-xs ${
-                      darkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    Population
-                  </div>
-                  <div
-                    className={`font-medium ${
-                      darkMode ? "text-gray-200" : "text-gray-800"
-                    }`}
-                  >
+                <div className="bg-white p-2 rounded border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                  <div className="text-xs text-gray-500">Population</div>
+                  <div className="font-medium text-gray-800">
                     {formatNumber(cameroonData.overview.totalPopulation)}
                   </div>
                 </div>
-                <div
-                  className={`${
-                    darkMode ? "bg-gray-800" : "bg-white"
-                  } p-2 rounded border ${
-                    darkMode ? "border-gray-700" : "border-gray-200"
-                  } hover:shadow-md transition-shadow duration-200`}
-                >
-                  <div
-                    className={`text-xs ${
-                      darkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    Superficie
-                  </div>
-                  <div
-                    className={`font-medium ${
-                      darkMode ? "text-gray-200" : "text-gray-800"
-                    }`}
-                  >
+                <div className="bg-white p-2 rounded border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                  <div className="text-xs text-gray-500">Superficie</div>
+                  <div className="font-medium text-gray-800">
                     {formatNumber(cameroonData.overview.totalArea)} km²
                   </div>
                 </div>
-                <div
-                  className={`${
-                    darkMode ? "bg-gray-800" : "bg-white"
-                  } p-2 rounded border ${
-                    darkMode ? "border-gray-700" : "border-gray-200"
-                  } hover:shadow-md transition-shadow duration-200`}
-                >
-                  <div
-                    className={`text-xs ${
-                      darkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    Capitale
-                  </div>
-                  <div
-                    className={`font-medium ${
-                      darkMode ? "text-gray-200" : "text-gray-800"
-                    }`}
-                  >
+                <div className="bg-white p-2 rounded border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                  <div className="text-xs text-gray-500">Capitale</div>
+                  <div className="font-medium text-gray-800">
                     {cameroonData.overview.capital}
                   </div>
                 </div>
-                <div
-                  className={`${
-                    darkMode ? "bg-gray-800" : "bg-white"
-                  } p-2 rounded border ${
-                    darkMode ? "border-gray-700" : "border-gray-200"
-                  } hover:shadow-md transition-shadow duration-200`}
-                >
-                  <div
-                    className={`text-xs ${
-                      darkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    Monnaie
-                  </div>
-                  <div
-                    className={`font-medium ${
-                      darkMode ? "text-gray-200" : "text-gray-800"
-                    }`}
-                  >
+                <div className="bg-white p-2 rounded border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                  <div className="text-xs text-gray-500">Monnaie</div>
+                  <div className="font-medium text-gray-800">
                     {cameroonData.overview.currency}
                   </div>
                 </div>
@@ -1094,7 +873,6 @@ const MapView: React.FC = () => {
             className={`${
               detailsOpen && !immersiveMode ? "w-3/5" : "w-full"
             } transition-all duration-300 relative`}
-            ref={mapRef}
           >
             <Map
               provider={mapTiler}
@@ -1130,7 +908,6 @@ const MapView: React.FC = () => {
                   />
                 ))}
 
-              {/* Affichage des marqueurs météo pour les départements */}
               {showWeather &&
                 selectedRegion &&
                 Object.entries(weatherData).map(([dept, data]) => {
@@ -1147,9 +924,7 @@ const MapView: React.FC = () => {
                         onClick={() => handleDepartmentClick(dept)}
                         color={getWeatherConditionColor(data.condition)}
                       >
-                        <div className="flex items-center justify-center w-full h-full">
-                          {/* {getWeatherIcon(data.condition)} */}
-                        </div>
+                        <div className="flex items-center justify-center w-full h-full"></div>
                       </Marker>
                     );
                   }
@@ -1161,19 +936,12 @@ const MapView: React.FC = () => {
                   anchor={REGION_COORDINATES[tooltipRegion.name]}
                   offset={[0, -20]}
                 >
-                  <div
-                    className={`px-3 py-1.5 rounded shadow-lg text-sm font-medium border pointer-events-none ${
-                      darkMode
-                        ? "bg-gray-800 text-gray-100 border-gray-700"
-                        : "bg-white text-gray-800 border-gray-200"
-                    }`}
-                  >
+                  <div className="px-3 py-1.5 rounded shadow-lg text-sm font-medium border pointer-events-none bg-white text-gray-800 border-gray-200">
                     {tooltipRegion.name} - {tooltipRegion.capital}
                   </div>
                 </Overlay>
               )}
 
-              {/* Affichage des tooltips météo pour les départements */}
               {showWeather &&
                 selectedRegion &&
                 selectedDepartment &&
@@ -1182,13 +950,7 @@ const MapView: React.FC = () => {
                     anchor={weatherData[selectedDepartment].coordinates}
                     offset={[0, -20]}
                   >
-                    <div
-                      className={`px-3 py-2 rounded-lg shadow-lg text-sm font-medium border ${
-                        darkMode
-                          ? "bg-gray-800 text-gray-100 border-gray-700"
-                          : "bg-white text-gray-800 border-gray-200"
-                      }`}
-                    >
+                    <div className="px-3 py-2 rounded-lg shadow-lg text-sm font-medium border bg-white text-gray-800 border-gray-200">
                       <div className="flex items-center">
                         {getWeatherIcon(
                           weatherData[selectedDepartment].condition
@@ -1207,44 +969,28 @@ const MapView: React.FC = () => {
 
             <div className="absolute top-4 right-4 flex flex-col space-y-2">
               <button
-                className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors ${
-                  darkMode
-                    ? "bg-gray-800 text-gray-200"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
+                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-white text-gray-700 hover:bg-gray-100"
                 onClick={handleZoomIn}
                 title="Zoom avant"
               >
                 <Plus className="h-5 w-5" />
               </button>
               <button
-                className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors ${
-                  darkMode
-                    ? "bg-gray-800 text-gray-200"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
+                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-white text-gray-700 hover:bg-gray-100"
                 onClick={handleZoomOut}
                 title="Zoom arrière"
               >
                 <Minus className="h-5 w-5" />
               </button>
               <button
-                className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors ${
-                  darkMode
-                    ? "bg-gray-800 text-gray-200"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
+                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-white text-gray-700 hover:bg-gray-100"
                 onClick={resetView}
                 title="Vue d'ensemble"
               >
                 <Layers className="h-5 w-5" />
               </button>
               <button
-                className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors ${
-                  darkMode
-                    ? "bg-gray-800 text-gray-200"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
+                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-white text-gray-700 hover:bg-gray-100"
                 onClick={toggleMapStyle}
                 title={mapStyle === "default" ? "Vue satellite" : "Vue carte"}
               >
@@ -1252,32 +998,16 @@ const MapView: React.FC = () => {
               </button>
             </div>
 
-            <div
-              className={`absolute bottom-14 right-4 p-3 rounded-lg shadow-md border ${
-                darkMode
-                  ? "bg-gray-800 border-gray-700 text-gray-200"
-                  : "bg-white border-gray-200 text-gray-800"
-              }`}
-            >
+            <div className="absolute bottom-14 right-4 p-3 rounded-lg shadow-md border bg-white border-gray-200 text-gray-800">
               <div className="text-sm font-medium mb-2">Légende</div>
               <div className="space-y-2">
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
-                  <span
-                    className={`text-xs ${
-                      darkMode ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    Régions
-                  </span>
+                  <span className="text-xs text-gray-700">Régions</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
-                  <span
-                    className={`text-xs ${
-                      darkMode ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
+                  <span className="text-xs text-gray-700">
                     Région sélectionnée
                   </span>
                 </div>
@@ -1285,21 +1015,11 @@ const MapView: React.FC = () => {
                   <>
                     <div className="flex items-center">
                       <div className="w-4 h-4 bg-yellow-500 rounded-full mr-2"></div>
-                      <span
-                        className={`text-xs ${
-                          darkMode ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        Ensoleillé
-                      </span>
+                      <span className="text-xs text-gray-700">Ensoleillé</span>
                     </div>
                     <div className="flex items-center">
                       <div className="w-4 h-4 bg-blue-400 rounded-full mr-2"></div>
-                      <span
-                        className={`text-xs ${
-                          darkMode ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
+                      <span className="text-xs text-gray-700">
                         Nuageux/Pluvieux
                       </span>
                     </div>
@@ -1310,19 +1030,9 @@ const MapView: React.FC = () => {
           </div>
 
           {detailsOpen && selectedRegion && !immersiveMode && (
-            <div
-              className={`w-2/5 overflow-y-auto transition-all duration-300 border-l ${
-                darkMode
-                  ? "bg-gray-800 border-gray-700"
-                  : "bg-white border-gray-200"
-              } shadow-lg`}
-            >
+            <div className="w-2/5 overflow-y-auto transition-all duration-300 border-l bg-white border-gray-200 shadow-lg">
               <div className="sticky top-0 z-10">
-                <div
-                  className={`p-4 text-white ${
-                    darkMode ? "bg-blue-800" : "bg-blue-700"
-                  }`}
-                >
+                <div className="p-4 text-white bg-blue-700">
                   <div className="flex items-center justify-between">
                     <button
                       onClick={closeDetails}
@@ -1341,96 +1051,41 @@ const MapView: React.FC = () => {
                   </div>
                 </div>
 
-                <div
-                  className={`p-3 border-b ${
-                    darkMode
-                      ? "bg-gray-700 border-gray-600"
-                      : "bg-green-50 border-gray-200"
-                  }`}
-                >
+                <div className="p-3 border-b bg-green-50 border-gray-200">
                   <div className="flex justify-around text-center">
                     <div>
-                      <div
-                        className={`text-lg font-bold ${
-                          darkMode ? "text-gray-100" : "text-gray-800"
-                        }`}
-                      >
+                      <div className="text-lg font-bold text-gray-800">
                         {formatNumber(selectedRegion.population)}
                       </div>
-                      <div
-                        className={`text-xs ${
-                          darkMode ? "text-gray-400" : "text-gray-500"
-                        }`}
-                      >
-                        Habitants
+                      <div className="text-xs text-gray-500">Habitants</div>
+                    </div>
+                    <div>
+                      <div className="text-lg font-bold text-gray-800">
+                        {formatNumber(selectedRegion.area)}
                       </div>
-                      <b>Superficie</b>
-                      <div>
-                        <div
-                          className={`text-lg font-bold ${
-                            darkMode ? "text-gray-100" : "text-gray-800"
-                          }`}
-                        >
-                          {formatNumber(selectedRegion.area)}
-                        </div>
-                        <div
-                          className={`text-xs ${
-                            darkMode ? "text-gray-400" : "text-gray-500"
-                          }`}
-                        >
-                          km²
-                        </div>
+                      <div className="text-xs text-gray-500">km²</div>
+                    </div>
+                    <div>
+                      <div className="text-lg font-bold text-gray-800">
+                        {Math.round(
+                          selectedRegion.population / selectedRegion.area
+                        )}
                       </div>
-                      <div>
-                        <div
-                          className={`text-lg font-bold ${
-                            darkMode ? "text-gray-100" : "text-gray-800"
-                          }`}
-                        >
-                          {Math.round(
-                            selectedRegion.population / selectedRegion.area
-                          )}
-                        </div>
-                        <div
-                          className={`text-xs ${
-                            darkMode ? "text-gray-400" : "text-gray-500"
-                          }`}
-                        >
-                          hab/km²
-                        </div>
+                      <div className="text-xs text-gray-500">hab/km²</div>
+                    </div>
+                    <div>
+                      <div className="text-lg font-bold text-gray-800">
+                        {selectedRegion.departments.length}
                       </div>
-                      <div>
-                        <div
-                          className={`text-lg font-bold ${
-                            darkMode ? "text-gray-100" : "text-gray-800"
-                          }`}
-                        >
-                          {selectedRegion.departments.length}
-                        </div>
-                        <div
-                          className={`text-xs ${
-                            darkMode ? "text-gray-400" : "text-gray-500"
-                          }`}
-                        >
-                          Départements
-                        </div>
-                      </div>
+                      <div className="text-xs text-gray-500">Départements</div>
                     </div>
                   </div>
 
-                  <div
-                    className={`flex border-b z-50 ${
-                      darkMode ? "border-gray-700" : "border-gray-200"
-                    }`}
-                  >
+                  <div className="flex border-b border-gray-200 mt-3">
                     <button
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "info"
-                          ? darkMode
-                            ? "border-b-2 border-green-400 text-green-400"
-                            : "border-b-2 border-green-600 text-green-600"
-                          : darkMode
-                          ? "text-gray-400 hover:text-gray-300"
+                          ? "border-b-2 border-green-600 text-green-600"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
                       onClick={() => setActiveTab("info")}
@@ -1443,11 +1098,7 @@ const MapView: React.FC = () => {
                     <button
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "companies"
-                          ? darkMode
-                            ? "border-b-2 border-green-400 text-green-400"
-                            : "border-b-2 border-green-600 text-green-600"
-                          : darkMode
-                          ? "text-gray-400 hover:text-gray-300"
+                          ? "border-b-2 border-green-600 text-green-600"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
                       onClick={() => setActiveTab("companies")}
@@ -1460,11 +1111,7 @@ const MapView: React.FC = () => {
                     <button
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "specialties"
-                          ? darkMode
-                            ? "border-b-2 border-green-400 text-green-400"
-                            : "border-b-2 border-green-600 text-green-600"
-                          : darkMode
-                          ? "text-gray-400 hover:text-gray-300"
+                          ? "border-b-2 border-green-600 text-green-600"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
                       onClick={() => setActiveTab("specialties")}
@@ -1477,11 +1124,7 @@ const MapView: React.FC = () => {
                     <button
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "tourist"
-                          ? darkMode
-                            ? "border-b-2 border-green-400 text-green-400"
-                            : "border-b-2 border-green-600 text-green-600"
-                          : darkMode
-                          ? "text-gray-400 hover:text-gray-300"
+                          ? "border-b-2 border-green-600 text-green-600"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
                       onClick={() => setActiveTab("tourist")}
@@ -1494,11 +1137,7 @@ const MapView: React.FC = () => {
                     <button
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "weather"
-                          ? darkMode
-                            ? "border-b-2 border-green-400 text-green-400"
-                            : "border-b-2 border-green-600 text-green-600"
-                          : darkMode
-                          ? "text-gray-400 hover:text-gray-300"
+                          ? "border-b-2 border-green-600 text-green-600"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
                       onClick={() => setActiveTab("weather")}
@@ -1514,23 +1153,11 @@ const MapView: React.FC = () => {
                 <div className="p-4">
                   {activeTab === "info" && (
                     <div className="space-y-4 animate-fadeIn">
-                      <div
-                        className={`p-4 rounded-lg ${
-                          darkMode ? "bg-gray-700" : "bg-gray-50"
-                        }`}
-                      >
-                        <h4
-                          className={`text-sm font-semibold mb-2 ${
-                            darkMode ? "text-gray-200" : "text-gray-700"
-                          }`}
-                        >
+                      <div className="p-4 rounded-lg bg-gray-50">
+                        <h4 className="text-sm font-semibold mb-2 text-gray-700">
                           Position géographique
                         </h4>
-                        <p
-                          className={`${
-                            darkMode ? "text-gray-300" : "text-gray-600"
-                          }`}
-                        >
+                        <p className="text-gray-600">
                           La région de {selectedRegion.name} est située au{" "}
                           {getRegionPosition(selectedRegion.name)} du Cameroun.
                           Sa capitale est {selectedRegion.capital}.
@@ -1538,22 +1165,14 @@ const MapView: React.FC = () => {
                       </div>
 
                       <div>
-                        <h4
-                          className={`text-sm font-semibold mb-2 ${
-                            darkMode ? "text-gray-200" : "text-gray-700"
-                          }`}
-                        >
+                        <h4 className="text-sm font-semibold mb-2 text-gray-700">
                           Départements ({selectedRegion.departments.length})
                         </h4>
                         <div className="grid grid-cols-2 gap-2">
                           {selectedRegion.departments.map((dept, index) => (
                             <div
                               key={index}
-                              className={`p-2 rounded ${
-                                darkMode
-                                  ? "bg-gray-700 text-gray-300"
-                                  : "bg-gray-50 text-gray-700"
-                              } flex items-center`}
+                              className="p-2 rounded bg-gray-50 text-gray-700 flex items-center"
                             >
                               <MapPin className="h-3 w-3 mr-2 flex-shrink-0" />
                               <span className="text-sm">{dept}</span>
@@ -1562,68 +1181,34 @@ const MapView: React.FC = () => {
                         </div>
                       </div>
 
-                      <div
-                        className={`p-4 rounded-lg border ${
-                          darkMode
-                            ? "bg-gray-700 border-gray-600"
-                            : "bg-white border-gray-200"
-                        }`}
-                      >
-                        <h4
-                          className={`text-sm font-semibold mb-2 ${
-                            darkMode ? "text-gray-200" : "text-gray-700"
-                          } flex items-center`}
-                        >
+                      <div className="p-4 rounded-lg border bg-white border-gray-200">
+                        <h4 className="text-sm font-semibold mb-2 text-gray-700 flex items-center">
                           <Users className="h-4 w-4 mr-1" />
                           Démographie
                         </h4>
                         <div className="space-y-2">
                           <div className="flex justify-between">
-                            <span
-                              className={`text-sm ${
-                                darkMode ? "text-gray-400" : "text-gray-500"
-                              }`}
-                            >
+                            <span className="text-sm text-gray-500">
                               Population:
                             </span>
-                            <span
-                              className={`font-medium ${
-                                darkMode ? "text-gray-200" : "text-gray-800"
-                              }`}
-                            >
+                            <span className="font-medium text-gray-800">
                               {formatNumber(selectedRegion.population)}{" "}
                               habitants
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span
-                              className={`text-sm ${
-                                darkMode ? "text-gray-400" : "text-gray-500"
-                              }`}
-                            >
+                            <span className="text-sm text-gray-500">
                               Superficie:
                             </span>
-                            <span
-                              className={`font-medium ${
-                                darkMode ? "text-gray-200" : "text-gray-800"
-                              }`}
-                            >
+                            <span className="font-medium text-gray-800">
                               {formatNumber(selectedRegion.area)} km²
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span
-                              className={`text-sm ${
-                                darkMode ? "text-gray-400" : "text-gray-500"
-                              }`}
-                            >
+                            <span className="text-sm text-gray-500">
                               Densité:
                             </span>
-                            <span
-                              className={`font-medium ${
-                                darkMode ? "text-gray-200" : "text-gray-800"
-                              }`}
-                            >
+                            <span className="font-medium text-gray-800">
                               {Math.round(
                                 selectedRegion.population / selectedRegion.area
                               )}{" "}
@@ -1631,18 +1216,10 @@ const MapView: React.FC = () => {
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span
-                              className={`text-sm ${
-                                darkMode ? "text-gray-400" : "text-gray-500"
-                              }`}
-                            >
+                            <span className="text-sm text-gray-500">
                               Nombre de départements:
                             </span>
-                            <span
-                              className={`font-medium ${
-                                darkMode ? "text-gray-200" : "text-gray-800"
-                              }`}
-                            >
+                            <span className="font-medium text-gray-800">
                               {selectedRegion.departments.length}
                             </span>
                           </div>
@@ -1655,23 +1232,12 @@ const MapView: React.FC = () => {
                     selectedRegion.specialties && (
                       <div className="space-y-6 animate-fadeIn">
                         <div className="flex justify-between items-center mb-4">
-                          <h3
-                            className={`text-xl font-bold ${
-                              darkMode ? "text-gray-100" : "text-gray-800"
-                            }`}
-                          >
+                          <h3 className="text-xl font-bold text-gray-800">
                             Spécialités de la région 🏞️
                           </h3>
                         </div>
 
-                        {/* Section Gastronomie */}
-                        <div
-                          className={`p-5 rounded-xl transition-all duration-300 ${
-                            darkMode
-                              ? "bg-gray-800"
-                              : "bg-gray-50 hover:bg-white"
-                          }`}
-                        >
+                        <div className="p-5 rounded-xl transition-all duration-300 bg-gray-50 hover:bg-white">
                           <div className="flex items-center mb-3">
                             <div className="bg-red-500 p-2 rounded-full mr-3 text-white">
                               <svg
@@ -1689,31 +1255,16 @@ const MapView: React.FC = () => {
                                 />
                               </svg>
                             </div>
-                            <h4
-                              className={`text-lg font-semibold ${
-                                darkMode ? "text-gray-200" : "text-gray-700"
-                              }`}
-                            >
+                            <h4 className="text-lg font-semibold text-gray-700">
                               Gastronomie 🍽️
                             </h4>
                           </div>
-                          <p
-                            className={`text-sm leading-relaxed ${
-                              darkMode ? "text-gray-400" : "text-gray-600"
-                            }`}
-                          >
+                          <p className="text-sm leading-relaxed text-gray-600">
                             {selectedRegion.specialties.gastronomy}
                           </p>
                         </div>
 
-                        {/* Section Professions */}
-                        <div
-                          className={`p-5 rounded-xl transition-all duration-300 ${
-                            darkMode
-                              ? "bg-gray-800"
-                              : "bg-gray-50 hover:bg-white"
-                          }`}
-                        >
+                        <div className="p-5 rounded-xl transition-all duration-300 bg-gray-50 hover:bg-white">
                           <div className="flex items-center mb-3">
                             <div className="bg-blue-500 p-2 rounded-full mr-3 text-white">
                               <svg
@@ -1731,31 +1282,16 @@ const MapView: React.FC = () => {
                                 />
                               </svg>
                             </div>
-                            <h4
-                              className={`text-lg font-semibold ${
-                                darkMode ? "text-gray-200" : "text-gray-700"
-                              }`}
-                            >
+                            <h4 className="text-lg font-semibold text-gray-700">
                               Métiers et Professions 👨‍🌾
                             </h4>
                           </div>
-                          <p
-                            className={`text-sm leading-relaxed ${
-                              darkMode ? "text-gray-400" : "text-gray-600"
-                            }`}
-                          >
+                          <p className="text-sm leading-relaxed text-gray-600">
                             {selectedRegion.specialties.professions}
                           </p>
                         </div>
 
-                        {/* Section Divertissement */}
-                        <div
-                          className={`p-5 rounded-xl transition-all duration-300 ${
-                            darkMode
-                              ? "bg-gray-800"
-                              : "bg-gray-50 hover:bg-white"
-                          }`}
-                        >
+                        <div className="p-5 rounded-xl transition-all duration-300 bg-gray-50 hover:bg-white">
                           <div className="flex items-center mb-3">
                             <div className="bg-green-500 p-2 rounded-full mr-3 text-white">
                               <svg
@@ -1773,19 +1309,11 @@ const MapView: React.FC = () => {
                                 />
                               </svg>
                             </div>
-                            <h4
-                              className={`text-lg font-semibold ${
-                                darkMode ? "text-gray-200" : "text-gray-700"
-                              }`}
-                            >
+                            <h4 className="text-lg font-semibold text-gray-700">
                               Divertissement et Culture 🎭
                             </h4>
                           </div>
-                          <p
-                            className={`text-sm leading-relaxed ${
-                              darkMode ? "text-gray-400" : "text-gray-600"
-                            }`}
-                          >
+                          <p className="text-sm leading-relaxed text-gray-600">
                             {selectedRegion.specialties.entertainment}
                           </p>
                         </div>
@@ -1795,11 +1323,7 @@ const MapView: React.FC = () => {
                   {activeTab === "companies" &&
                     selectedRegion.majorCompanies && (
                       <div className="space-y-4 animate-fadeIn">
-                        <h4
-                          className={`text-sm font-semibold mb-2 ${
-                            darkMode ? "text-gray-200" : "text-gray-700"
-                          }`}
-                        >
+                        <h4 className="text-sm font-semibold mb-2 text-gray-700">
                           Principales entreprises (
                           {selectedRegion.majorCompanies.length})
                         </h4>
@@ -1808,16 +1332,12 @@ const MapView: React.FC = () => {
                             (company, index) => (
                               <div
                                 key={index}
-                                className={`p-3 rounded-lg border ${
-                                  darkMode
-                                    ? "bg-gray-700 border-gray-600 hover:bg-gray-650"
-                                    : "bg-white border-gray-200 hover:shadow-md"
-                                } transition-all`}
+                                className="p-3 rounded-lg border bg-white border-gray-200 hover:shadow-md transition-all"
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center">
                                     <div
-                                      className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white`}
+                                      className="w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white"
                                       style={{
                                         backgroundColor: [
                                           "#3498db",
@@ -1834,22 +1354,10 @@ const MapView: React.FC = () => {
                                       <Building2 className="h-5 w-5" />
                                     </div>
                                     <div>
-                                      <div
-                                        className={`font-medium ${
-                                          darkMode
-                                            ? "text-gray-200"
-                                            : "text-gray-800"
-                                        }`}
-                                      >
+                                      <div className="font-medium text-gray-800">
                                         {company.name}
                                       </div>
-                                      <div
-                                        className={`text-sm ${
-                                          darkMode
-                                            ? "text-gray-400"
-                                            : "text-gray-500"
-                                        }`}
-                                      >
+                                      <div className="text-sm text-gray-500">
                                         {company.sector}
                                       </div>
                                     </div>
@@ -1865,11 +1373,7 @@ const MapView: React.FC = () => {
                   {activeTab === "tourist" && selectedRegion.touristSites && (
                     <div className="space-y-6 animate-fadeIn">
                       <div className="flex justify-between items-center mb-4">
-                        <h3
-                          className={`text-xl font-bold ${
-                            darkMode ? "text-gray-100" : "text-gray-800"
-                          }`}
-                        >
+                        <h3 className="text-xl font-bold text-gray-800">
                           Sites touristiques 🗺️
                         </h3>
                       </div>
@@ -1878,47 +1382,36 @@ const MapView: React.FC = () => {
                           (site: any, index: any) => (
                             <div
                               key={index}
-                              className={`relative p-5 rounded-xl transition-all duration-300 bg-gray-50 border}
-          `}
+                              className="relative p-5 rounded-xl transition-all duration-300 bg-gray-50 border"
                             >
-                              {/* Contenu de la carte */}
-                              <div className="relative z-20">
-                                <div className="flex items-center mb-3">
-                                  <h4
-                                    className={`text-lg font-semibold ${
-                                      darkMode
-                                        ? "text-gray-200"
-                                        : "text-gray-700"
-                                    }`}
-                                  >
-                                    {site.name}
-                                  </h4>
-                                </div>
-                                <p
-                                  className={`text-sm leading-relaxed ${
-                                    darkMode ? "text-gray-400" : "text-gray-600"
-                                  } mb-4`}
-                                >
-                                  {site.description}
-                                </p>
+                              <div
+                                className="relative p-0 overflow-hidden transition-all duration-500 transform bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl hover:shadow-3xl group h-96 border border-gray-100 cursor-pointer"
+                                onClick={() => openCarousel(site)}
+                              >
                                 <div
-                                  className={`mt-2 text-xs flex items-center ${
-                                    darkMode ? "text-gray-500" : "text-gray-500"
-                                  }`}
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-4 w-4 mr-1 text-indigo-400"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M5.057 5.188a8 8 0 1011.386 0L15.343 4.5A8 8 0 005.057 5.188zM10 12a2 2 0 100-4 2 2 0 000 4z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                  <span>{site.location}</span>
+                                  className="absolute inset-0 z-0 w-full h-full transition-all duration-700 opacity-90 group-hover:opacity-100 group-hover:scale-105"
+                                  style={{
+                                    backgroundImage: `url(${site.image})`,
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    filter:
+                                      "brightness(0.9) saturate(1.3) contrast(1.1)",
+                                  }}
+                                ></div>
+
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-5"></div>
+
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-700 z-10"></div>
+
+                                <div className="absolute bottom-0 left-0 right-0 z-20 p-6">
+                                  <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-5 shadow-2xl border border-white/60 transform transition-transform duration-300 group-hover:translate-y-[-4px]">
+                                    <h4 className="text-xl font-bold text-gray-800 mb-2 leading-tight">
+                                      {site.name}
+                                    </h4>
+                                    <p className="text-sm leading-relaxed text-gray-600 line-clamp-2">
+                                      {site.description}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1928,24 +1421,15 @@ const MapView: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Nouvel onglet Météo */}
                   {activeTab === "weather" && (
                     <div className="space-y-4 animate-fadeIn">
                       <div className="flex items-center justify-between mb-4">
-                        <h4
-                          className={`text-sm font-semibold ${
-                            darkMode ? "text-gray-200" : "text-gray-700"
-                          }`}
-                        >
+                        <h4 className="text-sm font-semibold text-gray-700">
                           Météo par département
                         </h4>
                         <button
                           onClick={refreshWeather}
-                          className={`p-2 rounded ${
-                            darkMode
-                              ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
-                              : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                          } flex items-center text-xs`}
+                          className="p-2 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center text-xs"
                           disabled={loadingWeather}
                         >
                           {loadingWeather ? (
@@ -1960,11 +1444,7 @@ const MapView: React.FC = () => {
                       {loadingWeather ? (
                         <div className="flex justify-center items-center py-8">
                           <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
-                          <p
-                            className={`ml-3 ${
-                              darkMode ? "text-gray-300" : "text-gray-600"
-                            }`}
-                          >
+                          <p className="ml-3 text-gray-600">
                             Chargement des données météo...
                           </p>
                         </div>
@@ -1973,18 +1453,10 @@ const MapView: React.FC = () => {
                           {selectedDepartment && departmentWeatherData && (
                             <div
                               ref={weatherRef}
-                              className={`p-4 rounded-lg border mb-6 ${
-                                darkMode
-                                  ? "bg-gray-700 border-gray-600"
-                                  : "bg-white border-gray-200"
-                              }`}
+                              className="p-4 rounded-lg border mb-6 bg-white border-gray-200"
                             >
                               <div className="flex items-center justify-between mb-3">
-                                <h3
-                                  className={`font-semibold ${
-                                    darkMode ? "text-gray-100" : "text-gray-800"
-                                  }`}
-                                >
+                                <h3 className="font-semibold text-gray-800">
                                   {selectedDepartment}
                                 </h3>
                                 <button
@@ -1992,11 +1464,7 @@ const MapView: React.FC = () => {
                                     setSelectedDepartment(null);
                                     setDepartmentWeatherData(null);
                                   }}
-                                  className={`p-1 rounded-full ${
-                                    darkMode
-                                      ? "hover:bg-gray-600"
-                                      : "hover:bg-gray-200"
-                                  }`}
+                                  className="p-1 rounded-full hover:bg-gray-200"
                                 >
                                   <X className="h-4 w-4" />
                                 </button>
@@ -2009,106 +1477,46 @@ const MapView: React.FC = () => {
                                   )}
                                 </div>
                                 <div>
-                                  <div
-                                    className={`text-2xl font-bold ${
-                                      darkMode
-                                        ? "text-gray-100"
-                                        : "text-gray-800"
-                                    }`}
-                                  >
+                                  <div className="text-2xl font-bold text-gray-800">
                                     {departmentWeatherData.temperature}°C
                                   </div>
-                                  <div
-                                    className={`${
-                                      darkMode
-                                        ? "text-gray-300"
-                                        : "text-gray-600"
-                                    }`}
-                                  >
+                                  <div className="text-gray-600">
                                     {departmentWeatherData.condition}
                                   </div>
                                 </div>
                               </div>
 
                               <div className="grid grid-cols-3 gap-3 mb-4">
-                                <div
-                                  className={`p-2 rounded ${
-                                    darkMode ? "bg-gray-800" : "bg-gray-50"
-                                  }`}
-                                >
+                                <div className="p-2 rounded bg-gray-50">
                                   <div className="flex items-center">
                                     <Wind className="h-4 w-4 mr-1 text-blue-400" />
-                                    <span
-                                      className={`text-xs ${
-                                        darkMode
-                                          ? "text-gray-400"
-                                          : "text-gray-500"
-                                      }`}
-                                    >
+                                    <span className="text-xs text-gray-500">
                                       Vent
                                     </span>
                                   </div>
-                                  <div
-                                    className={`font-medium ${
-                                      darkMode
-                                        ? "text-gray-200"
-                                        : "text-gray-800"
-                                    }`}
-                                  >
+                                  <div className="font-medium text-gray-800">
                                     {departmentWeatherData.windSpeed} km/h
                                   </div>
                                 </div>
-                                <div
-                                  className={`p-2 rounded ${
-                                    darkMode ? "bg-gray-800" : "bg-gray-50"
-                                  }`}
-                                >
+                                <div className="p-2 rounded bg-gray-50">
                                   <div className="flex items-center">
                                     <Droplets className="h-4 w-4 mr-1 text-blue-400" />
-                                    <span
-                                      className={`text-xs ${
-                                        darkMode
-                                          ? "text-gray-400"
-                                          : "text-gray-500"
-                                      }`}
-                                    >
+                                    <span className="text-xs text-gray-500">
                                       Humidité
                                     </span>
                                   </div>
-                                  <div
-                                    className={`font-medium ${
-                                      darkMode
-                                        ? "text-gray-200"
-                                        : "text-gray-800"
-                                    }`}
-                                  >
+                                  <div className="font-medium text-gray-800">
                                     {departmentWeatherData.humidity}%
                                   </div>
                                 </div>
-                                <div
-                                  className={`p-2 rounded ${
-                                    darkMode ? "bg-gray-800" : "bg-gray-50"
-                                  }`}
-                                >
+                                <div className="p-2 rounded bg-gray-50">
                                   <div className="flex items-center">
                                     <CloudRain className="h-4 w-4 mr-1 text-blue-400" />
-                                    <span
-                                      className={`text-xs ${
-                                        darkMode
-                                          ? "text-gray-400"
-                                          : "text-gray-500"
-                                      }`}
-                                    >
+                                    <span className="text-xs text-gray-500">
                                       Précip.
                                     </span>
                                   </div>
-                                  <div
-                                    className={`font-medium ${
-                                      darkMode
-                                        ? "text-gray-200"
-                                        : "text-gray-800"
-                                    }`}
-                                  >
+                                  <div className="font-medium text-gray-800">
                                     {departmentWeatherData.precipitation}%
                                   </div>
                                 </div>
@@ -2116,13 +1524,7 @@ const MapView: React.FC = () => {
 
                               {departmentWeatherData.forecast && (
                                 <div>
-                                  <h4
-                                    className={`text-sm font-medium mb-2 ${
-                                      darkMode
-                                        ? "text-gray-300"
-                                        : "text-gray-600"
-                                    }`}
-                                  >
+                                  <h4 className="text-sm font-medium mb-2 text-gray-600">
                                     Prévisions pour les prochains jours
                                   </h4>
                                   <div className="grid grid-cols-3 gap-2">
@@ -2130,15 +1532,9 @@ const MapView: React.FC = () => {
                                       (day, index) => (
                                         <div
                                           key={index}
-                                          className={`p-2 rounded text-center ${
-                                            darkMode
-                                              ? "bg-gray-800"
-                                              : "bg-gray-50"
-                                          }`}
+                                          className="p-2 rounded text-center bg-gray-50"
                                         >
-                                          <div
-                                            className={`text-sm font-medium mb-1text-gray-700}`}
-                                          >
+                                          <div className="text-sm font-medium mb-1 text-gray-700">
                                             {day.day}
                                           </div>
                                           <div className="flex justify-center mb-1">
@@ -2161,7 +1557,7 @@ const MapView: React.FC = () => {
                                               <CloudLightning className="h-5 w-5 text-blue-500" />
                                             )}
                                           </div>
-                                          <div className={`text-sm`}>
+                                          <div className="text-sm">
                                             {day.maxTemp}° / {day.minTemp}°
                                           </div>
                                         </div>
@@ -2173,38 +1569,27 @@ const MapView: React.FC = () => {
                             </div>
                           )}
 
-                          {/* Liste des départements avec leur météo */}
                           <div className="grid grid-cols-1 gap-3">
                             {Object.entries(weatherData).map(([dept, data]) => (
                               <div
                                 key={dept}
-                                className={`p-3 rounded-lg border cursor-pointer ${
+                                className={`p-3 rounded-lg border cursor-pointer transition-all ${
                                   selectedDepartment === dept
-                                    ? darkMode
-                                      ? "bg-blue-900 border-blue-700"
-                                      : "bg-blue-50 border-blue-200"
-                                    : darkMode
-                                    ? "bg-gray-700 border-gray-600 hover:bg-gray-650"
+                                    ? "bg-blue-50 border-blue-200"
                                     : "bg-white border-gray-200 hover:bg-gray-50"
-                                } transition-all`}
+                                }`}
                                 onClick={() => handleDepartmentClick(dept)}
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center">
-                                    <div
-                                      className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white`}
-                                    >
+                                    <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white">
                                       {getWeatherIcon(data.condition)}
                                     </div>
                                     <div>
                                       <div
                                         className={`font-medium ${
                                           selectedDepartment === dept
-                                            ? darkMode
-                                              ? "text-blue-100"
-                                              : "text-blue-800"
-                                            : darkMode
-                                            ? "text-gray-200"
+                                            ? "text-blue-800"
                                             : "text-gray-800"
                                         }`}
                                       >
@@ -2213,11 +1598,7 @@ const MapView: React.FC = () => {
                                       <div
                                         className={`text-sm ${
                                           selectedDepartment === dept
-                                            ? darkMode
-                                              ? "text-blue-200"
-                                              : "text-blue-600"
-                                            : darkMode
-                                            ? "text-gray-400"
+                                            ? "text-blue-600"
                                             : "text-gray-500"
                                         }`}
                                       >
@@ -2229,11 +1610,7 @@ const MapView: React.FC = () => {
                                     <div
                                       className={`text-2xl font-bold ${
                                         selectedDepartment === dept
-                                          ? darkMode
-                                            ? "text-blue-100"
-                                            : "text-blue-800"
-                                          : darkMode
-                                          ? "text-gray-200"
+                                          ? "text-blue-800"
                                           : "text-gray-800"
                                       }`}
                                     >
@@ -2242,11 +1619,7 @@ const MapView: React.FC = () => {
                                     <ChevronRight
                                       className={`h-5 w-5 ml-2 ${
                                         selectedDepartment === dept
-                                          ? darkMode
-                                            ? "text-blue-300"
-                                            : "text-blue-500"
-                                          : darkMode
-                                          ? "text-gray-500"
+                                          ? "text-blue-500"
                                           : "text-gray-400"
                                       }`}
                                     />
@@ -2265,6 +1638,103 @@ const MapView: React.FC = () => {
           )}
         </div>
       </div>
+
+      {showCarousel && selectedSite && (
+        <div
+          className="modal-fullscreen flex items-center justify-center bg-black"
+          onClick={() => setShowCarousel(false)}
+        >
+          <button
+            onClick={() => setShowCarousel(false)}
+            className="absolute top-6 right-6 p-3 bg-white/5 hover:bg-white/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 hover:rotate-90 z-50 group"
+          >
+            <X
+              className="w-7 h-7 text-white/80 group-hover:text-white"
+              strokeWidth={2}
+            />
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              prevImage();
+            }}
+            className="absolute left-6 p-5 bg-white/5 hover:bg-white/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
+            disabled={!selectedSite.images || selectedSite.images.length <= 1}
+          >
+            <ChevronLeft
+              className="w-8 h-8 text-white/80 group-hover:text-white"
+              strokeWidth={2.5}
+            />
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              nextImage();
+            }}
+            className="absolute right-6 p-5 bg-white/5 hover:bg-white/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
+            disabled={!selectedSite.images || selectedSite.images.length <= 1}
+          >
+            <ChevronRight
+              className="w-8 h-8 text-white/80 group-hover:text-white"
+              strokeWidth={2.5}
+            />
+          </button>
+
+          <div
+            className="absolute inset-0 flex items-center justify-center p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={
+                (selectedSite.images || [selectedSite.image])[currentImageIndex]
+              }
+              alt={`${selectedSite.name} - Image ${currentImageIndex + 1}`}
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+
+          {selectedSite.images && selectedSite.images.length > 1 && (
+            <div className="absolute top-6 left-6 px-4 py-2 bg-black/60 backdrop-blur-md rounded-full border border-white/10 z-50">
+              <span className="text-white text-sm font-medium">
+                {currentImageIndex + 1} / {selectedSite.images.length}
+              </span>
+            </div>
+          )}
+
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent pt-32 pb-8 px-8 z-40">
+            <div className="max-w-4xl mx-auto text-center space-y-3">
+              <h3 className="text-4xl font-bold text-white tracking-tight">
+                {selectedSite.name}
+              </h3>
+              <p className="text-lg text-gray-200 leading-relaxed">
+                {selectedSite.description}
+              </p>
+
+              {selectedSite.images && selectedSite.images.length > 1 && (
+                <div className="flex justify-center items-center gap-2 pt-4">
+                  {selectedSite.images.map((_: any, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex(idx);
+                      }}
+                      className={`transition-all duration-300 rounded-full ${
+                        idx === currentImageIndex
+                          ? "bg-white w-10 h-2.5 shadow-lg shadow-white/50"
+                          : "bg-white/30 w-2.5 h-2.5 hover:bg-white/50 hover:scale-125"
+                      }`}
+                      aria-label={`Image ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

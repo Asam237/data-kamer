@@ -259,19 +259,31 @@
           "name": "Parc National de Waza",
           "description": "L'un des parcs les plus célèbres du Cameroun, riche en faune sauvage africaine",
           "location": "Nord de Maroua",
-          "image": "/images/regions/extreme_nord/waza_park.jpg"
+          "image": "/pictures/touristiques/en/pw_1.webp",
+          "images": [
+            "/pictures/touristiques/en/pw_1.webp",
+            "/pictures/touristiques/en/pw_2.webp",
+            "/pictures/touristiques/en/pw_3.webp",
+            "/pictures/touristiques/en/pw_4.webp"
+          ]
+        },
+        {
+          "name": "Pic de Rhumiski",
+          "description": "Sommet emblématique offrant une vue panoramique sur les montagnes environnantes et les paysages du Nord Cameroun",
+          "location": "Rhumiski",
+          "image": "/pictures/touristiques/en/rr_1.webp",
+          "images": [
+            "/pictures/touristiques/en/rr_1.webp",
+            "/pictures/touristiques/en/rr_2.webp",
+            "/pictures/touristiques/en/rr_3.webp",
+            "/pictures/touristiques/en/rr_4.webp"
+          ]
         },
         {
           "name": "Monts Mandara",
           "description": "Chaîne de montagnes avec villages traditionnels et architecture unique",
           "location": "Ouest de la région",
           "image": "/images/regions/extreme_nord/mandara_mountains.jpg"
-        },
-        {
-          "name": "Marché de Maroua",
-          "description": "Marché coloré offrant artisanat local, textiles et produits régionaux",
-          "location": "Maroua",
-          "image": "/images/regions/extreme_nord/maroua_market.jpg"
         }
       ],
       "mainImage": "/images/regions/extreme_nord/extreme_nord_region.jpg"

@@ -37,7 +37,7 @@ interface OutageResponse {
 interface RegionOutage {
   regionCode: string;
   regionName: string;
-  outages: OutageResponse; // Changé de OutageInfo[] à OutageResponse
+  outages: OutageResponse;
   error?: string;
 }
 

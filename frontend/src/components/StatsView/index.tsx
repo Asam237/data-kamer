@@ -37,98 +37,18 @@ import {
   Filter,
   Download,
 } from "lucide-react";
-import { useRegions } from "@/hooks/useRegions";
-import { useUniversities } from "@/hooks/useUniversities";
-import { useOverview } from "@/hooks/useOverview";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
-import ErrorMessage from "@/components/common/ErrorMessage";
+import { CameroonData } from "../../../types";
 
-interface StatsViewProps {}
+interface StatsViewProps {
+  data: CameroonData;
+}
 
-const StatsView: React.FC<StatsViewProps> = () => {
+const StatsView: React.FC<StatsViewProps> = ({ data }) => {
   const [activeChart, setActiveChart] = useState<string>("population");
   const [timeRange, setTimeRange] = useState<string>("all");
 
-  // Utiliser les hooks pour récupérer les données du backend
-  const {
-    regions,
-    loading: regionsLoading,
-    error: regionsError,
-    refetch: refetchRegions,
-  } = useRegions();
-  const {
-    universities,
-    loading: universitiesLoading,
-    error: universitiesError,
-    refetch: refetchUniversities,
-  } = useUniversities();
-  const {
-    overview,
-    loading: overviewLoading,
-    error: overviewError,
-    refetch: refetchOverview,
-  } = useOverview();
-
-  const loading = regionsLoading || universitiesLoading || overviewLoading;
-  const error = regionsError || universitiesError || overviewError;
-
-  // Fonction pour relancer toutes les requêtes
-  const handleRetry = () => {
-    refetchRegions();
-    refetchUniversities();
-    refetchOverview();
-  };
-
-  // Affichage du loading
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mx-auto mb-6"></div>
-          <p className="text-xl font-semibold text-gray-700">
-            Chargement des données...
-          </p>
-          <p className="text-gray-500 mt-2">
-            Récupération des informations sur les statistiques
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Affichage des erreurs
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen p-8">
-        <ErrorMessage
-          title="Erreur de chargement des statistiques"
-          message={error}
-          onRetry={handleRetry}
-          className="max-w-md"
-        />
-      </div>
-    );
-  }
-
-  // Vérifier que toutes les données sont disponibles
-  if (!regions || !universities || !overview) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-center">
-          <p className="text-xl text-gray-600">Aucune donnée disponible</p>
-          <button
-            onClick={handleRetry}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Réessayer
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // Process data for charts
-  const regionData = regions
+  const regionData = data.regions
     .map((region) => ({
       name:
         region.name.length > 8
@@ -142,42 +62,45 @@ const StatsView: React.FC<StatsViewProps> = () => {
     }))
     .sort((a, b) => b.population - a.population);
 
-  const universityData = universities.map((uni) => ({
+  const universityData = data.universities.map((uni) => ({
     name: uni.name.length > 15 ? uni.name.substring(0, 15) + "..." : uni.name,
     fullName: uni.name,
     students: uni.students || 0,
-    founded: uni.founded || new Date().getFullYear(),
-    age: uni.founded ? new Date().getFullYear() - uni.founded : 0,
+    founded: uni.founded,
+    age: new Date().getFullYear() - uni.founded,
     region: uni.region,
     type: uni.type || "Public",
   }));
 
-  const regionStats = regions.map((region) => ({
+  const regionStats = data.regions.map((region) => ({
     region: region.name,
     population: region.population,
     area: region.area,
     density: Math.round(region.population / region.area),
-    universities: universities.filter((uni) => uni.region === region.id).length,
+    universities: data.universities.filter((uni) => uni.region === region.name)
+      .length,
   }));
 
-  const universityByRegion = regions.map((region) => ({
+  const universityByRegion = data.regions.map((region) => ({
     name: region.name,
-    universities: universities.filter((uni) => uni.region === region.id).length,
-    students: universities
-      .filter((uni) => uni.region === region.id)
+    universities: data.universities.filter((uni) => uni.region === region.name)
+      .length,
+    students: data.universities
+      .filter((uni) => uni.region === region.name)
       .reduce((sum, uni) => sum + (uni.students || 0), 0),
   }));
 
   const universityTypes = [
     {
       name: "Publiques",
-      value: universities.filter((uni) => uni.type === "Public" || !uni.type)
-        .length,
+      value: data.universities.filter(
+        (uni) => uni.type === "Public" || !uni.type
+      ).length,
       color: "#3B82F6",
     },
     {
       name: "Privées",
-      value: universities.filter((uni) => uni.type === "Privé").length,
+      value: data.universities.filter((uni) => uni.type === "Privé").length,
       color: "#10B981",
     },
   ];
@@ -185,26 +108,26 @@ const StatsView: React.FC<StatsViewProps> = () => {
   const populationDistribution = [
     {
       range: "< 1M",
-      count: regions.filter((r) => r.population < 1000000).length,
+      count: data.regions.filter((r) => r.population < 1000000).length,
       color: "#EF4444",
     },
     {
       range: "1M - 2M",
-      count: regions.filter(
+      count: data.regions.filter(
         (r) => r.population >= 1000000 && r.population < 2000000
       ).length,
       color: "#F59E0B",
     },
     {
       range: "2M - 3M",
-      count: regions.filter(
+      count: data.regions.filter(
         (r) => r.population >= 2000000 && r.population < 3000000
       ).length,
       color: "#10B981",
     },
     {
       range: "3M+",
-      count: regions.filter((r) => r.population >= 3000000).length,
+      count: data.regions.filter((r) => r.population >= 3000000).length,
       color: "#3B82F6",
     },
   ];
@@ -429,9 +352,7 @@ const StatsView: React.FC<StatsViewProps> = () => {
         return (
           <ResponsiveContainer width="100%" height={400}>
             <LineChart
-              data={universityData
-                .filter((uni) => uni.founded)
-                .sort((a, b) => a.founded - b.founded)}
+              data={universityData.sort((a, b) => a.founded - b.founded)}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="founded" tick={{ fontSize: 12 }} />
@@ -502,28 +423,41 @@ const StatsView: React.FC<StatsViewProps> = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Population Totale"
-          value={overview.totalPopulation.toLocaleString()}
+          value={data.overview.totalPopulation.toLocaleString()}
           icon={Users}
           color="text-blue-600"
           change={2.8}
         />
         <StatCard
           title="Densité Moyenne"
-          value={overview.averageDensity + " hab/km²"}
+          value={
+            Math.round(
+              data.overview.totalPopulation / data.overview.totalArea
+            ) + " hab/km²"
+          }
           icon={MapPin}
           color="text-green-600"
           change={1.2}
         />
         <StatCard
           title="Étudiants Total"
-          value={overview.totalStudents.toLocaleString()}
+          value={data.universities
+            .reduce((sum, uni) => sum + (uni.students || 0), 0)
+            .toLocaleString()}
           icon={GraduationCap}
           color="text-purple-600"
           change={5.4}
         />
         <StatCard
           title="Âge Moyen Universités"
-          value={overview.averageUniversityAge + " ans"}
+          value={
+            Math.round(
+              data.universities.reduce(
+                (sum, uni) => sum + (new Date().getFullYear() - uni.founded),
+                0
+              ) / data.universities.length
+            ) + " ans"
+          }
           icon={Activity}
           color="text-orange-600"
           change={-0.8}

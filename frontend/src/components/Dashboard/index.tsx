@@ -26,9 +26,7 @@ import {
   Line,
   Pie,
 } from "recharts";
-import { useOverview } from "@/hooks/useOverview";
-import { useRegions } from "@/hooks/useRegions";
-import { useUniversities } from "@/hooks/useUniversities";
+import cameroonData from "../../../data/cameroon.json";
 
 interface StatCardProps {
   title: string;
@@ -104,56 +102,68 @@ const StatCard: React.FC<StatCardProps> = ({
   </motion.div>
 );
 
-const Dashboard: React.FC = () => {
-  const {
-    overview,
-    loading: overviewLoading,
-    error: overviewError,
-  } = useOverview();
-  const { regions, loading: regionsLoading } = useRegions();
-  const { universities, loading: universitiesLoading } = useUniversities();
+interface DashboardData {
+  totalPopulation: number;
+  totalRegions: number;
+  totalDepartments: number;
+  totalUniversities: number;
+  capital: string;
+  totalArea: number;
+  currency: string;
+  officialLanguages: string[];
+}
 
-  const loading = overviewLoading || regionsLoading || universitiesLoading;
+interface DashboardProps {
+  data: DashboardData | null;
+}
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mx-auto mb-6"></div>
-          <p className="text-xl font-semibold text-gray-700">
-            Chargement des données...
-          </p>
-          <p className="text-gray-500 mt-2">
-            Récupération des informations sur la vue d&apos;ensemble des données
-          </p>
-        </div>
-      </div>
-    );
-  }
+interface Region {
+  id: number;
+  name: string;
+  capital: string;
+  population: number;
+  area: number;
+  departments: string[];
+}
 
-  if (overviewError) {
+interface University {
+  id: number;
+  name: string;
+  region: string;
+  founded: number;
+  type: string;
+  students: number;
+  website: string;
+  description: string;
+  faculties: string[];
+}
+
+interface CameroonData {
+  regions: Region[];
+  universities: University[];
+  overview: DashboardData;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ data }) => {
+  if (!data) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center bg-red-50 p-8 rounded-lg"
+          className="text-center"
         >
-          <p className="text-xl text-red-600 mb-4">Erreur de chargement</p>
-          <p className="text-gray-600">{overviewError}</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-600">Chargement des données...</p>
         </motion.div>
       </div>
     );
   }
 
-  if (!overview) {
-    return null;
-  }
-
   const stats: StatCardProps[] = [
     {
       title: "Population Totale",
-      value: overview.totalPopulation,
+      value: data.totalPopulation,
       icon: Users,
       color: {
         text: "text-blue-600",
@@ -165,7 +175,7 @@ const Dashboard: React.FC = () => {
     },
     {
       title: "Régions",
-      value: overview.totalRegions,
+      value: data.totalRegions,
       icon: MapPin,
       color: {
         text: "text-emerald-600",
@@ -177,7 +187,7 @@ const Dashboard: React.FC = () => {
     },
     {
       title: "Départements",
-      value: overview.totalDepartments,
+      value: data.totalDepartments,
       icon: Globe,
       color: {
         text: "text-purple-600",
@@ -189,7 +199,7 @@ const Dashboard: React.FC = () => {
     },
     {
       title: "Universités",
-      value: overview.totalUniversities,
+      value: data.totalUniversities,
       icon: GraduationCap,
       color: {
         text: "text-orange-600",
@@ -201,14 +211,18 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  const populationData = regions?.map((region) => ({
+  const populationData = cameroonData.regions.map((region: any) => ({
     name: region.name,
     population: region.population,
     area: region.area,
   }));
 
-  const publicCount = universities.filter((u) => u.type === "Public").length;
-  const privateCount = universities.filter((u) => u.type === "Privé").length;
+  const publicCount = cameroonData.universities.filter(
+    (u: any) => u.type === "Public"
+  ).length;
+  const privateCount = cameroonData.universities.filter(
+    (u: any) => u.type === "Privé"
+  ).length;
   const universityData = [
     { name: "Public", value: publicCount, color: "#3B82F6" },
     { name: "Privé", value: privateCount, color: "#10B981" },
@@ -219,7 +233,7 @@ const Dashboard: React.FC = () => {
     { year: "2019", population: 25876000 },
     { year: "2020", population: 26545000 },
     { year: "2021", population: 27224000 },
-    { year: "2022", population: 27914536 },
+    { year: "2022", population: cameroonData.overview.totalPopulation },
   ];
 
   return (
@@ -272,6 +286,7 @@ const Dashboard: React.FC = () => {
               />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
+                formatter={(value) => [value.toLocaleString(), "Population"]}
                 labelStyle={{ color: "#374151" }}
                 contentStyle={{
                   backgroundColor: "white",
@@ -458,16 +473,16 @@ const Dashboard: React.FC = () => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { label: "Capitale", value: overview.capital, icon: MapPin },
+            { label: "Capitale", value: data.capital, icon: MapPin },
             {
               label: "Superficie",
-              value: `${overview.totalArea.toLocaleString()} km²`,
+              value: `${data.totalArea.toLocaleString()} km²`,
               icon: Globe,
             },
-            { label: "Monnaie", value: overview.currency, icon: Activity },
+            { label: "Monnaie", value: data.currency, icon: Activity },
             {
               label: "Langues Officielles",
-              value: overview.officialLanguages.join(", "),
+              value: data.officialLanguages.join(", "),
               icon: Users,
             },
           ].map((item, index) => (

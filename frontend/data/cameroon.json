@@ -4,7 +4,7 @@
       "id": 1,
       "name": "Adamaoua",
       "capital": "Ngaoundéré",
-      "population": 884289,
+      "population": 1124000,
       "area": 63701,
       "departments": ["Djérem", "Faro-et-Déo", "Mayo-Banyo", "Mbéré", "Vina"],
       "majorCompanies": [
@@ -53,7 +53,7 @@
       "id": 2,
       "name": "Centre",
       "capital": "Yaoundé",
-      "population": 3098044,
+      "population": 3905000,
       "area": 68953,
       "departments": [
         "Haute-Sanaga",
@@ -127,7 +127,7 @@
       "id": 3,
       "name": "Est",
       "capital": "Bertoua",
-      "population": 771755,
+      "population": 830000,
       "area": 109002,
       "departments": [
         "Boumba-et-Ngoko",
@@ -185,7 +185,7 @@
       "id": 4,
       "name": "Extrême-Nord",
       "capital": "Maroua",
-      "population": 3111792,
+      "population": 3796000,
       "area": 34263,
       "departments": [
         "Diamaré",
@@ -246,7 +246,7 @@
       "id": 5,
       "name": "Littoral",
       "capital": "Douala",
-      "population": 2510283,
+      "population": 3178000,
       "area": 20248,
       "departments": ["Moungo", "Nkam", "Sanaga-Maritime", "Wouri"],
       "majorCompanies": [
@@ -309,7 +309,7 @@
       "id": 6,
       "name": "Nord",
       "capital": "Garoua",
-      "population": 1687859,
+      "population": 2297000,
       "area": 66090,
       "departments": ["Bénoué", "Faro", "Mayo-Louti", "Mayo-Rey"],
       "majorCompanies": [
@@ -358,7 +358,7 @@
       "id": 7,
       "name": "Nord-Ouest",
       "capital": "Bamenda",
-      "population": 1728953,
+      "population": 1906000,
       "area": 17300,
       "departments": [
         "Boyo",
@@ -415,7 +415,7 @@
       "id": 8,
       "name": "Ouest",
       "capital": "Bafoussam",
-      "population": 1720047,
+      "population": 1875000,
       "area": 13892,
       "departments": [
         "Bamboutos",
@@ -483,7 +483,7 @@
       "id": 9,
       "name": "Sud",
       "capital": "Ebolowa",
-      "population": 634855,
+      "population": 773000,
       "area": 47191,
       "departments": ["Dja-et-Lobo", "Mvila", "Océan", "Vallée-du-Ntem"],
       "majorCompanies": [
@@ -536,7 +536,7 @@
       "id": 10,
       "name": "Sud-Ouest",
       "capital": "Buea",
-      "population": 1318079,
+      "population": 1503000,
       "area": 25410,
       "departments": [
         "Fako",
@@ -966,7 +966,7 @@
     }
   ],
   "overview": {
-    "totalPopulation": 27914536,
+    "totalPopulation": 30119070,
     "totalArea": 475442,
     "totalRegions": 10,
     "totalDepartments": 58,

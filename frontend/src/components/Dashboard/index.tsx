@@ -38,10 +38,6 @@ interface StatCardProps {
     gradient: string;
   };
   description?: string;
-  trend?: {
-    value: number;
-    isPositive: boolean;
-  };
 }
 
 const StatCard: React.FC<StatCardProps> = ({
@@ -50,7 +46,6 @@ const StatCard: React.FC<StatCardProps> = ({
   icon: Icon,
   color,
   description,
-  trend,
 }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -73,23 +68,6 @@ const StatCard: React.FC<StatCardProps> = ({
           </p>
           {description && (
             <p className="text-xs text-gray-400 mt-1">{description}</p>
-          )}
-          {trend && (
-            <div className="flex items-center mt-2">
-              <TrendingUp
-                className={`w-4 h-4 mr-1 ${
-                  trend.isPositive ? "text-green-500" : "text-red-500"
-                }`}
-              />
-              <span
-                className={`text-sm font-medium ${
-                  trend.isPositive ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {trend.isPositive ? "+" : ""}
-                {trend.value}%
-              </span>
-            </div>
           )}
         </div>
         <div
@@ -171,7 +149,6 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         gradient: "from-blue-400 to-blue-600",
       },
       description: "Habitants du Cameroun",
-      trend: { value: 2.8, isPositive: true },
     },
     {
       title: "Régions",
@@ -183,7 +160,6 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         gradient: "from-emerald-400 to-emerald-600",
       },
       description: "Divisions administratives",
-      trend: { value: 0, isPositive: true },
     },
     {
       title: "Départements",
@@ -195,7 +171,6 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         gradient: "from-purple-400 to-purple-600",
       },
       description: "Subdivisions",
-      trend: { value: 0, isPositive: true },
     },
     {
       title: "Universités",
@@ -207,7 +182,6 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         gradient: "from-orange-400 to-orange-600",
       },
       description: "Institutions publiques",
-      trend: { value: 12.5, isPositive: true },
     },
   ];
 
@@ -229,11 +203,14 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
   ];
 
   const growthData = [
-    { year: "2018", population: 25216000 },
-    { year: "2019", population: 25876000 },
-    { year: "2020", population: 26545000 },
-    { year: "2021", population: 27224000 },
-    { year: "2022", population: cameroonData.overview.totalPopulation },
+    { year: "2018", population: 24806000 },
+    { year: "2019", population: 25506000 },
+    { year: "2020", population: 26211000 },
+    { year: "2021", population: 26916000 },
+    { year: "2022", population: 27633000 },
+    { year: "2023", population: 28373000 },
+    { year: "2024", population: 29124000 },
+    { year: "2025", population: cameroonData.overview.totalPopulation },
   ];
 
   return (
@@ -314,58 +291,6 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
               </defs>
             </BarChart>
           </ResponsiveContainer>
-        </motion.div>
-
-        {/* Universities Distribution */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">
-              Répartition des Universités
-            </h3>
-            <PieChart className="w-6 h-6 text-emerald-500" />
-          </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <RechartsPieChart>
-              <Pie
-                data={universityData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {universityData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value) => [value, "Universités"]}
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
-              />
-            </RechartsPieChart>
-          </ResponsiveContainer>
-          <div className="flex justify-center space-x-6 mt-4">
-            {universityData.map((item, index) => (
-              <div key={index} className="flex items-center">
-                <div
-                  className="w-3 h-3 rounded-full mr-2"
-                  style={{ backgroundColor: item.color }}
-                ></div>
-                <span className="text-sm text-gray-600">{item.name}</span>
-              </div>
-            ))}
-          </div>
         </motion.div>
 
         {/* Area by Region */}

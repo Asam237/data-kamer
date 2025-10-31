@@ -5,7 +5,6 @@ import Dashboard from "../components/Dashboard";
 import RegionsView from "../components/RegionsView";
 import UniversitiesView from "../components/UniversitiesView";
 import StatsView from "../components/StatsView";
-import SettingsView from "../components/SettingsView";
 import cameroonData from "../../data/cameroon.json";
 import MapView from "@/components/MapView";
 import { Monitor } from "lucide-react";

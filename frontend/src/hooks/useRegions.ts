@@ -9,9 +9,6 @@ interface UseRegionsState {
   refetch: () => Promise<void>;
 }
 
-/**
- * Hook personnalisé pour gérer les régions
- */
 export const useRegions = (): UseRegionsState => {
   const [regions, setRegions] = useState<Region[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

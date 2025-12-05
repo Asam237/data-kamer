@@ -427,7 +427,7 @@ const MapView: React.FC = () => {
     setIsAnimating(true);
     setSelectedRegion(region);
     setCenter(REGION_COORDINATES[region.name]);
-    setZoom(8);
+    setZoom(10);
     setDetailsOpen(true);
     setActiveTab("info");
     setSelectedDepartment(null);

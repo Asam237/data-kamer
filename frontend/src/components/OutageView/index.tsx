@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Map, Marker, Overlay, ZoomControl } from "pigeon-maps";
 import axios, { AxiosError } from "axios";
 import {
@@ -16,6 +16,7 @@ import {
   Clock,
   MapPin,
   List,
+  Target, // Ajouté pour le bouton de centrage
 } from "lucide-react";
 
 interface OutageInfo {
@@ -28,7 +29,6 @@ interface OutageInfo {
   ville: string;
 }
 
-// Mise à jour de l'interface pour refléter la structure normalisée
 interface OutageResponse {
   status: number;
   data: OutageInfo[];
@@ -40,6 +40,10 @@ interface RegionOutage {
   outages: OutageResponse;
   error?: string;
 }
+
+// Coordonnées pour le Cameroun
+const CAMEROON_CENTER: [number, number] = [5.5, 12.5];
+const INITIAL_ZOOM: number = 6;
 
 const REGION_COORDINATES: Record<string, [number, number]> = {
   CENTRE: [3.8667, 11.5167],
@@ -67,9 +71,6 @@ const REGION_MAPPING: Record<string, string> = {
   "X-10": "EXTRÊME-NORD",
 };
 
-const REGION_CODES: string[] = Object.keys(REGION_MAPPING);
-
-// Mise à jour pour utiliser la nouvelle structure
 const getRegionColor = (outages: OutageResponse): string => {
   if (!outages.data || outages.data.length === 0) return "#2ecc71";
   if (outages.data.length < 3) return "#f39c12";
@@ -92,8 +93,8 @@ const EneoOutageView: React.FC = () => {
   const [outageData, setOutageData] = useState<RegionOutage[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [center, setCenter] = useState<[number, number]>([7.3697, 12.3547]); // Centre du Cameroun
-  const [zoom, setZoom] = useState<number>(6);
+  const [center, setCenter] = useState<[number, number]>(CAMEROON_CENTER);
+  const [zoom, setZoom] = useState<number>(INITIAL_ZOOM);
   const [selectedRegion, setSelectedRegion] = useState<RegionOutage | null>(
     null
   );
@@ -107,10 +108,19 @@ const EneoOutageView: React.FC = () => {
   const [tooltipPosition, setTooltipPosition] = useState<[number, number]>([
     0, 0,
   ]);
+  // Nouveaux états pour la géolocalisation
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(
+    null
+  );
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationPrompted, setLocationPrompted] = useState<boolean>(false);
+
+  // --- Fonctions d'aide ---
 
   const fetchOutagesByRegion = async (
     regionCode: string
   ): Promise<RegionOutage> => {
+    // ... (votre fonction fetchOutagesByRegion reste la même)
     try {
       const response = await axios({
         method: "POST",
@@ -125,7 +135,6 @@ const EneoOutageView: React.FC = () => {
         },
       });
 
-      // Normaliser la structure des données
       let normalizedOutages: OutageResponse;
       if (
         response.data &&
@@ -155,25 +164,97 @@ const EneoOutageView: React.FC = () => {
       return {
         regionCode,
         regionName: REGION_MAPPING[regionCode],
-        outages: { status: 1, data: [] }, // Structure normalisée même en cas d'erreur
+        outages: { status: 1, data: [] },
         error: "Erreur de connexion",
       };
     }
   };
 
+  const geocodeLocation = useCallback(
+    async (
+      location: string,
+      city: string
+    ): Promise<[number, number] | null> => {
+      const query = `${location}, ${city}, Cameroun`;
+      try {
+        const response = await axios.get(
+          "https://nominatim.openstreetmap.org/search",
+          {
+            params: {
+              q: query,
+              format: "json",
+              limit: 1,
+              country: "Cameroon", // Pour affiner la recherche
+            },
+          }
+        );
+
+        if (response.data && response.data.length > 0) {
+          const lat = parseFloat(response.data[0].lat);
+          const lon = parseFloat(response.data[0].lon);
+          return [lat, lon];
+        }
+        return null;
+      } catch (error) {
+        console.error(
+          `Erreur de géocodage pour ${query}:`,
+          error as AxiosError
+        );
+        return null;
+      }
+    },
+    []
+  );
+
+  const requestUserLocation = useCallback((): void => {
+    if ("geolocation" in navigator) {
+      setLocationPrompted(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation([
+            position.coords.latitude,
+            position.coords.longitude,
+          ]);
+          setCenter([position.coords.latitude, position.coords.longitude]);
+          setZoom(12); // Zoom plus près de la position de l'utilisateur
+          setLocationError(null);
+        },
+        (err) => {
+          console.error("Erreur de géolocalisation:", err.message);
+          let errorMessage = "Accès à la localisation refusé ou impossible.";
+          if (err.code === err.PERMISSION_DENIED) {
+            errorMessage =
+              "Veuillez activer la localisation dans les réglages de votre navigateur.";
+          }
+          setLocationError(errorMessage);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        }
+      );
+    } else {
+      setLocationError(
+        "La géolocalisation n'est pas supportée par votre navigateur."
+      );
+    }
+  }, []);
+
+  // --- useEffects ---
+
   useEffect(() => {
     const fetchAllOutages = async (): Promise<void> => {
       setLoading(true);
       try {
+        // ... (votre logique de fetchAllOutages reste la même)
         const response = await fetch("/api/outages");
         if (!response.ok) {
           throw new Error(`Erreur HTTP: ${response.status}`);
         }
         const rawData = await response.json();
 
-        // Uniformiser la structure des données
         const transformedData = rawData.map((region: any) => {
-          // Vérifier si outages est déjà au bon format
           if (
             region.outages &&
             typeof region.outages === "object" &&
@@ -183,7 +264,6 @@ const EneoOutageView: React.FC = () => {
             return region;
           }
 
-          // Sinon, normaliser la structure
           return {
             regionCode: region.regionCode,
             regionName: region.regionName,
@@ -195,7 +275,6 @@ const EneoOutageView: React.FC = () => {
           };
         });
 
-        // Trouver les régions avec des coupures
         const regionsWithOutages = transformedData.filter(
           (region: RegionOutage) =>
             region.outages.data && region.outages.data.length > 0
@@ -221,13 +300,46 @@ const EneoOutageView: React.FC = () => {
       }
     };
     fetchAllOutages();
-  }, []);
+    // Demande de localisation au chargement initial, si ce n'est pas déjà fait
+    if (!locationPrompted) {
+      requestUserLocation();
+    }
+  }, [locationPrompted, requestUserLocation]);
 
-  const handleMarkerClick = (region: RegionOutage): void => {
+  // --- Handlers modifiés ---
+
+  const handleMarkerClick = async (region: RegionOutage): Promise<void> => {
     setSelectedRegion(region);
     setCenter(REGION_COORDINATES[region.regionName]);
     setZoom(8);
     setDetailsOpen(true);
+
+    // *Implémentation de la fonctionalité #2: Diriger la carte vers le quartier*
+    if (region.outages.data && region.outages.data.length > 0) {
+      // Pour cet exemple, prenons le premier quartier/ville de la région sélectionnée
+      const firstOutage = region.outages.data[0];
+      const locationToSearch = firstOutage.quartier || firstOutage.ville;
+      const city = firstOutage.ville || region.regionName;
+
+      if (locationToSearch) {
+        console.log(
+          `Recherche de coordonnées pour: ${locationToSearch}, ${city}`
+        );
+        const coords = await geocodeLocation(locationToSearch, city);
+
+        if (coords) {
+          setCenter(coords);
+          setZoom(14); // Zoom plus proche pour le niveau quartier
+          console.log(`Centré sur le quartier: ${locationToSearch}`, coords);
+        } else {
+          console.log(
+            `Coordonnées non trouvées pour ${locationToSearch}. Centrage sur la région.`
+          );
+          setCenter(REGION_COORDINATES[region.regionName]);
+          setZoom(8);
+        }
+      }
+    }
   };
 
   const handleMarkerHover = (
@@ -252,8 +364,8 @@ const EneoOutageView: React.FC = () => {
   };
 
   const resetView = (): void => {
-    setCenter([7.3697, 12.3547]);
-    setZoom(6);
+    setCenter(CAMEROON_CENTER);
+    setZoom(INITIAL_ZOOM);
     setSelectedRegion(null);
     setDetailsOpen(false);
   };
@@ -262,7 +374,19 @@ const EneoOutageView: React.FC = () => {
     setDetailsOpen(false);
   };
 
-  // Mise à jour pour utiliser la nouvelle structure
+  // Fonction pour centrer sur l'utilisateur
+  const centerOnUser = (): void => {
+    if (userLocation) {
+      setCenter(userLocation);
+      setZoom(12);
+      setLocationError(null); // Effacer l'erreur si l'utilisateur recentre
+    } else {
+      // Si la position n'est pas connue, redemander l'accès
+      requestUserLocation();
+    }
+  };
+
+  // ... (votre logique de filtrage et formatage reste la même)
   const filteredRegions = outageData.filter(
     (region) =>
       region.regionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -279,7 +403,6 @@ const EneoOutageView: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // Mise à jour pour utiliser la nouvelle structure
   const totalOutages: number = outageData.reduce(
     (total, region) =>
       total + (region.outages.data ? region.outages.data.length : 0),
@@ -287,6 +410,7 @@ const EneoOutageView: React.FC = () => {
   );
 
   if (loading) {
+    // ... (votre chargement reste le même)
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
@@ -303,6 +427,7 @@ const EneoOutageView: React.FC = () => {
   }
 
   if (error) {
+    // ... (votre gestion des erreurs reste la même)
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="bg-white border-l-4 border-red-500 shadow-lg rounded-lg p-6 max-w-md">
@@ -336,7 +461,9 @@ const EneoOutageView: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100 text-gray-800 transition-colors duration-300">
+      {/* Header */}
       <div className="bg-white border-gray-200 border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300">
+        {/* ... (votre header reste le même) ... */}
         <div className="flex items-center">
           <h1 className="text-xl font-bold flex items-center">
             <Zap className="h-6 w-6 mr-2 text-green-600" />
@@ -345,15 +472,21 @@ const EneoOutageView: React.FC = () => {
         </div>
         <div className="flex space-x-2">
           <button
-            className={`p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center`}
+            className={`p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center ${
+              viewMode === "map" ? "text-blue-600" : ""
+            }`}
             onClick={() => setViewMode("map")}
+            title="Vue Carte"
           >
             <MapIcon className="h-4 w-4 mr-1" />
             Carte
           </button>
           <button
-            className={`p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center`}
+            className={`p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center ${
+              viewMode === "list" ? "text-blue-600" : ""
+            }`}
             onClick={() => setViewMode("list")}
+            title="Vue Liste"
           >
             <List className="h-4 w-4 mr-1" />
             Liste
@@ -361,6 +494,11 @@ const EneoOutageView: React.FC = () => {
           <button
             className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center"
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            title={
+              sidebarOpen
+                ? "Masquer la barre latérale"
+                : "Afficher la barre latérale"
+            }
           >
             <Menu className="h-4 w-4 mr-1" />
             {sidebarOpen ? "Masquer" : "Afficher"}
@@ -371,6 +509,7 @@ const EneoOutageView: React.FC = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         {sidebarOpen && (
+          // ... (votre sidebar reste la même) ...
           <div className="w-80 bg-white shadow-lg overflow-hidden flex flex-col z-10">
             <div className="bg-gray-50 border-b p-4">
               <h2 className="font-bold text-gray-800 flex items-center">
@@ -490,6 +629,7 @@ const EneoOutageView: React.FC = () => {
           </div>
         )}
 
+        {/* Map / List View */}
         <div className="flex-1 flex overflow-hidden relative">
           {viewMode === "map" ? (
             <div
@@ -511,28 +651,62 @@ const EneoOutageView: React.FC = () => {
                 metaWheelZoom={true}
                 twoFingerDrag={true}
               >
-                {showRegions &&
-                  outageData.map((region) => (
-                    <Marker
-                      key={region.regionCode}
-                      width={
-                        selectedRegion?.regionCode === region.regionCode
-                          ? 50
-                          : 40
-                      }
-                      anchor={REGION_COORDINATES[region.regionName]}
-                      onClick={() => handleMarkerClick(region)}
-                      onMouseOver={(e: MarkerEvent) =>
-                        handleMarkerHover(region, [
-                          e.event.clientX,
-                          e.event.clientY,
-                        ])
-                      }
-                      onMouseOut={handleMarkerLeave}
-                      color={getRegionColor(region.outages)}
-                    />
-                  ))}
+                {/* Marqueur de la position de l'utilisateur */}
+                {userLocation && (
+                  <Marker
+                    anchor={userLocation}
+                    payload={1}
+                    width={50}
+                    color="#007bff"
+                  />
+                )}
 
+                {showRegions &&
+                  outageData.map((region) => {
+                    const outageCount = region.outages.data
+                      ? region.outages.data.length
+                      : 0;
+                    const isSelected =
+                      selectedRegion?.regionCode === region.regionCode;
+                    return (
+                      <Overlay
+                        key={region.regionCode}
+                        anchor={REGION_COORDINATES[region.regionName]}
+                        offset={[0, 0]}
+                      >
+                        <div
+                          className={`cursor-pointer transition-transform ${
+                            isSelected ? "scale-110" : "hover:scale-105"
+                          }`}
+                          onClick={() => handleMarkerClick(region)}
+                          onMouseOver={(e) =>
+                            handleMarkerHover(region, [e.clientX, e.clientY])
+                          }
+                          onMouseOut={handleMarkerLeave}
+                        >
+                          <div className="relative flex flex-col items-center">
+                            {/* Badge avec le nombre de coupures */}
+                            {outageCount > 0 && (
+                              <div className="absolute -top-2 bg-white text-gray-800 text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-gray-800 z-10">
+                                {outageCount}
+                              </div>
+                            )}
+                            {/* Icône de foudre */}
+                            <div
+                              className={`rounded-full p-2 shadow-lg ${
+                                isSelected ? "ring-4 ring-blue-500" : ""
+                              }`}
+                              style={{
+                                backgroundColor: getRegionColor(region.outages),
+                              }}
+                            >
+                              <Zap className="h-6 w-6 text-white" />
+                            </div>
+                          </div>
+                        </div>
+                      </Overlay>
+                    );
+                  })}
                 {showTooltip && tooltipRegion && !detailsOpen && (
                   <Overlay
                     anchor={REGION_COORDINATES[tooltipRegion.regionName]}
@@ -550,6 +724,37 @@ const EneoOutageView: React.FC = () => {
 
                 <ZoomControl />
               </Map>
+
+              {/* Message d'erreur/invitation de localisation */}
+              {locationError && !userLocation && (
+                <div className="absolute top-4 left-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md z-20">
+                  <p className="font-bold">Localisation requise</p>
+                  <p className="text-sm mt-1">{locationError}</p>
+                  {locationError.includes("refusé") && (
+                    <button
+                      onClick={requestUserLocation}
+                      className="mt-2 px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors"
+                    >
+                      Réactiver la localisation
+                    </button>
+                  )}
+                </div>
+              )}
+              {/* Message d'invitation par défaut si non demandé/refusé et non localisé */}
+              {!locationPrompted && !userLocation && (
+                <div className="absolute top-4 left-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded shadow-md z-20">
+                  <p className="font-bold">Localisez-vous !</p>
+                  <p className="text-sm mt-1">
+                    Cliquez pour voir les coupures proches de chez vous.
+                  </p>
+                  <button
+                    onClick={requestUserLocation}
+                    className="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors flex items-center"
+                  >
+                    <Target className="h-4 w-4 mr-1" /> Activer ma localisation
+                  </button>
+                </div>
+              )}
 
               {/* Custom map controls */}
               <div className="absolute top-4 right-4 flex flex-col space-y-2">
@@ -573,6 +778,22 @@ const EneoOutageView: React.FC = () => {
                   title="Vue d'ensemble"
                 >
                   <Layers className="h-5 w-5" />
+                </button>
+                {/* Nouveau bouton de centrage sur l'utilisateur */}
+                <button
+                  className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center transition-colors ${
+                    userLocation
+                      ? "bg-blue-500 text-white hover:bg-blue-600"
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={centerOnUser}
+                  title={
+                    userLocation
+                      ? "Centrer sur ma position"
+                      : "Activer la géolocalisation"
+                  }
+                >
+                  <Target className="h-5 w-5" />
                 </button>
               </div>
 
@@ -598,6 +819,7 @@ const EneoOutageView: React.FC = () => {
               </div>
             </div>
           ) : (
+            // ... (votre vue liste reste la même) ...
             <div className="w-full p-4 overflow-y-auto">
               <h2 className="text-xl font-bold mb-4">
                 Liste des coupures programmées

@@ -41,7 +41,6 @@ interface RegionOutage {
   error?: string;
 }
 
-// Coordonnées pour le Cameroun
 const CAMEROON_CENTER: [number, number] = [5.5, 12.5];
 const INITIAL_ZOOM: number = 6;
 

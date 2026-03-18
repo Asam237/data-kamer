@@ -4,22 +4,13 @@
       "id": 1,
       "name": "Adamaoua",
       "capital": "Ngaoundéré",
-      "population": 1124000,
+      "population": 1525175,
       "area": 63701,
       "departments": ["Djérem", "Faro-et-Déo", "Mayo-Banyo", "Mbéré", "Vina"],
       "majorCompanies": [
-        {
-          "name": "SODECOTON",
-          "sector": "Agriculture"
-        },
-        {
-          "name": "Brasseries du Cameroun",
-          "sector": "Boissons"
-        },
-        {
-          "name": "Dangote Cement",
-          "sector": "Construction"
-        }
+        { "name": "SODECOTON", "sector": "Agriculture" },
+        { "name": "Brasseries du Cameroun", "sector": "Boissons" },
+        { "name": "Dangote Cement", "sector": "Construction" }
       ],
       "jobDemand": ["Élevage", "Agriculture", "Agroalimentaire", "Tourisme"],
       "specialties": {
@@ -32,7 +23,7 @@
           "name": "Parc National de la Bénoué",
           "description": "Vaste parc national offrant des safaris et l'observation de la faune sauvage",
           "location": "Sud de Ngaoundéré",
-          "image": "/pictures/bn.jpg"
+          "image": "/images/regions/adamaoua/benoue_park.jpg"
         },
         {
           "name": "Chutes de Tello",
@@ -53,7 +44,7 @@
       "id": 2,
       "name": "Centre",
       "capital": "Yaoundé",
-      "population": 3905000,
+      "population": 5225915,
       "area": 68953,
       "departments": [
         "Haute-Sanaga",
@@ -68,26 +59,11 @@
         "Nyong-et-So'o"
       ],
       "majorCompanies": [
-        {
-          "name": "ENEO",
-          "sector": "Énergie"
-        },
-        {
-          "name": "MTN Cameroon",
-          "sector": "Télécommunications"
-        },
-        {
-          "name": "CAMTEL",
-          "sector": "Télécommunications"
-        },
-        {
-          "name": "Orange Cameroun",
-          "sector": "Télécommunications"
-        },
-        {
-          "name": "BICEC",
-          "sector": "Banque"
-        }
+        { "name": "ENEO", "sector": "Énergie" },
+        { "name": "MTN Cameroon", "sector": "Télécommunications" },
+        { "name": "CAMTEL", "sector": "Télécommunications" },
+        { "name": "Orange Cameroun", "sector": "Télécommunications" },
+        { "name": "BICEC", "sector": "Banque" }
       ],
       "jobDemand": [
         "Administration publique",
@@ -127,7 +103,7 @@
       "id": 3,
       "name": "Est",
       "capital": "Bertoua",
-      "population": 830000,
+      "population": 1200281,
       "area": 109002,
       "departments": [
         "Boumba-et-Ngoko",
@@ -136,22 +112,10 @@
         "Lom-et-Djérem"
       ],
       "majorCompanies": [
-        {
-          "name": "PALLISCO",
-          "sector": "Exploitation forestière"
-        },
-        {
-          "name": "SFID",
-          "sector": "Bois"
-        },
-        {
-          "name": "COTCO",
-          "sector": "Pétrole"
-        },
-        {
-          "name": "CamIron",
-          "sector": "Mines"
-        }
+        { "name": "PALLISCO", "sector": "Exploitation forestière" },
+        { "name": "SFID", "sector": "Bois" },
+        { "name": "COTCO", "sector": "Pétrole" },
+        { "name": "CamIron", "sector": "Mines" }
       ],
       "jobDemand": ["Foresterie", "Mines", "Agriculture", "Conservation"],
       "specialties": {
@@ -185,7 +149,7 @@
       "id": 4,
       "name": "Extrême-Nord",
       "capital": "Maroua",
-      "population": 3796000,
+      "population": 5573289,
       "area": 34263,
       "departments": [
         "Diamaré",
@@ -196,18 +160,9 @@
         "Mayo-Tsanaga"
       ],
       "majorCompanies": [
-        {
-          "name": "SODECOTON",
-          "sector": "Agriculture"
-        },
-        {
-          "name": "SEMRY",
-          "sector": "Riziculture"
-        },
-        {
-          "name": "CICAM",
-          "sector": "Textile"
-        }
+        { "name": "SODECOTON", "sector": "Agriculture" },
+        { "name": "SEMRY", "sector": "Riziculture" },
+        { "name": "CICAM", "sector": "Textile" }
       ],
       "jobDemand": [
         "Agriculture",
@@ -246,30 +201,15 @@
       "id": 5,
       "name": "Littoral",
       "capital": "Douala",
-      "population": 3178000,
+      "population": 4247503,
       "area": 20248,
       "departments": ["Moungo", "Nkam", "Sanaga-Maritime", "Wouri"],
       "majorCompanies": [
-        {
-          "name": "SABC",
-          "sector": "Boissons"
-        },
-        {
-          "name": "CAMRAIL",
-          "sector": "Transport ferroviaire"
-        },
-        {
-          "name": "Port Autonome de Douala",
-          "sector": "Transport maritime"
-        },
-        {
-          "name": "ALUCAM",
-          "sector": "Aluminium"
-        },
-        {
-          "name": "SOCAPALM",
-          "sector": "Agriculture"
-        }
+        { "name": "SABC", "sector": "Boissons" },
+        { "name": "CAMRAIL", "sector": "Transport ferroviaire" },
+        { "name": "Port Autonome de Douala", "sector": "Transport maritime" },
+        { "name": "ALUCAM", "sector": "Aluminium" },
+        { "name": "SOCAPALM", "sector": "Agriculture" }
       ],
       "jobDemand": [
         "Logistique/Transport",
@@ -309,22 +249,13 @@
       "id": 6,
       "name": "Nord",
       "capital": "Garoua",
-      "population": 2297000,
+      "population": 3723485,
       "area": 66090,
       "departments": ["Bénoué", "Faro", "Mayo-Louti", "Mayo-Rey"],
       "majorCompanies": [
-        {
-          "name": "SODECOTON",
-          "sector": "Agriculture"
-        },
-        {
-          "name": "Brasseries du Cameroun",
-          "sector": "Boissons"
-        },
-        {
-          "name": "CIMENCAM",
-          "sector": "Ciment"
-        }
+        { "name": "SODECOTON", "sector": "Agriculture" },
+        { "name": "Brasseries du Cameroun", "sector": "Boissons" },
+        { "name": "CIMENCAM", "sector": "Ciment" }
       ],
       "jobDemand": ["Agriculture", "Élevage", "Commerce", "Construction"],
       "specialties": {
@@ -337,7 +268,7 @@
           "name": "Parc National de Bouba Ndjida",
           "description": "Vaste parc national abritant des éléphants, lions et de nombreuses espèces d'antilopes",
           "location": "Est de Garoua",
-          "image": "/images/regions/nord/bouba_ndjida_park.jpg"
+          "image": "/pictures/bn.jpg"
         },
         {
           "name": "Lamido Palace",
@@ -358,7 +289,7 @@
       "id": 7,
       "name": "Nord-Ouest",
       "capital": "Bamenda",
-      "population": 1906000,
+      "population": 1774119,
       "area": 17300,
       "departments": [
         "Boyo",
@@ -370,18 +301,9 @@
         "Ngo-Ketunjia"
       ],
       "majorCompanies": [
-        {
-          "name": "Ndawara Tea Estate",
-          "sector": "Agriculture"
-        },
-        {
-          "name": "Cameroon Development Corporation",
-          "sector": "Agriculture"
-        },
-        {
-          "name": "Guinness Cameroon",
-          "sector": "Boissons"
-        }
+        { "name": "Ndawara Tea Estate", "sector": "Agriculture" },
+        { "name": "Cameroon Development Corporation", "sector": "Agriculture" },
+        { "name": "Guinness Cameroon", "sector": "Boissons" }
       ],
       "jobDemand": ["Agriculture", "Artisanat", "Éducation", "Commerce"],
       "specialties": {
@@ -415,7 +337,7 @@
       "id": 8,
       "name": "Ouest",
       "capital": "Bafoussam",
-      "population": 1875000,
+      "population": 3315190,
       "area": 13892,
       "departments": [
         "Bamboutos",
@@ -428,22 +350,10 @@
         "Noun"
       ],
       "majorCompanies": [
-        {
-          "name": "SABC",
-          "sector": "Boissons"
-        },
-        {
-          "name": "SOCAPALM",
-          "sector": "Agriculture"
-        },
-        {
-          "name": "UNALOR",
-          "sector": "Aviculture"
-        },
-        {
-          "name": "SIC CACAO",
-          "sector": "Agroalimentaire"
-        }
+        { "name": "SABC", "sector": "Boissons" },
+        { "name": "SOCAPALM", "sector": "Agriculture" },
+        { "name": "UNALOR", "sector": "Aviculture" },
+        { "name": "SIC CACAO", "sector": "Agroalimentaire" }
       ],
       "jobDemand": [
         "Agriculture",
@@ -483,26 +393,14 @@
       "id": 9,
       "name": "Sud",
       "capital": "Ebolowa",
-      "population": 773000,
+      "population": 938738,
       "area": 47191,
       "departments": ["Dja-et-Lobo", "Mvila", "Océan", "Vallée-du-Ntem"],
       "majorCompanies": [
-        {
-          "name": "HEVECAM",
-          "sector": "Caoutchouc"
-        },
-        {
-          "name": "SOCAPALM",
-          "sector": "Agriculture"
-        },
-        {
-          "name": "SAFACAM",
-          "sector": "Agriculture"
-        },
-        {
-          "name": "CamIron",
-          "sector": "Mines"
-        }
+        { "name": "HEVECAM", "sector": "Caoutchouc" },
+        { "name": "SOCAPALM", "sector": "Agriculture" },
+        { "name": "SAFACAM", "sector": "Agriculture" },
+        { "name": "CamIron", "sector": "Mines" }
       ],
       "jobDemand": ["Agriculture", "Foresterie", "Mines", "Tourisme"],
       "specialties": {
@@ -536,7 +434,7 @@
       "id": 10,
       "name": "Sud-Ouest",
       "capital": "Buea",
-      "population": 1503000,
+      "population": 1324187,
       "area": 25410,
       "departments": [
         "Fako",
@@ -551,18 +449,9 @@
           "name": "CDC (Cameroon Development Corporation)",
           "sector": "Agriculture"
         },
-        {
-          "name": "PAMOL",
-          "sector": "Huile de palme"
-        },
-        {
-          "name": "SONARA",
-          "sector": "Pétrole"
-        },
-        {
-          "name": "Guinness Cameroon",
-          "sector": "Boissons"
-        }
+        { "name": "PAMOL", "sector": "Huile de palme" },
+        { "name": "SONARA", "sector": "Pétrole" },
+        { "name": "Guinness Cameroon", "sector": "Boissons" }
       ],
       "jobDemand": ["Agriculture", "Tourisme", "Pétrole", "Pêche", "Services"],
       "specialties": {
@@ -573,7 +462,7 @@
       "touristSites": [
         {
           "name": "Mont Cameroun",
-          "description": "Plus haut sommet d'Afrique de l'Ouest (4,100m), volcan actif offrant des randonnées",
+          "description": "Plus haut sommet d'Afrique de l'Ouest (4 100m), volcan actif offrant des randonnées spectaculaires",
           "location": "Buea",
           "image": "/images/regions/sud_ouest/mount_cameroon.jpg"
         },
@@ -600,9 +489,9 @@
       "region": "Centre",
       "founded": 1962,
       "type": "Public",
-      "students": 45000,
+      "students": 60000,
       "website": "https://www.uy1.uninet.cm",
-      "description": "La plus ancienne université du Cameroun, spécialisée dans les sciences exactes, la médecine et les sciences de l'ingénieur.",
+      "description": "La plus ancienne université du Cameroun, spécialisée dans les sciences exactes, la médecine et les sciences de l'ingénieur. Classée parmi les meilleures universités d'Afrique centrale.",
       "faculties": [
         "Faculté des Sciences",
         "Faculté de Médecine et des Sciences Biomédicales",
@@ -626,13 +515,13 @@
       "region": "Centre",
       "founded": 1993,
       "type": "Public",
-      "students": 35000,
+      "students": 45000,
       "website": "https://www.univ-yaounde2.cm",
-      "description": "Université spécialisée dans les sciences sociales, le droit, les sciences économiques et de gestion.",
+      "description": "Université spécialisée dans les sciences sociales, le droit, les sciences économiques et de gestion. Siège de l'IRIC et de l'IFORD.",
       "faculties": [
         "Faculté des Sciences Juridiques et Politiques",
         "Faculté des Sciences Économiques et de Gestion",
-        "Institut des Relations Internationales du Cameroun",
+        "Institut des Relations Internationales du Cameroun (IRIC)",
         "École Supérieure des Sciences et Techniques de l'Information et de la Communication",
         "Institut de Formation et de Recherche Démographique (IFORD)",
         "Chaire Santé et Globalisation"
@@ -648,11 +537,11 @@
       "id": 3,
       "name": "Université de Douala",
       "region": "Littoral",
-      "founded": 1993,
+      "founded": 1992,
       "type": "Public",
-      "students": 40000,
+      "students": 55000,
       "website": "https://www.univ-douala.com",
-      "description": "Université pluridisciplinaire située dans la capitale économique du Cameroun.",
+      "description": "Université pluridisciplinaire de la capitale économique du Cameroun, organisée sur cinq campus (Bassa, Ndogbong, Akwa, MATGENIE, PK17).",
       "faculties": [
         "Faculté des Sciences",
         "Faculté des Sciences Juridiques et Politiques",
@@ -661,8 +550,7 @@
         "Faculté de Médecine et des Sciences Pharmaceutiques",
         "École Nationale Supérieure Polytechnique",
         "Institut Universitaire de Technologie",
-        "Ecole Normale Supérieure d'Enseignement Technique",
-        "Institut Universitaire de Technologie",
+        "École Normale Supérieure d'Enseignement Technique",
         "Institut des Beaux-Arts",
         "Institut des Sciences Halieutiques"
       ],
@@ -679,14 +567,14 @@
       "region": "Ouest",
       "founded": 1993,
       "type": "Public",
-      "students": 28000,
+      "students": 35000,
       "website": "https://www.univ-dschang.org",
-      "description": "Université reconnue pour ses programmes en agriculture, sciences vétérinaires et architecture.",
+      "description": "Université reconnue pour ses programmes en agriculture, agroalimentaire et sciences vétérinaires. Destination académique de référence en Afrique centrale.",
       "faculties": [
-        "Faculté d'Agronomie et des Sciences Agricoles",
+        "Faculté d'Agronomie et des Sciences Agricoles (FASA)",
         "Faculté des Sciences",
         "Faculté des Lettres et Sciences Humaines",
-        "École Nationale Supérieure des Sciences Agro-Industrielles",
+        "École Nationale Supérieure des Sciences Agro-Industrielles (ENSAI)",
         "Institut Universitaire de Technologie"
       ],
       "mainImage": "/images/universities/université_de_dschang.jpg",
@@ -702,9 +590,9 @@
       "region": "Adamaoua",
       "founded": 1993,
       "type": "Public",
-      "students": 22000,
+      "students": 25000,
       "website": "https://www.univ-ndere.cm",
-      "description": "Université du Grand Nord, offrant des formations adaptées aux besoins de développement de la région.",
+      "description": "Université du Grand Nord, située à Dang (15 km de Ngaoundéré), offrant des formations adaptées aux besoins de développement régional.",
       "faculties": [
         "Faculté des Sciences",
         "Faculté des Arts, Lettres et Sciences Humaines",
@@ -725,9 +613,9 @@
       "region": "Sud-Ouest",
       "founded": 1993,
       "type": "Public",
-      "students": 25000,
+      "students": 30000,
       "website": "https://www.ubuea.cm",
-      "description": "Première université anglophone du Cameroun, située au pied du Mont Cameroun.",
+      "description": "Première université anglophone du Cameroun, au pied du Mont Cameroun. Classée #1 au Cameroun dans plusieurs classements internationaux 2025.",
       "faculties": [
         "Faculty of Science",
         "Faculty of Arts",
@@ -748,9 +636,9 @@
       "region": "Extrême-Nord",
       "founded": 2008,
       "type": "Public",
-      "students": 18000,
+      "students": 20000,
       "website": "https://www.univ-maroua.cm",
-      "description": "Université récente dédiée au développement du Grand Nord camerounais.",
+      "description": "Université dédiée au développement du Grand Nord, avec un Institut Supérieur du Sahel unique pour la recherche sur les zones arides.",
       "faculties": [
         "Faculté des Sciences",
         "École Normale Supérieure",
@@ -770,9 +658,9 @@
       "region": "Nord-Ouest",
       "founded": 2010,
       "type": "Public",
-      "students": 15000,
+      "students": 18000,
       "website": "https://www.uniba.cm",
-      "description": "Université anglophone récente, contribuant au développement de la région du Nord-Ouest.",
+      "description": "Université anglophone créée le 14 décembre 2010, avec un plan stratégique de développement 2021-2025 axé sur l'innovation.",
       "faculties": [
         "Faculty of Science",
         "Faculty of Arts",
@@ -794,16 +682,16 @@
       "type": "Public",
       "students": 10000,
       "website": "https://www.univ-bertoua.cm",
-      "description": "Université publique créée par le décret N°2022/008 du 05 Janvier 2022, située dans la région de l'Est du Cameroun.",
+      "description": "Université créée par décret N°2022/008 du 05 janvier 2022. Dotée de formations spécialisées en mines, forêt, urbanisme et environnement.",
       "faculties": [
-        "L'Ecole Normale Supérieure (ENS) à Bertoua",
-        "L'Ecole Supérieure des Sciences de l'Urbanisme et du Tourisme (ESSUT)",
-        "L'Institut Supérieur d'Agriculture, du Bois, de l'Eau et de l'Environnement,(ISABEE)",
-        "L'Ecole Supérieure de Transformation des Mines et des Ressources Energétiques (ESTM)",
-        "La Faculté des Arts, Lettres et Sciences Humaines",
-        "La Faculté des Sciences",
-        "La Faculté des Sciences Économiques et de Gestion",
-        "La Faculté des Sciences Juridiques et Politiques"
+        "École Normale Supérieure (ENS)",
+        "École Supérieure des Sciences de l'Urbanisme et du Tourisme (ESSUT)",
+        "Institut Supérieur d'Agriculture, du Bois, de l'Eau et de l'Environnement (ISABEE)",
+        "École Supérieure de Transformation des Mines et des Ressources Énergétiques (ESTM)",
+        "Faculté des Arts, Lettres et Sciences Humaines",
+        "Faculté des Sciences",
+        "Faculté des Sciences Économiques et de Gestion",
+        "Faculté des Sciences Juridiques et Politiques"
       ],
       "mainImage": "/images/universities/université_de_bertoua.jpg",
       "galleryImages": [
@@ -818,10 +706,10 @@
       "region": "Sud",
       "founded": 2022,
       "type": "Public",
-      "students": 4800,
+      "students": 5000,
       "website": "https://unv-ebolowa.cm/",
-      "description": "Université publique située dans la région du Sud du Cameroun, créée dans le cadre de la décentralisation de l'enseignement supérieur.",
-      "faculties": ["Informations sur les facultés"],
+      "description": "Université publique créée en 2022 dans le cadre de la décentralisation de l'enseignement supérieur camerounais.",
+      "faculties": ["Structure facultaire en cours de développement"],
       "mainImage": "/images/universities/université_d'ebolowa.jpg",
       "galleryImages": [
         "/images/universities/université_d'ebolowa_campus.jpg",
@@ -835,12 +723,12 @@
       "region": "Nord",
       "founded": 2022,
       "type": "Public",
-      "students": 3500,
+      "students": 5000,
       "website": "http://univ-garoua.cm/",
-      "description": "Université publique située dans la région du Nord du Cameroun.",
+      "description": "Université publique créée en 2022, contribuant au développement de l'enseignement supérieur dans le Grand Nord camerounais.",
       "faculties": [
         "Faculté des Sciences Juridiques et Politiques",
-        "Faculté des Sciences Économiques et Gestion",
+        "Faculté des Sciences Économiques et de Gestion",
         "École Supérieure des Sciences Économiques et Commerciales",
         "Faculté de Médecine et des Sciences Biomédicales",
         "Faculté des Sciences",
@@ -859,7 +747,7 @@
       "region": "Centre",
       "founded": 1989,
       "type": "Privé",
-      "students": 8000,
+      "students": 9000,
       "website": "https://ucac-icy.net/",
       "description": "Établissement sous-régional d'enseignement supérieur alliant excellence académique et formation humaine intégrale.",
       "faculties": [
@@ -882,9 +770,9 @@
       "region": "Ouest",
       "founded": 2000,
       "type": "Privé",
-      "students": 5000,
+      "students": 5500,
       "website": "https://www.udesmontagnes.org",
-      "description": "Université privée située à Bangangté, reconnue pour ses programmes en médecine et ingénierie.",
+      "description": "Université privée à Bangangté, reconnue pour ses programmes en médecine et en ingénierie.",
       "faculties": [
         "Faculté de Médecine et des Sciences Biomédicales",
         "Faculté des Sciences de l'Ingénieur",
@@ -904,9 +792,9 @@
       "region": "Centre",
       "founded": 2007,
       "type": "Privé",
-      "students": 1200,
+      "students": 1500,
       "website": "https://uacosendai-edu.net/",
-      "description": "Université privée confessionnelle située à Nanga-Eboko, offrant une formation diversifiée dans un cadre serein.",
+      "description": "Université confessionnelle à Nanga-Eboko, offrant une formation diversifiée dans un cadre serein.",
       "faculties": [
         "Faculté de Théologie",
         "Faculté des Sciences de l'Éducation",
@@ -926,7 +814,7 @@
       "region": "Centre",
       "founded": 2009,
       "type": "Privé",
-      "students": 3000,
+      "students": 3500,
       "website": "https://www.upac.cm",
       "description": "Université protestante offrant des formations dans diverses disciplines avec une approche chrétienne.",
       "faculties": [
@@ -950,7 +838,7 @@
       "type": "Privé",
       "students": 2500,
       "website": "https://www.ude-cameroun.org",
-      "description": "Université privée située à Ebolowa, contribuant au développement de la région du Sud.",
+      "description": "Université privée à Ebolowa, contribuant au développement de l'enseignement supérieur dans la région du Sud.",
       "faculties": [
         "Faculté des Sciences Juridiques et Politiques",
         "Faculté des Sciences Économiques et de Gestion",
@@ -966,14 +854,20 @@
     }
   ],
   "overview": {
-    "totalPopulation": 30119070,
-    "totalArea": 475442,
+    "totalPopulation": 29879300,
+    "totalPopulationYear": 2025,
+    "totalArea": 475650,
     "totalRegions": 10,
     "totalDepartments": 58,
-    "totalUniversities": 11,
+    "totalUniversitesPubliques": 11,
+    "totalEtablissementsPrives": 230,
     "capital": "Yaoundé",
     "officialLanguages": ["Français", "Anglais"],
     "currency": "Franc CFA",
+    "populationGrowthRate": 2.54,
+    "medianAge": 18.2,
+    "urbanizationRate": 59.85,
+    "dataSource": "BUCREP 2023, INS Cameroun, Worldometer 2025",
     "images": {
       "flag": "/images/flag.jpg",
       "map": "/images/map.jpg",

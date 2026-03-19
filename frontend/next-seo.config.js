@@ -1,5 +1,5 @@
 /** @type {import('next-seo').NextSeoProps} */
 const config = {
-  title: "Ecole La Semence"
+  title: "Data Kamer",
 };
 export default config;

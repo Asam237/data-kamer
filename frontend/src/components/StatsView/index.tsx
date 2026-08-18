@@ -34,18 +34,27 @@ import {
   PieChart as PieChartIcon,
   Activity,
   Target,
-  Filter,
   Download,
 } from "lucide-react";
 import { CameroonData } from "../../../types";
+import PageHeader from "@/components/ui/PageHeader";
+import StatCard from "@/components/ui/StatCard";
+import { exportToCsv } from "@/lib/export";
 
 interface StatsViewProps {
   data: CameroonData;
 }
 
+const chartTooltipStyle = {
+  backgroundColor: "hsl(var(--card))",
+  border: "1px solid hsl(var(--border))",
+  borderRadius: "8px",
+  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+  color: "hsl(var(--foreground))",
+};
+
 const StatsView: React.FC<StatsViewProps> = ({ data }) => {
   const [activeChart, setActiveChart] = useState<string>("population");
-  const [timeRange, setTimeRange] = useState<string>("all");
 
   // Process data for charts
   const regionData = data.regions
@@ -158,39 +167,18 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
     { id: "radar", name: "Radar", icon: Target },
   ];
 
-  const StatCard = ({ title, value, icon: Icon, color, change }: any) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      className="bg-white rounded-xl shadow-lg p-6 border border-gray-100"
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
-          <p className={`text-2xl font-bold ${color}`}>{value}</p>
-          {change && (
-            <p
-              className={`text-sm ${
-                change > 0 ? "text-green-600" : "text-red-600"
-              } flex items-center mt-1`}
-            >
-              <TrendingUp className="w-4 h-4 mr-1" />
-              {change > 0 ? "+" : ""}
-              {change}%
-            </p>
-          )}
-        </div>
-        <div
-          className={`p-3 rounded-lg ${color
-            .replace("text-", "bg-")
-            .replace("-600", "-100")}`}
-        >
-          <Icon className={`w-6 h-6 ${color}`} />
-        </div>
-      </div>
-    </motion.div>
-  );
+  const handleExport = () => {
+    exportToCsv(
+      "statistiques-regions",
+      regionStats.map((r) => ({
+        Région: r.region,
+        Population: r.population,
+        "Superficie (km²)": r.area,
+        "Densité (hab/km²)": r.density,
+        Universités: r.universities,
+      }))
+    );
+  };
 
   const renderChart = () => {
     switch (activeChart) {
@@ -198,7 +186,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
         return (
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={regionData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="name" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
@@ -209,12 +197,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                 labelFormatter={(label) =>
                   regionData.find((r) => r.name === label)?.fullName || label
                 }
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
+                contentStyle={chartTooltipStyle}
               />
               <Bar dataKey="population" fill="#3B82F6" radius={[4, 4, 0, 0]} />
               <Bar dataKey="density" fill="#10B981" radius={[4, 4, 0, 0]} />
@@ -226,7 +209,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
         return (
           <ResponsiveContainer width="100%" height={400}>
             <ComposedChart data={universityByRegion}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis
                 dataKey="name"
                 tick={{ fontSize: 12 }}
@@ -240,14 +223,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                 orientation="right"
                 tick={{ fontSize: 12 }}
               />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
-              />
+              <Tooltip contentStyle={chartTooltipStyle} />
               <Bar
                 yAxisId="left"
                 dataKey="universities"
@@ -269,7 +245,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
         return (
           <ResponsiveContainer width="100%" height={400}>
             <AreaChart data={regionStats}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis
                 dataKey="region"
                 tick={{ fontSize: 12 }}
@@ -278,14 +254,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                 height={100}
               />
               <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
-              />
+              <Tooltip contentStyle={chartTooltipStyle} />
               <Area
                 type="monotone"
                 dataKey="density"
@@ -324,7 +293,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip contentStyle={chartTooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
             <ResponsiveContainer width="100%" height="100%">
@@ -342,7 +311,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip contentStyle={chartTooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -354,17 +323,12 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
             <LineChart
               data={universityData.sort((a, b) => a.founded - b.founded)}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="founded" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
                 labelFormatter={(value) => `Année: ${value}`}
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
+                contentStyle={chartTooltipStyle}
               />
               <Line
                 type="monotone"
@@ -392,7 +356,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                 fillOpacity={0.3}
                 strokeWidth={2}
               />
-              <Tooltip />
+              <Tooltip contentStyle={chartTooltipStyle} />
             </RadarChart>
           </ResponsiveContainer>
         );
@@ -403,30 +367,21 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
   };
 
   return (
-    <div className="space-y-8 p-8">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center"
-      >
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          Statistiques Avancées
-        </h1>
-        <p className="text-lg text-gray-600">
-          Analyses détaillées et visualisations interactives des données du
-          Cameroun
-        </p>
-      </motion.div>
+    <div className="space-y-8 p-6 sm:p-8">
+      <PageHeader
+        title="Statistiques Avancées"
+        subtitle="Analyses détaillées et visualisations interactives des données du Cameroun"
+        icon={BarChart3}
+        align="center"
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Population Totale"
-          value={data.overview.totalPopulation.toLocaleString()}
+          value={data.overview.totalPopulation}
           icon={Users}
-          color="text-blue-600"
-          change={2.8}
+          accent="blue"
         />
         <StatCard
           title="Densité Moyenne"
@@ -436,17 +391,16 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
             ) + " hab/km²"
           }
           icon={MapPin}
-          color="text-green-600"
-          change={1.2}
+          accent="emerald"
         />
         <StatCard
           title="Étudiants Total"
-          value={data.universities
-            .reduce((sum, uni) => sum + (uni.students || 0), 0)
-            .toLocaleString()}
+          value={data.universities.reduce(
+            (sum, uni) => sum + (uni.students || 0),
+            0
+          )}
           icon={GraduationCap}
-          color="text-purple-600"
-          change={5.4}
+          accent="purple"
         />
         <StatCard
           title="Âge Moyen Universités"
@@ -459,8 +413,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
             ) + " ans"
           }
           icon={Activity}
-          color="text-orange-600"
-          change={-0.8}
+          accent="orange"
         />
       </div>
 
@@ -468,7 +421,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl shadow-lg p-6 border border-gray-100"
+        className="bg-card rounded-xl shadow-sm p-6 border border-border"
       >
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div className="flex flex-wrap gap-2">
@@ -476,10 +429,10 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
               <button
                 key={option.id}
                 onClick={() => setActiveChart(option.id)}
-                className={`flex items-center px-4 py-2 rounded-lg transition-all duration-200 ${
+                className={`flex items-center px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                   activeChart === option.id
                     ? "bg-blue-500 text-white shadow-lg"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    : "bg-muted text-muted-foreground hover:bg-muted/70"
                 }`}
               >
                 <option.icon className="w-4 h-4 mr-2" />
@@ -487,21 +440,13 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-4">
-            <select
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">Toutes les données</option>
-              <option value="recent">Données récentes</option>
-              <option value="historical">Données historiques</option>
-            </select>
-            <button className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-              <Download className="w-4 h-4 mr-2" />
-              Exporter
-            </button>
-          </div>
+          <button
+            onClick={handleExport}
+            className="flex items-center px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Exporter
+          </button>
         </div>
 
         {/* Chart Container */}
@@ -510,7 +455,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="bg-gray-50 rounded-lg p-4"
+          className="bg-muted/40 rounded-lg p-4"
         >
           {renderChart()}
         </motion.div>
@@ -521,16 +466,16 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-white rounded-xl shadow-lg p-6 border border-gray-100"
+          className="bg-card rounded-xl shadow-sm p-6 border border-border"
         >
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
+          <h3 className="text-xl font-bold text-foreground mb-4">
             Top 5 Régions par Population
           </h3>
           <div className="space-y-3">
             {regionData.slice(0, 5).map((region, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
               >
                 <div className="flex items-center">
                   <div
@@ -546,9 +491,11 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                   >
                     {index + 1}
                   </div>
-                  <span className="font-medium">{region.fullName}</span>
+                  <span className="font-medium text-foreground">
+                    {region.fullName}
+                  </span>
                 </div>
-                <span className="text-gray-600">
+                <span className="text-muted-foreground">
                   {region.population.toLocaleString()}
                 </span>
               </div>
@@ -559,14 +506,14 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-white rounded-xl shadow-lg p-6 border border-gray-100"
+          className="bg-card rounded-xl shadow-sm p-6 border border-border"
         >
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
+          <h3 className="text-xl font-bold text-foreground mb-4">
             Universités par Région
           </h3>
           <ResponsiveContainer width="100%" height={200}>
             <ScatterChart data={scatterData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis
                 dataKey="x"
                 name="Superficie"
@@ -594,12 +541,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                     ? "Population"
                     : "Densité",
                 ]}
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
+                contentStyle={chartTooltipStyle}
               />
               <Scatter dataKey="y" fill="#3B82F6" />
             </ScatterChart>

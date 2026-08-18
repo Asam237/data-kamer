@@ -5,23 +5,33 @@ import Dashboard from "../components/Dashboard";
 import RegionsView from "../components/RegionsView";
 import UniversitiesView from "../components/UniversitiesView";
 import StatsView from "../components/StatsView";
+import CompareView from "../components/CompareView";
 import cameroonData from "../../data/cameroon.json";
 import MapView from "@/components/MapView";
 import { Monitor } from "lucide-react";
 import EneoOutageView from "@/components/OutageView";
+import SettingsView from "@/components/SettingsView";
+import Topbar from "@/components/Topbar";
+import CommandPalette, { ViewType } from "@/components/CommandPalette";
+import FavoritesModal from "@/components/FavoritesModal";
 
-type ViewType =
-  | "dashboard"
-  | "regions"
-  | "universities"
-  | "stats"
-  | "settings"
-  | "outages"
-  | "map";
+const VIEW_TITLES: Record<ViewType, string> = {
+  dashboard: "Tableau de bord",
+  regions: "Régions du Cameroun",
+  universities: "Universités du Cameroun",
+  compare: "Comparateur de régions",
+  map: "Carte interactive",
+  outages: "Coupures de courant ENEO",
+  stats: "Statistiques avancées",
+  settings: "Paramètres",
+};
 
 const DashboardPage = () => {
   const [activeView, setActiveView] = useState<ViewType>("dashboard");
-  const [data, setData] = useState(cameroonData);
+  const [data] = useState(cameroonData);
+  const [pendingSearch, setPendingSearch] = useState<string>("");
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -34,13 +44,15 @@ const DashboardPage = () => {
 
     window.addEventListener("resize", checkScreenSize);
 
-    let timer: any;
-
     return () => {
-      clearTimeout(timer);
       window.removeEventListener("resize", checkScreenSize);
     };
-  }, [isMobile]);
+  }, []);
+
+  const handleNavigate = (view: ViewType, search?: string) => {
+    setPendingSearch(search ?? "");
+    setActiveView(view);
+  };
 
   if (isMobile) {
     return (
@@ -96,25 +108,31 @@ const DashboardPage = () => {
       case "dashboard":
         return (
           <motion.div {...viewProps}>
-            <Dashboard data={data.overview} />
+            <Dashboard data={data.overview} onNavigate={handleNavigate} />
           </motion.div>
         );
       case "regions":
         return (
           <motion.div {...viewProps}>
-            <RegionsView />
+            <RegionsView initialSearch={pendingSearch} />
           </motion.div>
         );
       case "universities":
         return (
           <motion.div {...viewProps}>
-            <UniversitiesView />
+            <UniversitiesView initialSearch={pendingSearch} />
+          </motion.div>
+        );
+      case "compare":
+        return (
+          <motion.div {...viewProps}>
+            <CompareView />
           </motion.div>
         );
       case "stats":
         return (
           <motion.div {...viewProps}>
-            <StatsView data={data} />
+            <StatsView data={data as any} />
           </motion.div>
         );
       case "outages":
@@ -129,21 +147,43 @@ const DashboardPage = () => {
             <MapView />
           </motion.div>
         );
+      case "settings":
+        return (
+          <motion.div {...viewProps}>
+            <SettingsView />
+          </motion.div>
+        );
       default:
         return (
           <motion.div {...viewProps}>
-            <Dashboard data={data.overview} />
+            <Dashboard data={data.overview} onNavigate={handleNavigate} />
           </motion.div>
         );
     }
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       <Sidebar activeView={activeView} setActiveView={setActiveView} />
-      <main className="flex-1 ml-64 overflow-auto">
-        <div>{renderView()}</div>
+      <main className="flex-1 ml-64 overflow-auto flex flex-col">
+        <Topbar
+          title={VIEW_TITLES[activeView]}
+          onOpenCommandPalette={() => setCommandOpen(true)}
+          onOpenFavorites={() => setFavoritesOpen(true)}
+        />
+        <div className="flex-1">{renderView()}</div>
       </main>
+
+      <CommandPalette
+        open={commandOpen}
+        onOpenChange={setCommandOpen}
+        onNavigate={handleNavigate}
+      />
+      <FavoritesModal
+        open={favoritesOpen}
+        onOpenChange={setFavoritesOpen}
+        onNavigate={handleNavigate}
+      />
     </div>
   );
 };

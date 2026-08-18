@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api";
+import { getLocalUniversities } from "@/lib/cameroonAdapter";
 
 // Types pour les universités (basés sur votre modèle Django)
 export interface University {
@@ -28,36 +28,27 @@ export interface UniversityGallery {
 }
 
 /**
- * Service pour gérer les universités
+ * Service pour gérer les universités.
+ * Source de données : le fichier JSON embarqué (data/cameroon.json),
+ * exposé de façon synchrone via l'adaptateur local.
  */
 export class UniversitiesService {
-  private static readonly BASE_ENDPOINT = "/universities";
-
   /**
    * Récupérer toutes les universités
    */
   static async getAllUniversities(): Promise<University[]> {
-    try {
-      return await apiClient.get<University[]>(`${this.BASE_ENDPOINT}/`);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des universités:", error);
-      throw error;
-    }
+    return getLocalUniversities();
   }
 
   /**
    * Récupérer une université par ID
    */
   static async getUniversityById(id: number): Promise<University> {
-    try {
-      return await apiClient.get<University>(`${this.BASE_ENDPOINT}/${id}/`);
-    } catch (error) {
-      console.error(
-        `Erreur lors de la récupération de l'université ${id}:`,
-        error
-      );
-      throw error;
+    const university = getLocalUniversities().find((u) => u.id === id);
+    if (!university) {
+      throw new Error(`Université introuvable pour l'identifiant ${id}`);
     }
+    return university;
   }
 
   /**
@@ -66,17 +57,7 @@ export class UniversitiesService {
   static async getUniversitiesByRegion(
     regionId: number
   ): Promise<University[]> {
-    try {
-      return await apiClient.get<University[]>(
-        `${this.BASE_ENDPOINT}/?region=${regionId}`
-      );
-    } catch (error) {
-      console.error(
-        `Erreur lors de la récupération des universités de la région ${regionId}:`,
-        error
-      );
-      throw error;
-    }
+    return getLocalUniversities().filter((u) => u.region === regionId);
   }
 
   /**
@@ -85,31 +66,18 @@ export class UniversitiesService {
   static async getUniversitiesByType(
     type: "Public" | "Privé"
   ): Promise<University[]> {
-    try {
-      return await apiClient.get<University[]>(
-        `${this.BASE_ENDPOINT}/?type=${type}`
-      );
-    } catch (error) {
-      console.error(
-        `Erreur lors de la récupération des universités ${type}:`,
-        error
-      );
-      throw error;
-    }
+    return getLocalUniversities().filter((u) => u.type === type);
   }
 
   /**
    * Rechercher des universités
    */
   static async searchUniversities(query: string): Promise<University[]> {
-    try {
-      return await apiClient.get<University[]>(
-        `${this.BASE_ENDPOINT}/?search=${encodeURIComponent(query)}`
-      );
-    } catch (error) {
-      console.error("Erreur lors de la recherche d'universités:", error);
-      throw error;
-    }
+    const q = query.trim().toLowerCase();
+    if (!q) return getLocalUniversities();
+    return getLocalUniversities().filter((u) =>
+      u.name.toLowerCase().includes(q)
+    );
   }
 
   /**
@@ -122,46 +90,37 @@ export class UniversitiesService {
     totalStudents: number;
     averageAge: number;
   }> {
-    try {
-      const universities = await this.getAllUniversities();
+    const universities = getLocalUniversities();
 
-      const totalUniversities = universities.length;
-      const publicUniversities = universities.filter(
-        (uni) => uni.type === "Public"
-      ).length;
-      const privateUniversities = universities.filter(
-        (uni) => uni.type === "Privé"
-      ).length;
-      const totalStudents = universities.reduce(
-        (sum, uni) => sum + uni.students,
-        0
-      );
+    const totalUniversities = universities.length;
+    const publicUniversities = universities.filter(
+      (uni) => uni.type === "Public"
+    ).length;
+    const privateUniversities = universities.filter(
+      (uni) => uni.type === "Privé"
+    ).length;
+    const totalStudents = universities.reduce(
+      (sum, uni) => sum + uni.students,
+      0
+    );
 
-      const currentYear = new Date().getFullYear();
-      const averageAge =
-        universities.length > 0
-          ? Math.round(
-              universities.reduce(
-                (sum, uni) =>
-                  sum + (currentYear - (uni.founded || currentYear)),
-                0
-              ) / universities.length
-            )
-          : 0;
+    const currentYear = new Date().getFullYear();
+    const averageAge =
+      universities.length > 0
+        ? Math.round(
+            universities.reduce(
+              (sum, uni) => sum + (currentYear - (uni.founded || currentYear)),
+              0
+            ) / universities.length
+          )
+        : 0;
 
-      return {
-        totalUniversities,
-        publicUniversities,
-        privateUniversities,
-        totalStudents,
-        averageAge,
-      };
-    } catch (error) {
-      console.error(
-        "Erreur lors du calcul des statistiques des universités:",
-        error
-      );
-      throw error;
-    }
+    return {
+      totalUniversities,
+      publicUniversities,
+      privateUniversities,
+      totalStudents,
+      averageAge,
+    };
   }
 }

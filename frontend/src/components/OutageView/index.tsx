@@ -411,13 +411,13 @@ const EneoOutageView: React.FC = () => {
   if (loading) {
     // ... (votre chargement reste le même)
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-screen bg-muted">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mx-auto mb-6"></div>
-          <p className="text-xl font-semibold text-gray-700">
+          <p className="text-xl font-semibold text-foreground">
             Chargement des données...
           </p>
-          <p className="text-gray-500 mt-2">
+          <p className="text-muted-foreground mt-2">
             Récupération des informations sur les coupures ENEO
           </p>
         </div>
@@ -428,8 +428,8 @@ const EneoOutageView: React.FC = () => {
   if (error) {
     // ... (votre gestion des erreurs reste la même)
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="bg-white border-l-4 border-red-500 shadow-lg rounded-lg p-6 max-w-md">
+      <div className="flex items-center justify-center h-screen bg-muted">
+        <div className="bg-card border-l-4 border-red-500 shadow-lg rounded-lg p-6 max-w-md">
           <div className="flex items-center">
             <div className="flex-shrink-0 text-red-500">
               <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
@@ -441,10 +441,10 @@ const EneoOutageView: React.FC = () => {
               </svg>
             </div>
             <div className="ml-4">
-              <h2 className="text-lg font-bold text-gray-800 mb-1">
+              <h2 className="text-lg font-bold text-foreground mb-1">
                 Erreur de chargement
               </h2>
-              <p className="text-gray-600">{error}</p>
+              <p className="text-muted-foreground">{error}</p>
               <button
                 className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
                 onClick={() => window.location.reload()}
@@ -459,9 +459,9 @@ const EneoOutageView: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 text-gray-800 transition-colors duration-300">
+    <div className="flex flex-col h-screen bg-muted text-foreground transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white border-gray-200 border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300">
+      <div className="bg-card border-border border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300">
         {/* ... (votre header reste le même) ... */}
         <div className="flex items-center">
           <h1 className="text-xl font-bold flex items-center">
@@ -471,7 +471,7 @@ const EneoOutageView: React.FC = () => {
         </div>
         <div className="flex space-x-2">
           <button
-            className={`p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center ${
+            className={`p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors flex items-center ${
               viewMode === "map" ? "text-blue-600" : ""
             }`}
             onClick={() => setViewMode("map")}
@@ -481,7 +481,7 @@ const EneoOutageView: React.FC = () => {
             Carte
           </button>
           <button
-            className={`p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center ${
+            className={`p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors flex items-center ${
               viewMode === "list" ? "text-blue-600" : ""
             }`}
             onClick={() => setViewMode("list")}
@@ -491,7 +491,7 @@ const EneoOutageView: React.FC = () => {
             Liste
           </button>
           <button
-            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex items-center"
+            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors flex items-center"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             title={
               sidebarOpen
@@ -509,9 +509,9 @@ const EneoOutageView: React.FC = () => {
         {/* Sidebar */}
         {sidebarOpen && (
           // ... (votre sidebar reste la même) ...
-          <div className="w-80 bg-white shadow-lg overflow-hidden flex flex-col z-10">
-            <div className="bg-gray-50 border-b p-4">
-              <h2 className="font-bold text-gray-800 flex items-center">
+          <div className="w-80 bg-card shadow-lg overflow-hidden flex flex-col z-10">
+            <div className="bg-muted border-b p-4">
+              <h2 className="font-bold text-foreground flex items-center">
                 <Zap className="h-5 w-5 mr-2 text-yellow-500" />
                 Régions ({outageData.length})
               </h2>
@@ -528,12 +528,12 @@ const EneoOutageView: React.FC = () => {
                   {searchTerm ? (
                     <button
                       onClick={() => setSearchTerm("")}
-                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
                     >
                       <X className="h-4 w-4" />
                     </button>
                   ) : (
-                    <Search className="absolute right-3 top-2.5 text-gray-400 h-4 w-4" />
+                    <Search className="absolute right-3 top-2.5 text-muted-foreground h-4 w-4" />
                   )}
                 </div>
               </div>
@@ -548,7 +548,7 @@ const EneoOutageView: React.FC = () => {
                 />
                 <label
                   htmlFor="showRegions"
-                  className="text-sm font-medium text-gray-700"
+                  className="text-sm font-medium text-foreground"
                 >
                   Afficher les marqueurs sur la carte
                 </label>
@@ -564,7 +564,7 @@ const EneoOutageView: React.FC = () => {
                       className={`cursor-pointer rounded-lg overflow-hidden transition-all duration-200 border ${
                         selectedRegion?.regionCode === region.regionCode
                           ? "border-blue-500 shadow-md"
-                          : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                          : "border-border hover:border-border hover:shadow-sm"
                       }`}
                       onClick={() => handleMarkerClick(region)}
                     >
@@ -579,7 +579,7 @@ const EneoOutageView: React.FC = () => {
                         </div>
                         <div className="flex-1">
                           <div className="font-medium">{region.regionName}</div>
-                          <div className="text-sm text-gray-500 flex items-center">
+                          <div className="text-sm text-muted-foreground flex items-center">
                             {region.outages.data &&
                             region.outages.data.length > 0 ? (
                               <span className="text-red-500 font-medium">
@@ -592,25 +592,25 @@ const EneoOutageView: React.FC = () => {
                             )}
                           </div>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </div>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <div className="text-center py-8">
-                  <div className="text-gray-400 mb-2">
+                  <div className="text-muted-foreground mb-2">
                     <Search className="h-12 w-12 mx-auto" />
                   </div>
-                  <p className="text-gray-600 font-medium">
+                  <p className="text-muted-foreground font-medium">
                     Aucune région trouvée
                   </p>
-                  <p className="text-gray-500 text-sm mt-1">
+                  <p className="text-muted-foreground text-sm mt-1">
                     Essayez avec un autre terme de recherche
                   </p>
                   {searchTerm && (
                     <button
-                      className="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors text-sm"
+                      className="mt-4 px-4 py-2 bg-muted text-foreground rounded hover:bg-muted/70 transition-colors text-sm"
                       onClick={() => setSearchTerm("")}
                     >
                       Effacer la recherche
@@ -620,8 +620,8 @@ const EneoOutageView: React.FC = () => {
               )}
             </div>
 
-            <div className="bg-gray-50 p-3 border-t">
-              <div className="text-sm text-gray-500 text-center">
+            <div className="bg-muted p-3 border-t">
+              <div className="text-sm text-muted-foreground text-center">
                 Total: {totalOutages} coupure(s) programmée(s)
               </div>
             </div>
@@ -686,7 +686,7 @@ const EneoOutageView: React.FC = () => {
                           <div className="relative flex flex-col items-center">
                             {/* Badge avec le nombre de coupures */}
                             {outageCount > 0 && (
-                              <div className="absolute -top-2 bg-white text-gray-800 text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-gray-800 z-10">
+                              <div className="absolute -top-2 bg-card text-foreground text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-gray-800 z-10">
                                 {outageCount}
                               </div>
                             )}
@@ -711,7 +711,7 @@ const EneoOutageView: React.FC = () => {
                     anchor={REGION_COORDINATES[tooltipRegion.regionName]}
                     offset={[0, -20]}
                   >
-                    <div className="bg-white px-3 py-1.5 rounded shadow-lg text-sm font-medium border border-gray-200 pointer-events-none">
+                    <div className="bg-card px-3 py-1.5 rounded shadow-lg text-sm font-medium border border-border pointer-events-none">
                       {tooltipRegion.regionName} -{" "}
                       {tooltipRegion.outages.data
                         ? tooltipRegion.outages.data.length
@@ -758,21 +758,21 @@ const EneoOutageView: React.FC = () => {
               {/* Custom map controls */}
               <div className="absolute top-4 right-4 flex flex-col space-y-2">
                 <button
-                  className="bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                  className="bg-card rounded-full w-10 h-10 shadow-md flex items-center justify-center text-foreground hover:bg-muted"
                   onClick={handleZoomIn}
                   title="Zoom avant"
                 >
                   <Plus className="h-5 w-5" />
                 </button>
                 <button
-                  className="bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                  className="bg-card rounded-full w-10 h-10 shadow-md flex items-center justify-center text-foreground hover:bg-muted"
                   onClick={handleZoomOut}
                   title="Zoom arrière"
                 >
                   <Minus className="h-5 w-5" />
                 </button>
                 <button
-                  className="bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                  className="bg-card rounded-full w-10 h-10 shadow-md flex items-center justify-center text-foreground hover:bg-muted"
                   onClick={resetView}
                   title="Vue d'ensemble"
                 >
@@ -783,7 +783,7 @@ const EneoOutageView: React.FC = () => {
                   className={`rounded-full w-10 h-10 shadow-md flex items-center justify-center transition-colors ${
                     userLocation
                       ? "bg-blue-500 text-white hover:bg-blue-600"
-                      : "bg-white text-gray-700 hover:bg-gray-100"
+                      : "bg-card text-foreground hover:bg-muted"
                   }`}
                   onClick={centerOnUser}
                   title={
@@ -797,22 +797,22 @@ const EneoOutageView: React.FC = () => {
               </div>
 
               {/* Legend */}
-              <div className="absolute bottom-14 right-4 bg-white p-3 rounded-lg shadow-md border border-gray-200">
+              <div className="absolute bottom-14 right-4 bg-card p-3 rounded-lg shadow-md border border-border">
                 <div className="text-sm font-medium mb-2">Légende</div>
                 <div className="space-y-2">
                   <div className="flex items-center">
                     <div className="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-xs text-gray-700">
+                    <span className="text-xs text-foreground">
                       Aucune coupure
                     </span>
                   </div>
                   <div className="flex items-center">
                     <div className="w-4 h-4 bg-yellow-500 rounded-full mr-2"></div>
-                    <span className="text-xs text-gray-700">1-2 coupures</span>
+                    <span className="text-xs text-foreground">1-2 coupures</span>
                   </div>
                   <div className="flex items-center">
                     <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
-                    <span className="text-xs text-gray-700">3+ coupures</span>
+                    <span className="text-xs text-foreground">3+ coupures</span>
                   </div>
                 </div>
               </div>
@@ -846,16 +846,16 @@ const EneoOutageView: React.FC = () => {
                     .map((region) => (
                       <div
                         key={region.regionCode}
-                        className="bg-white rounded-lg shadow-md overflow-hidden"
+                        className="bg-card rounded-lg shadow-md overflow-hidden"
                       >
                         <div className="bg-blue-700 text-white p-3 flex justify-between items-center">
                           <h3 className="font-bold">{region.regionName}</h3>
-                          <span className="bg-white text-blue-700 px-2 py-0.5 rounded-full text-sm font-medium">
+                          <span className="bg-card text-blue-700 px-2 py-0.5 rounded-full text-sm font-medium">
                             {region.outages.data.length} coupure(s)
                           </span>
                         </div>
                         <div className="p-4">
-                          <div className="divide-y divide-gray-200">
+                          <div className="divide-y divide-border">
                             {region.outages.data.map((outage, idx) => (
                               <div
                                 key={idx}
@@ -863,7 +863,7 @@ const EneoOutageView: React.FC = () => {
                               >
                                 <div className="flex flex-wrap gap-4 mb-2">
                                   <div className="flex items-center text-sm">
-                                    <MapPin className="h-4 w-4 text-gray-500 mr-1" />
+                                    <MapPin className="h-4 w-4 text-muted-foreground mr-1" />
                                     <span className="font-medium">
                                       {outage.ville}
                                     </span>
@@ -871,18 +871,18 @@ const EneoOutageView: React.FC = () => {
                                     <span>{outage.quartier}</span>
                                   </div>
                                   <div className="flex items-center text-sm">
-                                    <Calendar className="h-4 w-4 text-gray-500 mr-1" />
+                                    <Calendar className="h-4 w-4 text-muted-foreground mr-1" />
                                     <span>{formatDate(outage.prog_date)}</span>
                                   </div>
                                   <div className="flex items-center text-sm">
-                                    <Clock className="h-4 w-4 text-gray-500 mr-1" />
+                                    <Clock className="h-4 w-4 text-muted-foreground mr-1" />
                                     <span>
                                       {outage.prog_heure_debut} -{" "}
                                       {outage.prog_heure_fin}
                                     </span>
                                   </div>
                                 </div>
-                                <p className="text-gray-700 bg-gray-50 p-3 rounded text-sm mt-2">
+                                <p className="text-foreground bg-muted p-3 rounded text-sm mt-2">
                                   {outage.observations}
                                 </p>
                               </div>
@@ -898,8 +898,8 @@ const EneoOutageView: React.FC = () => {
 
           {/* Details panel */}
           {viewMode === "map" && detailsOpen && selectedRegion && (
-            <div className="w-2/5 bg-white shadow-lg overflow-y-auto transition-all duration-300 border-l border-gray-200">
-              <div className="sticky top-0 z-10 bg-white shadow-sm">
+            <div className="w-2/5 bg-card shadow-lg overflow-y-auto transition-all duration-300 border-l border-border">
+              <div className="sticky top-0 z-10 bg-card shadow-sm">
                 <div className="bg-blue-700 p-4 text-white">
                   <div className="flex items-center justify-between">
                     <button
@@ -917,15 +917,15 @@ const EneoOutageView: React.FC = () => {
                 </div>
 
                 {/* Stats bar */}
-                <div className="bg-blue-50 p-3 border-b border-gray-200">
+                <div className="bg-blue-50 p-3 border-b border-border">
                   <div className="flex justify-around text-center">
                     <div>
-                      <div className="text-lg font-bold text-gray-800">
+                      <div className="text-lg font-bold text-foreground">
                         {selectedRegion.outages.data
                           ? selectedRegion.outages.data.length
                           : 0}
                       </div>
-                      <div className="text-xs text-gray-500">Coupures</div>
+                      <div className="text-xs text-muted-foreground">Coupures</div>
                     </div>
                   </div>
                 </div>
@@ -937,11 +937,11 @@ const EneoOutageView: React.FC = () => {
                     {selectedRegion.outages.data.map((outage, idx) => (
                       <div
                         key={idx}
-                        className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+                        className="bg-card border border-border rounded-lg shadow-sm overflow-hidden"
                       >
-                        <div className="bg-gray-50 p-3 border-b border-gray-200">
+                        <div className="bg-muted p-3 border-b border-border">
                           <div className="flex items-center justify-between">
-                            <div className="font-medium text-gray-800">
+                            <div className="font-medium text-foreground">
                               {outage.ville} - {outage.quartier}
                             </div>
                             <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
@@ -952,7 +952,7 @@ const EneoOutageView: React.FC = () => {
                         <div className="p-4">
                           <div className="grid grid-cols-2 gap-4 mb-3">
                             <div className="flex flex-col">
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-muted-foreground">
                                 Heure de début
                               </span>
                               <span className="font-medium flex items-center">
@@ -961,7 +961,7 @@ const EneoOutageView: React.FC = () => {
                               </span>
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-muted-foreground">
                                 Heure de fin
                               </span>
                               <span className="font-medium flex items-center">
@@ -971,10 +971,10 @@ const EneoOutageView: React.FC = () => {
                             </div>
                           </div>
                           <div className="mt-3">
-                            <span className="text-xs text-gray-500 block mb-1">
+                            <span className="text-xs text-muted-foreground block mb-1">
                               Raison de la coupure
                             </span>
-                            <p className="text-gray-700 bg-gray-50 p-3 rounded text-sm">
+                            <p className="text-foreground bg-muted p-3 rounded text-sm">
                               {outage.observations}
                             </p>
                           </div>
@@ -987,10 +987,10 @@ const EneoOutageView: React.FC = () => {
                     <div className="bg-green-100 p-4 rounded-full mb-4">
                       <Zap className="h-12 w-12 text-green-500" />
                     </div>
-                    <h4 className="text-lg font-medium text-gray-800 mb-2">
+                    <h4 className="text-lg font-medium text-foreground mb-2">
                       Aucune coupure programmée
                     </h4>
-                    <p className="text-gray-500 text-center max-w-xs">
+                    <p className="text-muted-foreground text-center max-w-xs">
                       Il n&apos;y a actuellement aucune coupure programmée dans
                       la région {selectedRegion.regionName}.
                     </p>
@@ -999,9 +999,9 @@ const EneoOutageView: React.FC = () => {
               </div>
 
               {/* Quick navigation between regions */}
-              <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3 flex justify-between">
+              <div className="sticky bottom-0 bg-card border-t border-border p-3 flex justify-between">
                 <button
-                  className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded flex items-center text-sm transition-colors"
+                  className="px-3 py-2 bg-muted hover:bg-muted/70 text-foreground rounded flex items-center text-sm transition-colors"
                   onClick={() => {
                     const currentIndex = outageData.findIndex(
                       (r) => r.regionCode === selectedRegion.regionCode
@@ -1016,7 +1016,7 @@ const EneoOutageView: React.FC = () => {
                   Région précédente
                 </button>
                 <button
-                  className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded flex items-center text-sm transition-colors"
+                  className="px-3 py-2 bg-muted hover:bg-muted/70 text-foreground rounded flex items-center text-sm transition-colors"
                   onClick={() => {
                     const currentIndex = outageData.findIndex(
                       (r) => r.regionCode === selectedRegion.regionCode

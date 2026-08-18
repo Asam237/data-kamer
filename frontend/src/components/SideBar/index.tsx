@@ -9,18 +9,13 @@ import {
   TrendingUp,
   Map,
   Zap,
+  Scale,
 } from "lucide-react";
+import type { ViewType } from "@/components/CommandPalette";
 
 type NavigationItem = {
   name: string;
-  key:
-    | "dashboard"
-    | "regions"
-    | "universities"
-    | "stats"
-    | "settings"
-    | "map"
-    | "outages";
+  key: ViewType;
   icon: any;
   description: string;
 };
@@ -32,18 +27,24 @@ const navigation: NavigationItem[] = [
     icon: Home,
     description: "Vue d'ensemble des données",
   },
-  // {
-  //   name: "Régions",
-  //   key: "regions",
-  //   icon: MapPin,
-  //   description: "Exploration des régions",
-  // },
-  // {
-  //   name: "Universités",
-  //   key: "universities",
-  //   icon: GraduationCap,
-  //   description: "Institutions d'enseignement",
-  // },
+  {
+    name: "Régions",
+    key: "regions",
+    icon: MapPin,
+    description: "Exploration des régions",
+  },
+  {
+    name: "Universités",
+    key: "universities",
+    icon: GraduationCap,
+    description: "Institutions d'enseignement",
+  },
+  {
+    name: "Comparateur",
+    key: "compare",
+    icon: Scale,
+    description: "Comparer plusieurs régions",
+  },
   {
     name: "Carte",
     key: "map",
@@ -74,7 +75,7 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
     <motion.div
       initial={{ x: -300 }}
       animate={{ x: 0 }}
-      className="fixed inset-y-0 left-0 w-64 bg-white shadow-2xl z-50"
+      className="fixed inset-y-0 left-0 w-64 bg-card border-r border-border shadow-2xl z-50"
     >
       <div className="flex flex-col h-full">
         {/* Logo */}
@@ -109,12 +110,12 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
                 key={item.key}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.05 }}
                 onClick={() => setActiveView(item.key)}
                 className={`group w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 relative overflow-hidden ${
                   isActive
-                    ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg transform scale-105"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 hover:translate-x-2"
+                    ? "text-white shadow-lg transform scale-105"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground hover:translate-x-1"
                 }`}
                 whileHover={{ scale: isActive ? 1.05 : 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -132,7 +133,7 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
                     className={`w-5 h-5 mr-3 transition-all duration-300 ${
                       isActive
                         ? "text-white transform rotate-12"
-                        : "text-gray-500 group-hover:text-blue-500"
+                        : "text-muted-foreground group-hover:text-blue-500"
                     }`}
                   />
                   <div className="flex-1 text-left">
@@ -143,7 +144,7 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
                     </div>
                     <div
                       className={`text-xs opacity-70 ${
-                        isActive ? "text-blue-100" : "text-gray-400"
+                        isActive ? "text-blue-100" : "text-muted-foreground"
                       }`}
                     >
                       {item.description}
@@ -167,10 +168,10 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="p-4 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50"
+          className="p-4 border-t border-border bg-muted/40"
         >
           <div className="text-center">
-            <p className="text-xs text-gray-500 mb-3">
+            <p className="text-xs text-muted-foreground mb-3">
               © {new Date().getFullYear()} DataKamer
             </p>
 
@@ -180,7 +181,7 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
                 href="https://github.com/Asam237/data-kamer"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                className="text-muted-foreground hover:text-foreground transition-colors duration-200"
                 title="GitHub"
               >
                 <svg
@@ -195,7 +196,7 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
                 href="https://x.com/asam_237"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-blue-500 transition-colors duration-200"
+                className="text-muted-foreground hover:text-blue-500 transition-colors duration-200"
                 title="X (Twitter)"
               >
                 <svg
@@ -211,7 +212,7 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
                 href="https://www.linkedin.com/in/abba-sali-aboubakar-mamate/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-blue-600 transition-colors duration-200"
+                className="text-muted-foreground hover:text-blue-600 transition-colors duration-200"
                 title="LinkedIn"
               >
                 <svg

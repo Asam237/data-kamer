@@ -592,13 +592,13 @@ const MapView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-screen bg-muted">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mx-auto mb-6"></div>
-          <p className="text-xl font-semibold text-gray-700">
+          <p className="text-xl font-semibold text-foreground">
             Chargement des données...
           </p>
-          <p className="text-gray-500 mt-2">
+          <p className="text-muted-foreground mt-2">
             Préparation de la carte interactive du Cameroun
           </p>
         </div>
@@ -608,8 +608,8 @@ const MapView: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="bg-white border-red-500 border-l-4 shadow-lg rounded-lg p-6 max-w-md">
+      <div className="flex items-center justify-center h-screen bg-muted">
+        <div className="bg-card border-red-500 border-l-4 shadow-lg rounded-lg p-6 max-w-md">
           <div className="flex items-center">
             <div className="flex-shrink-0 text-red-500">
               <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
@@ -621,14 +621,14 @@ const MapView: React.FC = () => {
               </svg>
             </div>
             <div className="ml-4">
-              <h2 className="text-lg font-bold text-gray-800 mb-1">
+              <h2 className="text-lg font-bold text-foreground mb-1">
                 Erreur de chargement
               </h2>
-              <p className="text-gray-600">{error}</p>
-              <p className="mt-4 text-sm text-gray-500">
+              <p className="text-muted-foreground">{error}</p>
+              <p className="mt-4 text-sm text-muted-foreground">
                 Assurez-vous que le fichier JSON est correctement placé dans le
                 dossier{" "}
-                <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                <code className="bg-muted px-2 py-1 rounded text-sm">
                   public/data/cameroon.json
                 </code>
               </p>
@@ -647,9 +647,9 @@ const MapView: React.FC = () => {
 
   if (!cameroonData) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-screen bg-muted">
         <div className="text-center">
-          <p className="text-xl font-semibold text-gray-700">
+          <p className="text-xl font-semibold text-foreground">
             Aucune donnée disponible
           </p>
           <button
@@ -664,11 +664,11 @@ const MapView: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 text-gray-800 transition-colors duration-300">
-      <div className="bg-white border-gray-200 border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300">
+    <div className="flex flex-col h-screen bg-muted text-foreground transition-colors duration-300">
+      <div className="bg-card border-border border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300">
         <div className="flex items-center">
           <button
-            className="mr-3 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="mr-3 p-2 rounded-full hover:bg-muted transition-colors"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             <Menu className="h-5 w-5" />
@@ -680,7 +680,7 @@ const MapView: React.FC = () => {
         </div>
         <div className="flex items-center space-x-3">
           <button
-            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
             onClick={() => setShowWeather(!showWeather)}
             title={showWeather ? "Masquer la météo" : "Afficher la météo"}
           >
@@ -691,14 +691,14 @@ const MapView: React.FC = () => {
             )}
           </button>
           <button
-            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
             onClick={toggleMapStyle}
             title={mapStyle === "default" ? "Vue satellite" : "Vue carte"}
           >
             <Layers className="h-5 w-5" />
           </button>
           <button
-            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
             onClick={toggleImmersiveMode}
             title={immersiveMode ? "Mode normal" : "Mode immersif"}
           >
@@ -713,9 +713,9 @@ const MapView: React.FC = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {sidebarOpen && !immersiveMode && (
-          <div className="w-80 bg-white border-gray-200 border-r shadow-lg overflow-hidden flex flex-col z-10 transition-all duration-300">
-            <div className="bg-gray-50 border-b p-4">
-              <h2 className="font-bold text-gray-800 flex items-center">
+          <div className="w-80 bg-card border-border border-r shadow-lg overflow-hidden flex flex-col z-10 transition-all duration-300">
+            <div className="bg-muted border-b p-4">
+              <h2 className="font-bold text-foreground flex items-center">
                 <MapIcon className="h-5 w-5 mr-2 text-green-600" />
                 Régions du Cameroun ({cameroonData.regions.length})
               </h2>
@@ -727,17 +727,17 @@ const MapView: React.FC = () => {
                     placeholder="Rechercher une région..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white border-gray-300 text-gray-800 placeholder-gray-500"
+                    className="w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-card border-border text-foreground placeholder-gray-500"
                   />
                   {searchTerm ? (
                     <button
                       onClick={() => setSearchTerm("")}
-                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
                     >
                       <X className="h-4 w-4" />
                     </button>
                   ) : (
-                    <Search className="absolute right-3 top-2.5 text-gray-400 h-4 w-4" />
+                    <Search className="absolute right-3 top-2.5 text-muted-foreground h-4 w-4" />
                   )}
                 </div>
               </div>
@@ -752,7 +752,7 @@ const MapView: React.FC = () => {
                 />
                 <label
                   htmlFor="showRegions"
-                  className="text-sm font-medium text-gray-700"
+                  className="text-sm font-medium text-foreground"
                 >
                   Afficher les marqueurs sur la carte
                 </label>
@@ -768,7 +768,7 @@ const MapView: React.FC = () => {
                 />
                 <label
                   htmlFor="showWeather"
-                  className="text-sm font-medium text-gray-700"
+                  className="text-sm font-medium text-foreground"
                 >
                   Afficher la météo
                 </label>
@@ -784,7 +784,7 @@ const MapView: React.FC = () => {
                       className={`cursor-pointer rounded-lg overflow-hidden transition-all duration-200 border ${
                         selectedRegion?.id === region.id
                           ? "border-green-500 shadow-md"
-                          : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                          : "border-border hover:border-border hover:shadow-sm"
                       }`}
                       onClick={() => handleMarkerClick(region)}
                     >
@@ -798,33 +798,33 @@ const MapView: React.FC = () => {
                           {region.id}
                         </div>
                         <div className="flex-1">
-                          <div className="font-medium text-gray-800">
+                          <div className="font-medium text-foreground">
                             {region.name}
                           </div>
-                          <div className="text-sm text-gray-500 flex items-center">
+                          <div className="text-sm text-muted-foreground flex items-center">
                             <Home className="h-3 w-3 mr-1" />
                             {region.capital}
                           </div>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </div>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <div className="text-center py-8">
-                  <div className="text-gray-400 mb-2">
+                  <div className="text-muted-foreground mb-2">
                     <Search className="h-12 w-12 mx-auto" />
                   </div>
-                  <p className="text-gray-600 font-medium">
+                  <p className="text-muted-foreground font-medium">
                     Aucune région trouvée
                   </p>
-                  <p className="text-gray-500 text-sm mt-1">
+                  <p className="text-muted-foreground text-sm mt-1">
                     Essayez avec un autre terme de recherche
                   </p>
                   {searchTerm && (
                     <button
-                      className="mt-4 px-4 py-2 bg-gray-200 text-gray-800 hover:bg-gray-300 rounded transition-colors text-sm"
+                      className="mt-4 px-4 py-2 bg-muted text-foreground hover:bg-muted/70 rounded transition-colors text-sm"
                       onClick={() => setSearchTerm("")}
                     >
                       Effacer la recherche
@@ -834,32 +834,32 @@ const MapView: React.FC = () => {
               )}
             </div>
 
-            <div className="bg-gray-50 border-gray-200 border-t p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">
+            <div className="bg-muted border-border border-t p-4">
+              <h3 className="text-sm font-semibold text-foreground mb-2">
                 Aperçu du Cameroun
               </h3>
               <div className="grid grid-cols-2 gap-2">
-                <div className="bg-white p-2 rounded border border-gray-200 hover:shadow-md transition-shadow duration-200">
-                  <div className="text-xs text-gray-500">Population</div>
-                  <div className="font-medium text-gray-800">
+                <div className="bg-card p-2 rounded border border-border hover:shadow-md transition-shadow duration-200">
+                  <div className="text-xs text-muted-foreground">Population</div>
+                  <div className="font-medium text-foreground">
                     {formatNumber(cameroonData.overview.totalPopulation)}
                   </div>
                 </div>
-                <div className="bg-white p-2 rounded border border-gray-200 hover:shadow-md transition-shadow duration-200">
-                  <div className="text-xs text-gray-500">Superficie</div>
-                  <div className="font-medium text-gray-800">
+                <div className="bg-card p-2 rounded border border-border hover:shadow-md transition-shadow duration-200">
+                  <div className="text-xs text-muted-foreground">Superficie</div>
+                  <div className="font-medium text-foreground">
                     {formatNumber(cameroonData.overview.totalArea)} km²
                   </div>
                 </div>
-                <div className="bg-white p-2 rounded border border-gray-200 hover:shadow-md transition-shadow duration-200">
-                  <div className="text-xs text-gray-500">Capitale</div>
-                  <div className="font-medium text-gray-800">
+                <div className="bg-card p-2 rounded border border-border hover:shadow-md transition-shadow duration-200">
+                  <div className="text-xs text-muted-foreground">Capitale</div>
+                  <div className="font-medium text-foreground">
                     {cameroonData.overview.capital}
                   </div>
                 </div>
-                <div className="bg-white p-2 rounded border border-gray-200 hover:shadow-md transition-shadow duration-200">
-                  <div className="text-xs text-gray-500">Monnaie</div>
-                  <div className="font-medium text-gray-800">
+                <div className="bg-card p-2 rounded border border-border hover:shadow-md transition-shadow duration-200">
+                  <div className="text-xs text-muted-foreground">Monnaie</div>
+                  <div className="font-medium text-foreground">
                     {cameroonData.overview.currency}
                   </div>
                 </div>
@@ -936,7 +936,7 @@ const MapView: React.FC = () => {
                   anchor={REGION_COORDINATES[tooltipRegion.name]}
                   offset={[0, -20]}
                 >
-                  <div className="px-3 py-1.5 rounded shadow-lg text-sm font-medium border pointer-events-none bg-white text-gray-800 border-gray-200">
+                  <div className="px-3 py-1.5 rounded shadow-lg text-sm font-medium border pointer-events-none bg-card text-foreground border-border">
                     {tooltipRegion.name} - {tooltipRegion.capital}
                   </div>
                 </Overlay>
@@ -950,7 +950,7 @@ const MapView: React.FC = () => {
                     anchor={weatherData[selectedDepartment].coordinates}
                     offset={[0, -20]}
                   >
-                    <div className="px-3 py-2 rounded-lg shadow-lg text-sm font-medium border bg-white text-gray-800 border-gray-200">
+                    <div className="px-3 py-2 rounded-lg shadow-lg text-sm font-medium border bg-card text-foreground border-border">
                       <div className="flex items-center">
                         {getWeatherIcon(
                           weatherData[selectedDepartment].condition
@@ -969,28 +969,28 @@ const MapView: React.FC = () => {
 
             <div className="absolute top-4 right-4 flex flex-col space-y-2">
               <button
-                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-white text-gray-700 hover:bg-gray-100"
+                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-card text-foreground hover:bg-muted"
                 onClick={handleZoomIn}
                 title="Zoom avant"
               >
                 <Plus className="h-5 w-5" />
               </button>
               <button
-                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-white text-gray-700 hover:bg-gray-100"
+                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-card text-foreground hover:bg-muted"
                 onClick={handleZoomOut}
                 title="Zoom arrière"
               >
                 <Minus className="h-5 w-5" />
               </button>
               <button
-                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-white text-gray-700 hover:bg-gray-100"
+                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-card text-foreground hover:bg-muted"
                 onClick={resetView}
                 title="Vue d'ensemble"
               >
                 <Layers className="h-5 w-5" />
               </button>
               <button
-                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-white text-gray-700 hover:bg-gray-100"
+                className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-card text-foreground hover:bg-muted"
                 onClick={toggleMapStyle}
                 title={mapStyle === "default" ? "Vue satellite" : "Vue carte"}
               >
@@ -998,16 +998,16 @@ const MapView: React.FC = () => {
               </button>
             </div>
 
-            <div className="absolute bottom-14 right-4 p-3 rounded-lg shadow-md border bg-white border-gray-200 text-gray-800">
+            <div className="absolute bottom-14 right-4 p-3 rounded-lg shadow-md border bg-card border-border text-foreground">
               <div className="text-sm font-medium mb-2">Légende</div>
               <div className="space-y-2">
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
-                  <span className="text-xs text-gray-700">Régions</span>
+                  <span className="text-xs text-foreground">Régions</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
-                  <span className="text-xs text-gray-700">
+                  <span className="text-xs text-foreground">
                     Région sélectionnée
                   </span>
                 </div>
@@ -1015,11 +1015,11 @@ const MapView: React.FC = () => {
                   <>
                     <div className="flex items-center">
                       <div className="w-4 h-4 bg-yellow-500 rounded-full mr-2"></div>
-                      <span className="text-xs text-gray-700">Ensoleillé</span>
+                      <span className="text-xs text-foreground">Ensoleillé</span>
                     </div>
                     <div className="flex items-center">
                       <div className="w-4 h-4 bg-blue-400 rounded-full mr-2"></div>
-                      <span className="text-xs text-gray-700">
+                      <span className="text-xs text-foreground">
                         Nuageux/Pluvieux
                       </span>
                     </div>
@@ -1030,7 +1030,7 @@ const MapView: React.FC = () => {
           </div>
 
           {detailsOpen && selectedRegion && !immersiveMode && (
-            <div className="w-2/5 overflow-y-auto transition-all duration-300 border-l bg-white border-gray-200 shadow-lg">
+            <div className="w-2/5 overflow-y-auto transition-all duration-300 border-l bg-card border-border shadow-lg">
               <div className="sticky top-0 z-10">
                 <div className="p-4 text-white bg-blue-700">
                   <div className="flex items-center justify-between">
@@ -1051,42 +1051,42 @@ const MapView: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="p-3 border-b bg-green-50 border-gray-200">
+                <div className="p-3 border-b bg-green-50 border-border">
                   <div className="flex justify-around text-center">
                     <div>
-                      <div className="text-lg font-bold text-gray-800">
+                      <div className="text-lg font-bold text-foreground">
                         {formatNumber(selectedRegion.population)}
                       </div>
-                      <div className="text-xs text-gray-500">Habitants</div>
+                      <div className="text-xs text-muted-foreground">Habitants</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-gray-800">
+                      <div className="text-lg font-bold text-foreground">
                         {formatNumber(selectedRegion.area)}
                       </div>
-                      <div className="text-xs text-gray-500">km²</div>
+                      <div className="text-xs text-muted-foreground">km²</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-gray-800">
+                      <div className="text-lg font-bold text-foreground">
                         {Math.round(
                           selectedRegion.population / selectedRegion.area
                         )}
                       </div>
-                      <div className="text-xs text-gray-500">hab/km²</div>
+                      <div className="text-xs text-muted-foreground">hab/km²</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-gray-800">
+                      <div className="text-lg font-bold text-foreground">
                         {selectedRegion.departments.length}
                       </div>
-                      <div className="text-xs text-gray-500">Départements</div>
+                      <div className="text-xs text-muted-foreground">Départements</div>
                     </div>
                   </div>
 
-                  <div className="flex border-b border-gray-200 mt-3">
+                  <div className="flex border-b border-border mt-3">
                     <button
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "info"
                           ? "border-b-2 border-green-600 text-green-600"
-                          : "text-gray-500 hover:text-gray-700"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                       onClick={() => setActiveTab("info")}
                     >
@@ -1099,7 +1099,7 @@ const MapView: React.FC = () => {
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "companies"
                           ? "border-b-2 border-green-600 text-green-600"
-                          : "text-gray-500 hover:text-gray-700"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                       onClick={() => setActiveTab("companies")}
                     >
@@ -1112,7 +1112,7 @@ const MapView: React.FC = () => {
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "specialties"
                           ? "border-b-2 border-green-600 text-green-600"
-                          : "text-gray-500 hover:text-gray-700"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                       onClick={() => setActiveTab("specialties")}
                     >
@@ -1125,7 +1125,7 @@ const MapView: React.FC = () => {
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "tourist"
                           ? "border-b-2 border-green-600 text-green-600"
-                          : "text-gray-500 hover:text-gray-700"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                       onClick={() => setActiveTab("tourist")}
                     >
@@ -1138,7 +1138,7 @@ const MapView: React.FC = () => {
                       className={`flex-1 py-3 text-sm font-medium transition-colors ${
                         activeTab === "weather"
                           ? "border-b-2 border-green-600 text-green-600"
-                          : "text-gray-500 hover:text-gray-700"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                       onClick={() => setActiveTab("weather")}
                     >
@@ -1153,11 +1153,11 @@ const MapView: React.FC = () => {
                 <div className="p-4">
                   {activeTab === "info" && (
                     <div className="space-y-4 animate-fadeIn">
-                      <div className="p-4 rounded-lg bg-gray-50">
-                        <h4 className="text-sm font-semibold mb-2 text-gray-700">
+                      <div className="p-4 rounded-lg bg-muted">
+                        <h4 className="text-sm font-semibold mb-2 text-foreground">
                           Position géographique
                         </h4>
-                        <p className="text-gray-600">
+                        <p className="text-muted-foreground">
                           La région de {selectedRegion.name} est située au{" "}
                           {getRegionPosition(selectedRegion.name)} du Cameroun.
                           Sa capitale est {selectedRegion.capital}.
@@ -1165,14 +1165,14 @@ const MapView: React.FC = () => {
                       </div>
 
                       <div>
-                        <h4 className="text-sm font-semibold mb-2 text-gray-700">
+                        <h4 className="text-sm font-semibold mb-2 text-foreground">
                           Départements ({selectedRegion.departments.length})
                         </h4>
                         <div className="grid grid-cols-2 gap-2">
                           {selectedRegion.departments.map((dept, index) => (
                             <div
                               key={index}
-                              className="p-2 rounded bg-gray-50 text-gray-700 flex items-center"
+                              className="p-2 rounded bg-muted text-foreground flex items-center"
                             >
                               <MapPin className="h-3 w-3 mr-2 flex-shrink-0" />
                               <span className="text-sm">{dept}</span>
@@ -1181,34 +1181,34 @@ const MapView: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="p-4 rounded-lg border bg-white border-gray-200">
-                        <h4 className="text-sm font-semibold mb-2 text-gray-700 flex items-center">
+                      <div className="p-4 rounded-lg border bg-card border-border">
+                        <h4 className="text-sm font-semibold mb-2 text-foreground flex items-center">
                           <Users className="h-4 w-4 mr-1" />
                           Démographie
                         </h4>
                         <div className="space-y-2">
                           <div className="flex justify-between">
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-muted-foreground">
                               Population:
                             </span>
-                            <span className="font-medium text-gray-800">
+                            <span className="font-medium text-foreground">
                               {formatNumber(selectedRegion.population)}{" "}
                               habitants
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-muted-foreground">
                               Superficie:
                             </span>
-                            <span className="font-medium text-gray-800">
+                            <span className="font-medium text-foreground">
                               {formatNumber(selectedRegion.area)} km²
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-muted-foreground">
                               Densité:
                             </span>
-                            <span className="font-medium text-gray-800">
+                            <span className="font-medium text-foreground">
                               {Math.round(
                                 selectedRegion.population / selectedRegion.area
                               )}{" "}
@@ -1216,10 +1216,10 @@ const MapView: React.FC = () => {
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-muted-foreground">
                               Nombre de départements:
                             </span>
-                            <span className="font-medium text-gray-800">
+                            <span className="font-medium text-foreground">
                               {selectedRegion.departments.length}
                             </span>
                           </div>
@@ -1232,12 +1232,12 @@ const MapView: React.FC = () => {
                     selectedRegion.specialties && (
                       <div className="space-y-6 animate-fadeIn">
                         <div className="flex justify-between items-center mb-4">
-                          <h3 className="text-xl font-bold text-gray-800">
+                          <h3 className="text-xl font-bold text-foreground">
                             Spécialités de la région 🏞️
                           </h3>
                         </div>
 
-                        <div className="p-5 rounded-xl transition-all duration-300 bg-gray-50 hover:bg-white">
+                        <div className="p-5 rounded-xl transition-all duration-300 bg-muted hover:bg-card">
                           <div className="flex items-center mb-3">
                             <div className="bg-red-500 p-2 rounded-full mr-3 text-white">
                               <svg
@@ -1255,16 +1255,16 @@ const MapView: React.FC = () => {
                                 />
                               </svg>
                             </div>
-                            <h4 className="text-lg font-semibold text-gray-700">
+                            <h4 className="text-lg font-semibold text-foreground">
                               Gastronomie 🍽️
                             </h4>
                           </div>
-                          <p className="text-sm leading-relaxed text-gray-600">
+                          <p className="text-sm leading-relaxed text-muted-foreground">
                             {selectedRegion.specialties.gastronomy}
                           </p>
                         </div>
 
-                        <div className="p-5 rounded-xl transition-all duration-300 bg-gray-50 hover:bg-white">
+                        <div className="p-5 rounded-xl transition-all duration-300 bg-muted hover:bg-card">
                           <div className="flex items-center mb-3">
                             <div className="bg-blue-500 p-2 rounded-full mr-3 text-white">
                               <svg
@@ -1282,16 +1282,16 @@ const MapView: React.FC = () => {
                                 />
                               </svg>
                             </div>
-                            <h4 className="text-lg font-semibold text-gray-700">
+                            <h4 className="text-lg font-semibold text-foreground">
                               Métiers et Professions 👨‍🌾
                             </h4>
                           </div>
-                          <p className="text-sm leading-relaxed text-gray-600">
+                          <p className="text-sm leading-relaxed text-muted-foreground">
                             {selectedRegion.specialties.professions}
                           </p>
                         </div>
 
-                        <div className="p-5 rounded-xl transition-all duration-300 bg-gray-50 hover:bg-white">
+                        <div className="p-5 rounded-xl transition-all duration-300 bg-muted hover:bg-card">
                           <div className="flex items-center mb-3">
                             <div className="bg-green-500 p-2 rounded-full mr-3 text-white">
                               <svg
@@ -1309,11 +1309,11 @@ const MapView: React.FC = () => {
                                 />
                               </svg>
                             </div>
-                            <h4 className="text-lg font-semibold text-gray-700">
+                            <h4 className="text-lg font-semibold text-foreground">
                               Divertissement et Culture 🎭
                             </h4>
                           </div>
-                          <p className="text-sm leading-relaxed text-gray-600">
+                          <p className="text-sm leading-relaxed text-muted-foreground">
                             {selectedRegion.specialties.entertainment}
                           </p>
                         </div>
@@ -1323,7 +1323,7 @@ const MapView: React.FC = () => {
                   {activeTab === "companies" &&
                     selectedRegion.majorCompanies && (
                       <div className="space-y-4 animate-fadeIn">
-                        <h4 className="text-sm font-semibold mb-2 text-gray-700">
+                        <h4 className="text-sm font-semibold mb-2 text-foreground">
                           Principales entreprises (
                           {selectedRegion.majorCompanies.length})
                         </h4>
@@ -1332,7 +1332,7 @@ const MapView: React.FC = () => {
                             (company, index) => (
                               <div
                                 key={index}
-                                className="p-3 rounded-lg border bg-white border-gray-200 hover:shadow-md transition-all"
+                                className="p-3 rounded-lg border bg-card border-border hover:shadow-md transition-all"
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center">
@@ -1354,10 +1354,10 @@ const MapView: React.FC = () => {
                                       <Building2 className="h-5 w-5" />
                                     </div>
                                     <div>
-                                      <div className="font-medium text-gray-800">
+                                      <div className="font-medium text-foreground">
                                         {company.name}
                                       </div>
-                                      <div className="text-sm text-gray-500">
+                                      <div className="text-sm text-muted-foreground">
                                         {company.sector}
                                       </div>
                                     </div>
@@ -1373,7 +1373,7 @@ const MapView: React.FC = () => {
                   {activeTab === "tourist" && selectedRegion.touristSites && (
                     <div className="space-y-6 animate-fadeIn">
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-bold text-gray-800">
+                        <h3 className="text-xl font-bold text-foreground">
                           Sites touristiques 🗺️
                         </h3>
                       </div>
@@ -1382,10 +1382,10 @@ const MapView: React.FC = () => {
                           (site: any, index: any) => (
                             <div
                               key={index}
-                              className="relative p-5 rounded-xl transition-all duration-300 bg-gray-50 border"
+                              className="relative p-5 rounded-xl transition-all duration-300 bg-muted border"
                             >
                               <div
-                                className="relative p-0 overflow-hidden transition-all duration-500 transform bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl hover:shadow-3xl group h-96 border border-gray-100 cursor-pointer"
+                                className="relative p-0 overflow-hidden transition-all duration-500 transform bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl hover:shadow-3xl group h-96 border border-border cursor-pointer"
                                 onClick={() => openCarousel(site)}
                               >
                                 <div
@@ -1404,11 +1404,11 @@ const MapView: React.FC = () => {
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-700 z-10"></div>
 
                                 <div className="absolute bottom-0 left-0 right-0 z-20 p-6">
-                                  <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-5 shadow-2xl border border-white/60 transform transition-transform duration-300 group-hover:translate-y-[-4px]">
-                                    <h4 className="text-xl font-bold text-gray-800 mb-2 leading-tight">
+                                  <div className="bg-card/95 backdrop-blur-xl rounded-2xl p-5 shadow-2xl border border-white/60 transform transition-transform duration-300 group-hover:translate-y-[-4px]">
+                                    <h4 className="text-xl font-bold text-foreground mb-2 leading-tight">
                                       {site.name}
                                     </h4>
-                                    <p className="text-sm leading-relaxed text-gray-600 line-clamp-2">
+                                    <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
                                       {site.description}
                                     </p>
                                   </div>
@@ -1424,12 +1424,12 @@ const MapView: React.FC = () => {
                   {activeTab === "weather" && (
                     <div className="space-y-4 animate-fadeIn">
                       <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-sm font-semibold text-gray-700">
+                        <h4 className="text-sm font-semibold text-foreground">
                           Météo par département
                         </h4>
                         <button
                           onClick={refreshWeather}
-                          className="p-2 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center text-xs"
+                          className="p-2 rounded bg-muted hover:bg-muted/70 text-foreground flex items-center text-xs"
                           disabled={loadingWeather}
                         >
                           {loadingWeather ? (
@@ -1444,7 +1444,7 @@ const MapView: React.FC = () => {
                       {loadingWeather ? (
                         <div className="flex justify-center items-center py-8">
                           <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
-                          <p className="ml-3 text-gray-600">
+                          <p className="ml-3 text-muted-foreground">
                             Chargement des données météo...
                           </p>
                         </div>
@@ -1453,10 +1453,10 @@ const MapView: React.FC = () => {
                           {selectedDepartment && departmentWeatherData && (
                             <div
                               ref={weatherRef}
-                              className="p-4 rounded-lg border mb-6 bg-white border-gray-200"
+                              className="p-4 rounded-lg border mb-6 bg-card border-border"
                             >
                               <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-semibold text-gray-800">
+                                <h3 className="font-semibold text-foreground">
                                   {selectedDepartment}
                                 </h3>
                                 <button
@@ -1464,7 +1464,7 @@ const MapView: React.FC = () => {
                                     setSelectedDepartment(null);
                                     setDepartmentWeatherData(null);
                                   }}
-                                  className="p-1 rounded-full hover:bg-gray-200"
+                                  className="p-1 rounded-full hover:bg-muted/70"
                                 >
                                   <X className="h-4 w-4" />
                                 </button>
@@ -1477,46 +1477,46 @@ const MapView: React.FC = () => {
                                   )}
                                 </div>
                                 <div>
-                                  <div className="text-2xl font-bold text-gray-800">
+                                  <div className="text-2xl font-bold text-foreground">
                                     {departmentWeatherData.temperature}°C
                                   </div>
-                                  <div className="text-gray-600">
+                                  <div className="text-muted-foreground">
                                     {departmentWeatherData.condition}
                                   </div>
                                 </div>
                               </div>
 
                               <div className="grid grid-cols-3 gap-3 mb-4">
-                                <div className="p-2 rounded bg-gray-50">
+                                <div className="p-2 rounded bg-muted">
                                   <div className="flex items-center">
                                     <Wind className="h-4 w-4 mr-1 text-blue-400" />
-                                    <span className="text-xs text-gray-500">
+                                    <span className="text-xs text-muted-foreground">
                                       Vent
                                     </span>
                                   </div>
-                                  <div className="font-medium text-gray-800">
+                                  <div className="font-medium text-foreground">
                                     {departmentWeatherData.windSpeed} km/h
                                   </div>
                                 </div>
-                                <div className="p-2 rounded bg-gray-50">
+                                <div className="p-2 rounded bg-muted">
                                   <div className="flex items-center">
                                     <Droplets className="h-4 w-4 mr-1 text-blue-400" />
-                                    <span className="text-xs text-gray-500">
+                                    <span className="text-xs text-muted-foreground">
                                       Humidité
                                     </span>
                                   </div>
-                                  <div className="font-medium text-gray-800">
+                                  <div className="font-medium text-foreground">
                                     {departmentWeatherData.humidity}%
                                   </div>
                                 </div>
-                                <div className="p-2 rounded bg-gray-50">
+                                <div className="p-2 rounded bg-muted">
                                   <div className="flex items-center">
                                     <CloudRain className="h-4 w-4 mr-1 text-blue-400" />
-                                    <span className="text-xs text-gray-500">
+                                    <span className="text-xs text-muted-foreground">
                                       Précip.
                                     </span>
                                   </div>
-                                  <div className="font-medium text-gray-800">
+                                  <div className="font-medium text-foreground">
                                     {departmentWeatherData.precipitation}%
                                   </div>
                                 </div>
@@ -1524,7 +1524,7 @@ const MapView: React.FC = () => {
 
                               {departmentWeatherData.forecast && (
                                 <div>
-                                  <h4 className="text-sm font-medium mb-2 text-gray-600">
+                                  <h4 className="text-sm font-medium mb-2 text-muted-foreground">
                                     Prévisions pour les prochains jours
                                   </h4>
                                   <div className="grid grid-cols-3 gap-2">
@@ -1532,9 +1532,9 @@ const MapView: React.FC = () => {
                                       (day, index) => (
                                         <div
                                           key={index}
-                                          className="p-2 rounded text-center bg-gray-50"
+                                          className="p-2 rounded text-center bg-muted"
                                         >
-                                          <div className="text-sm font-medium mb-1 text-gray-700">
+                                          <div className="text-sm font-medium mb-1 text-foreground">
                                             {day.day}
                                           </div>
                                           <div className="flex justify-center mb-1">
@@ -1576,7 +1576,7 @@ const MapView: React.FC = () => {
                                 className={`p-3 rounded-lg border cursor-pointer transition-all ${
                                   selectedDepartment === dept
                                     ? "bg-blue-50 border-blue-200"
-                                    : "bg-white border-gray-200 hover:bg-gray-50"
+                                    : "bg-card border-border hover:bg-muted"
                                 }`}
                                 onClick={() => handleDepartmentClick(dept)}
                               >
@@ -1590,7 +1590,7 @@ const MapView: React.FC = () => {
                                         className={`font-medium ${
                                           selectedDepartment === dept
                                             ? "text-blue-800"
-                                            : "text-gray-800"
+                                            : "text-foreground"
                                         }`}
                                       >
                                         {dept}
@@ -1599,7 +1599,7 @@ const MapView: React.FC = () => {
                                         className={`text-sm ${
                                           selectedDepartment === dept
                                             ? "text-blue-600"
-                                            : "text-gray-500"
+                                            : "text-muted-foreground"
                                         }`}
                                       >
                                         {data.condition}
@@ -1611,7 +1611,7 @@ const MapView: React.FC = () => {
                                       className={`text-2xl font-bold ${
                                         selectedDepartment === dept
                                           ? "text-blue-800"
-                                          : "text-gray-800"
+                                          : "text-foreground"
                                       }`}
                                     >
                                       {data.temperature}°C
@@ -1620,7 +1620,7 @@ const MapView: React.FC = () => {
                                       className={`h-5 w-5 ml-2 ${
                                         selectedDepartment === dept
                                           ? "text-blue-500"
-                                          : "text-gray-400"
+                                          : "text-muted-foreground"
                                       }`}
                                     />
                                   </div>
@@ -1646,7 +1646,7 @@ const MapView: React.FC = () => {
         >
           <button
             onClick={() => setShowCarousel(false)}
-            className="absolute top-6 right-6 p-3 bg-white/5 hover:bg-white/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 hover:rotate-90 z-50 group"
+            className="absolute top-6 right-6 p-3 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 hover:rotate-90 z-50 group"
           >
             <X
               className="w-7 h-7 text-white/80 group-hover:text-white"
@@ -1659,7 +1659,7 @@ const MapView: React.FC = () => {
               e.stopPropagation();
               prevImage();
             }}
-            className="absolute left-6 p-5 bg-white/5 hover:bg-white/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
+            className="absolute left-6 p-5 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
             disabled={!selectedSite.images || selectedSite.images.length <= 1}
           >
             <ChevronLeft
@@ -1673,7 +1673,7 @@ const MapView: React.FC = () => {
               e.stopPropagation();
               nextImage();
             }}
-            className="absolute right-6 p-5 bg-white/5 hover:bg-white/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
+            className="absolute right-6 p-5 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
             disabled={!selectedSite.images || selectedSite.images.length <= 1}
           >
             <ChevronRight
@@ -1708,7 +1708,7 @@ const MapView: React.FC = () => {
               <h3 className="text-4xl font-bold text-white tracking-tight">
                 {selectedSite.name}
               </h3>
-              <p className="text-lg text-gray-200 leading-relaxed">
+              <p className="text-lg text-muted-foreground leading-relaxed">
                 {selectedSite.description}
               </p>
 
@@ -1723,8 +1723,8 @@ const MapView: React.FC = () => {
                       }}
                       className={`transition-all duration-300 rounded-full ${
                         idx === currentImageIndex
-                          ? "bg-white w-10 h-2.5 shadow-lg shadow-white/50"
-                          : "bg-white/30 w-2.5 h-2.5 hover:bg-white/50 hover:scale-125"
+                          ? "bg-card w-10 h-2.5 shadow-lg shadow-white/50"
+                          : "bg-card/30 w-2.5 h-2.5 hover:bg-card/50 hover:scale-125"
                       }`}
                       aria-label={`Image ${idx + 1}`}
                     />

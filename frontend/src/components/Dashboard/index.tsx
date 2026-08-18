@@ -7,8 +7,9 @@ import {
   Globe,
   TrendingUp,
   BarChart3,
-  PieChart,
   Activity,
+  Star,
+  ArrowRight,
 } from "lucide-react";
 import {
   AreaChart,
@@ -18,73 +19,21 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart as RechartsPieChart,
-  Cell,
   BarChart,
   Bar,
   LineChart,
   Line,
-  Pie,
 } from "recharts";
 import cameroonData from "../../../data/cameroon.json";
-
-interface StatCardProps {
-  title: string;
-  value: number | string;
-  icon: React.ComponentType<{ className?: string }>;
-  color: {
-    text: string;
-    bg: string;
-    gradient: string;
-  };
-  description?: string;
-}
-
-const StatCard: React.FC<StatCardProps> = ({
-  title,
-  value,
-  icon: Icon,
-  color,
-  description,
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    whileHover={{ y: -5, scale: 1.02 }}
-    transition={{ duration: 0.3 }}
-    className="group relative"
-  >
-    <div
-      className={`absolute -inset-0.5 bg-gradient-to-r ${color.gradient} rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300`}
-    ></div>
-    <div className="relative bg-white rounded-2xl shadow-xl p-6 border border-gray-100 space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-gray-500 tracking-wide uppercase">
-            {title}
-          </p>
-          <p className={`text-3xl font-bold ${color.text} tracking-tight mt-1`}>
-            {typeof value === "number" ? value.toLocaleString() : value}
-          </p>
-          {description && (
-            <p className="text-xs text-gray-400 mt-1">{description}</p>
-          )}
-        </div>
-        <div
-          className={`p-4 rounded-2xl ${color.bg} bg-opacity-20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}
-        >
-          <Icon className={`w-8 h-8 ${color.text}`} />
-        </div>
-      </div>
-    </div>
-  </motion.div>
-);
+import StatCard from "@/components/ui/StatCard";
+import PageHeader from "@/components/ui/PageHeader";
+import { useFavorites } from "@/lib/favorites";
+import type { ViewType } from "@/components/CommandPalette";
 
 interface DashboardData {
   totalPopulation: number;
   totalRegions: number;
   totalDepartments: number;
-  totalUniversities: number;
   capital: string;
   totalArea: number;
   currency: string;
@@ -93,36 +42,20 @@ interface DashboardData {
 
 interface DashboardProps {
   data: DashboardData | null;
+  onNavigate?: (view: ViewType, search?: string) => void;
 }
 
-interface Region {
-  id: number;
-  name: string;
-  capital: string;
-  population: number;
-  area: number;
-  departments: string[];
-}
+const chartTooltipStyle = {
+  backgroundColor: "hsl(var(--card))",
+  border: "1px solid hsl(var(--border))",
+  borderRadius: "8px",
+  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+  color: "hsl(var(--foreground))",
+};
 
-interface University {
-  id: number;
-  name: string;
-  region: string;
-  founded: number;
-  type: string;
-  students: number;
-  website: string;
-  description: string;
-  faculties: string[];
-}
+const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
+  const { favorites } = useFavorites();
 
-interface CameroonData {
-  regions: Region[];
-  universities: University[];
-  overview: DashboardData;
-}
-
-const Dashboard: React.FC<DashboardProps> = ({ data }) => {
   if (!data) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -132,56 +65,44 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           className="text-center"
         >
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-xl text-gray-600">Chargement des données...</p>
+          <p className="text-xl text-muted-foreground">
+            Chargement des données...
+          </p>
         </motion.div>
       </div>
     );
   }
 
-  const stats: StatCardProps[] = [
+  const totalUniversities = cameroonData.universities.length;
+
+  const stats = [
     {
       title: "Population Totale",
       value: data.totalPopulation,
       icon: Users,
-      color: {
-        text: "text-blue-600",
-        bg: "bg-blue-100",
-        gradient: "from-blue-400 to-blue-600",
-      },
+      accent: "blue" as const,
       description: "Habitants du Cameroun",
     },
     {
       title: "Régions",
       value: data.totalRegions,
       icon: MapPin,
-      color: {
-        text: "text-emerald-600",
-        bg: "bg-emerald-100",
-        gradient: "from-emerald-400 to-emerald-600",
-      },
+      accent: "emerald" as const,
       description: "Divisions administratives",
     },
     {
       title: "Départements",
       value: data.totalDepartments,
       icon: Globe,
-      color: {
-        text: "text-purple-600",
-        bg: "bg-purple-100",
-        gradient: "from-purple-400 to-purple-600",
-      },
+      accent: "purple" as const,
       description: "Subdivisions",
     },
     {
       title: "Universités",
-      value: data.totalUniversities,
+      value: totalUniversities,
       icon: GraduationCap,
-      color: {
-        text: "text-orange-600",
-        bg: "bg-orange-100",
-        gradient: "from-orange-400 to-orange-600",
-      },
-      description: "Institutions publiques",
+      accent: "orange" as const,
+      description: "Institutions recensées",
     },
   ];
 
@@ -190,17 +111,6 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
     population: region.population,
     area: region.area,
   }));
-
-  const publicCount = cameroonData.universities.filter(
-    (u: any) => u.type === "Public"
-  ).length;
-  const privateCount = cameroonData.universities.filter(
-    (u: any) => u.type === "Privé"
-  ).length;
-  const universityData = [
-    { name: "Public", value: publicCount, color: "#3B82F6" },
-    { name: "Privé", value: privateCount, color: "#10B981" },
-  ];
 
   const growthData = [
     { year: "2018", population: 24806000 },
@@ -214,27 +124,51 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
   ];
 
   return (
-    <div className="space-y-8 p-8">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center"
-      >
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          Tableau de Bord DataKamer
-        </h1>
-        <p className="text-lg text-gray-600">
-          Tout savoir sur le Cameroun - Statistiques et informations clés
-        </p>
-      </motion.div>
+    <div className="space-y-8 p-6 sm:p-8">
+      <PageHeader
+        title="Tableau de Bord DataKamer"
+        subtitle="Tout savoir sur le Cameroun — statistiques et informations clés"
+        icon={TrendingUp}
+        align="center"
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <StatCard key={index} {...stat} />
+          <StatCard key={stat.title} {...stat} delay={index * 0.05} />
         ))}
       </div>
+
+      {/* Favorites quick access */}
+      {favorites.length > 0 && onNavigate && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-card rounded-2xl shadow-sm p-6 border border-border"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Star className="w-5 h-5 text-amber-500" />
+            <h3 className="text-lg font-bold text-foreground">Vos favoris</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {favorites.map((fav) => (
+              <button
+                key={`${fav.kind}-${fav.key}`}
+                onClick={() =>
+                  onNavigate(
+                    fav.kind === "region" ? "regions" : "universities",
+                    fav.label
+                  )
+                }
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted text-sm text-foreground hover:bg-blue-500 hover:text-white transition-colors"
+              >
+                {fav.label}
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -243,17 +177,17 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
+          className="bg-card rounded-2xl shadow-sm p-6 border border-border"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-foreground">
               Population par Région
             </h3>
             <BarChart3 className="w-6 h-6 text-blue-500" />
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={populationData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis
                 dataKey="name"
                 tick={{ fontSize: 12 }}
@@ -263,14 +197,11 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
               />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
-                formatter={(value) => [value.toLocaleString(), "Population"]}
-                labelStyle={{ color: "#374151" }}
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
+                formatter={(value) => [
+                  Number(value).toLocaleString("fr-FR"),
+                  "Population",
+                ]}
+                contentStyle={chartTooltipStyle}
               />
               <Bar
                 dataKey="population"
@@ -297,18 +228,18 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
+          transition={{ delay: 0.3 }}
+          className="bg-card rounded-2xl shadow-sm p-6 border border-border"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-foreground">
               Superficie par Région
             </h3>
             <Activity className="w-6 h-6 text-purple-500" />
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={populationData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis
                 dataKey="name"
                 tick={{ fontSize: 12 }}
@@ -319,15 +250,10 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
                 formatter={(value) => [
-                  value.toLocaleString() + " km²",
+                  Number(value).toLocaleString("fr-FR") + " km²",
                   "Superficie",
                 ]}
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
+                contentStyle={chartTooltipStyle}
               />
               <Area
                 type="monotone"
@@ -350,36 +276,34 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
+          transition={{ delay: 0.4 }}
+          className="bg-card rounded-2xl shadow-sm p-6 border border-border lg:col-span-2"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-foreground">
               Évolution de la Population
             </h3>
             <TrendingUp className="w-6 h-6 text-green-500" />
           </div>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={280}>
             <LineChart data={growthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="year" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
-                formatter={(value) => [value.toLocaleString(), "Population"]}
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
+                formatter={(value) => [
+                  Number(value).toLocaleString("fr-FR"),
+                  "Population",
+                ]}
+                contentStyle={chartTooltipStyle}
               />
               <Line
                 type="monotone"
                 dataKey="population"
                 stroke="#10B981"
                 strokeWidth={3}
-                dot={{ fill: "#10B981", strokeWidth: 2, r: 6 }}
-                activeDot={{ r: 8, stroke: "#10B981", strokeWidth: 2 }}
+                dot={{ fill: "#10B981", strokeWidth: 2, r: 5 }}
+                activeDot={{ r: 7, stroke: "#10B981", strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -390,10 +314,10 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl shadow-xl p-8 border border-blue-100"
+        transition={{ delay: 0.5 }}
+        className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-2xl shadow-sm p-8 border border-border"
       >
-        <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+        <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
           Informations Générales
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -401,7 +325,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
             { label: "Capitale", value: data.capital, icon: MapPin },
             {
               label: "Superficie",
-              value: `${data.totalArea.toLocaleString()} km²`,
+              value: `${data.totalArea.toLocaleString("fr-FR")} km²`,
               icon: Globe,
             },
             { label: "Monnaie", value: data.currency, icon: Activity },
@@ -412,19 +336,19 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
             },
           ].map((item, index) => (
             <motion.div
-              key={index}
+              key={item.label}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7 + index * 0.1 }}
-              className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              transition={{ delay: 0.6 + index * 0.1 }}
+              className="bg-card p-6 rounded-xl shadow-sm border border-border hover:shadow-md transition-all duration-300 hover:-translate-y-1"
             >
               <div className="flex items-center mb-3">
                 <item.icon className="w-5 h-5 text-blue-500 mr-2" />
-                <p className="text-sm font-medium text-gray-500">
+                <p className="text-sm font-medium text-muted-foreground">
                   {item.label}
                 </p>
               </div>
-              <p className="text-lg font-semibold text-gray-900">
+              <p className="text-lg font-semibold text-foreground">
                 {item.value}
               </p>
             </motion.div>

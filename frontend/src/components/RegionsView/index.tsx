@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   MagnifyingGlassIcon,
   InformationCircleIcon,
@@ -6,14 +6,23 @@ import {
   UserGroupIcon,
   DocumentIcon,
 } from "@heroicons/react/24/outline";
+import { Star, Download } from "lucide-react";
 import { useRegions } from "@/hooks/useRegions";
 import { Region } from "@/services/regions.service";
+import PageHeader from "@/components/ui/PageHeader";
+import EmptyState from "@/components/ui/EmptyState";
+import { useFavorites } from "@/lib/favorites";
+import { exportToCsv } from "@/lib/export";
 
+interface RegionsViewProps {
+  initialSearch?: string;
+}
 
-export default function RegionsView() {
+export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
   const { regions, loading, error, refetch } = useRegions();
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>(initialSearch);
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
+  const { isFavorite, toggleFavorite } = useFavorites("region");
 
   // Memoized filtered regions to improve performance
   const filteredRegions = useMemo(() => {
@@ -24,6 +33,19 @@ export default function RegionsView() {
     );
   }, [regions, searchTerm]);
 
+  const handleExport = () => {
+    exportToCsv(
+      "regions-cameroun",
+      filteredRegions.map((r) => ({
+        Nom: r.name,
+        Capitale: r.capital,
+        Population: r.population,
+        "Superficie (km²)": r.area,
+        Départements: r.departments.length,
+      }))
+    );
+  };
+
   // Modal for region details
   const RegionDetailModal = ({
     region,
@@ -32,17 +54,30 @@ export default function RegionsView() {
     region: Region;
     onClose: () => void;
   }) => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-border">
         <div className="p-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-2xl text-white">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">{region.name}</h2>
-            <button
-              onClick={onClose}
-              className="hover:bg-white/20 rounded-full p-2 transition"
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => toggleFavorite("region", region.name, region.name)}
+                className="hover:bg-white/20 rounded-full p-2 transition"
+                title="Ajouter aux favoris"
+              >
+                <Star
+                  className={`w-5 h-5 ${
+                    isFavorite("region", region.name) ? "fill-current" : ""
+                  }`}
+                />
+              </button>
+              <button
+                onClick={onClose}
+                className="hover:bg-white/20 rounded-full p-2 transition"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         </div>
         <div className="p-6 space-y-6">
@@ -50,9 +85,11 @@ export default function RegionsView() {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <MapIcon className="w-6 h-6 text-blue-500" />
-                <h3 className="text-lg font-semibold">Détails sur la région</h3>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Détails sur la région
+                </h3>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 text-foreground">
                 <p>
                   <strong>Capitale:</strong> {region.capital}
                 </p>
@@ -68,9 +105,11 @@ export default function RegionsView() {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <UserGroupIcon className="w-6 h-6 text-green-500" />
-                <h3 className="text-lg font-semibold">Population</h3>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Population
+                </h3>
               </div>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-2xl font-bold text-foreground">
                 {region.population.toLocaleString()}
               </p>
             </div>
@@ -80,9 +119,13 @@ export default function RegionsView() {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <InformationCircleIcon className="w-6 h-6 text-purple-500" />
-                <h3 className="text-lg font-semibold">Gastronomie</h3>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Gastronomie
+                </h3>
               </div>
-              <p className="text-gray-600">{region.specialties.gastronomy}</p>
+              <p className="text-muted-foreground">
+                {region.specialties.gastronomy}
+              </p>
             </div>
           )}
 
@@ -90,13 +133,15 @@ export default function RegionsView() {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <DocumentIcon className="w-6 h-6 text-orange-500" />
-                <h3 className="text-lg font-semibold">Grandes Entreprises</h3>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Grandes Entreprises
+                </h3>
               </div>
               <div className="flex flex-wrap gap-2">
                 {region.major_companies.map((company, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                    className="px-3 py-1 bg-muted text-foreground rounded-full text-sm"
                   >
                     {company.name} ({company.sector})
                   </span>
@@ -114,7 +159,9 @@ export default function RegionsView() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-xl text-gray-600">Loading Regions...</p>
+          <p className="text-xl text-muted-foreground">
+            Chargement des régions...
+          </p>
         </div>
       </div>
     );
@@ -123,9 +170,9 @@ export default function RegionsView() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center bg-red-50 p-8 rounded-lg">
-          <p className="text-xl text-red-600 mb-4">Erreur de chargement</p>
-          <p className="text-gray-600 mb-4">{error}</p>
+        <div className="text-center bg-red-500/10 p-8 rounded-lg">
+          <p className="text-xl text-red-500 mb-4">Erreur de chargement</p>
+          <p className="text-muted-foreground mb-4">{error}</p>
           <button
             onClick={refetch}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
@@ -137,24 +184,38 @@ export default function RegionsView() {
     );
   }
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="p-6 sm:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header and Search */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Regions du Cameroun
-          </h1>
-          <div className="relative w-full md:w-auto">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Rechercher une région..."
-              className="w-full md:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
+        <PageHeader
+          title="Régions du Cameroun"
+          subtitle={`${filteredRegions.length} région${
+            filteredRegions.length !== 1 ? "s" : ""
+          } référencée${filteredRegions.length !== 1 ? "s" : ""}`}
+          icon={MapIcon}
+          actions={
+            <div className="flex items-center gap-2">
+              <div className="relative w-full md:w-64">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Rechercher une région..."
+                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-card text-foreground focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <button
+                onClick={handleExport}
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium flex-shrink-0"
+                title="Exporter en CSV"
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">Exporter</span>
+              </button>
+            </div>
+          }
+        />
 
         {/* Regions Grid */}
         {filteredRegions.length > 0 ? (
@@ -162,36 +223,57 @@ export default function RegionsView() {
             {filteredRegions.map((region) => (
               <div
                 key={region.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                className="bg-card rounded-xl shadow-sm border border-border overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-xl font-semibold text-gray-900">
+                    <h3 className="text-xl font-semibold text-foreground">
                       {region.name}
                     </h3>
-                    <button
-                      onClick={() => setSelectedRegion(region)}
-                      className="text-blue-500 hover:bg-blue-50 rounded-full p-2 transition"
-                    >
-                      <InformationCircleIcon className="w-6 h-6" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() =>
+                          toggleFavorite("region", region.name, region.name)
+                        }
+                        className={`rounded-full p-2 transition ${
+                          isFavorite("region", region.name)
+                            ? "text-amber-500"
+                            : "text-muted-foreground hover:text-amber-500"
+                        }`}
+                        title="Ajouter aux favoris"
+                      >
+                        <Star
+                          className={`w-5 h-5 ${
+                            isFavorite("region", region.name)
+                              ? "fill-current"
+                              : ""
+                          }`}
+                        />
+                      </button>
+                      <button
+                        onClick={() => setSelectedRegion(region)}
+                        className="text-blue-500 hover:bg-blue-500/10 rounded-full p-2 transition"
+                      >
+                        <InformationCircleIcon className="w-6 h-6" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">
+                        <p className="text-sm font-medium text-muted-foreground">
                           Capital
                         </p>
-                        <p className="text-lg text-gray-900">
+                        <p className="text-lg text-foreground">
                           {region.capital}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-600">
+                        <p className="text-sm font-medium text-muted-foreground">
                           Population
                         </p>
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-lg font-semibold text-foreground">
                           {region.population.toLocaleString()}
                         </p>
                       </div>
@@ -201,13 +283,13 @@ export default function RegionsView() {
                       {region.departments.slice(0, 3).map((dept, index) => (
                         <span
                           key={index}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
+                          className="px-2 py-1 bg-muted text-foreground text-xs rounded-full"
                         >
                           {dept.name}
                         </span>
                       ))}
                       {region.departments.length > 3 && (
-                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                        <span className="px-2 py-1 bg-muted text-foreground text-xs rounded-full">
                           +{region.departments.length - 3}
                         </span>
                       )}
@@ -218,11 +300,11 @@ export default function RegionsView() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-xl shadow-lg">
-            <p className="text-gray-500 text-xl">
-              No regions found for &quot;{searchTerm}&quot;
-            </p>
-          </div>
+          <EmptyState
+            icon={MagnifyingGlassIcon}
+            title={`Aucune région trouvée pour "${searchTerm}"`}
+            description="Essayez un autre terme de recherche."
+          />
         )}
       </div>
 

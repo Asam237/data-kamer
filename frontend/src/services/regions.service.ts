@@ -1,4 +1,4 @@
-import { apiClient, ApiError } from "@/lib/api";
+import { getLocalRegions } from "@/lib/cameroonAdapter";
 
 // Types pour les régions (basés sur votre modèle Django)
 export interface Region {
@@ -52,50 +52,40 @@ export interface TouristSite {
 }
 
 /**
- * Service pour gérer les régions
+ * Service pour gérer les régions.
+ * Source de données : le fichier JSON embarqué (data/cameroon.json),
+ * exposé de façon synchrone via l'adaptateur local.
  */
 export class RegionsService {
-  private static readonly BASE_ENDPOINT = "/regions";
-
   /**
    * Récupérer toutes les régions
    */
   static async getAllRegions(): Promise<Region[]> {
-    try {
-      return await apiClient.get<Region[]>(`${this.BASE_ENDPOINT}/`);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des régions:", error);
-      throw error;
-    }
+    return getLocalRegions();
   }
 
   /**
    * Récupérer une région par ID
    */
   static async getRegionById(id: number): Promise<Region> {
-    try {
-      return await apiClient.get<Region>(`${this.BASE_ENDPOINT}/${id}/`);
-    } catch (error) {
-      console.error(
-        `Erreur lors de la récupération de la région ${id}:`,
-        error
-      );
-      throw error;
+    const region = getLocalRegions().find((r) => r.id === id);
+    if (!region) {
+      throw new Error(`Région introuvable pour l'identifiant ${id}`);
     }
+    return region;
   }
 
   /**
    * Rechercher des régions par nom
    */
   static async searchRegions(query: string): Promise<Region[]> {
-    try {
-      return await apiClient.get<Region[]>(
-        `${this.BASE_ENDPOINT}/?search=${encodeURIComponent(query)}`
-      );
-    } catch (error) {
-      console.error("Erreur lors de la recherche de régions:", error);
-      throw error;
-    }
+    const q = query.trim().toLowerCase();
+    if (!q) return getLocalRegions();
+    return getLocalRegions().filter(
+      (region) =>
+        region.name.toLowerCase().includes(q) ||
+        region.capital.toLowerCase().includes(q)
+    );
   }
 
   /**
@@ -107,29 +97,21 @@ export class RegionsService {
     totalArea: number;
     averageDensity: number;
   }> {
-    try {
-      const regions = await this.getAllRegions();
+    const regions = getLocalRegions();
 
-      const totalRegions = regions.length;
-      const totalPopulation = regions.reduce(
-        (sum, region) => sum + region.population,
-        0
-      );
-      const totalArea = regions.reduce((sum, region) => sum + region.area, 0);
-      const averageDensity = Math.round(totalPopulation / totalArea);
+    const totalRegions = regions.length;
+    const totalPopulation = regions.reduce(
+      (sum, region) => sum + region.population,
+      0
+    );
+    const totalArea = regions.reduce((sum, region) => sum + region.area, 0);
+    const averageDensity = Math.round(totalPopulation / totalArea);
 
-      return {
-        totalRegions,
-        totalPopulation,
-        totalArea,
-        averageDensity,
-      };
-    } catch (error) {
-      console.error(
-        "Erreur lors du calcul des statistiques des régions:",
-        error
-      );
-      throw error;
-    }
+    return {
+      totalRegions,
+      totalPopulation,
+      totalArea,
+      averageDensity,
+    };
   }
 }

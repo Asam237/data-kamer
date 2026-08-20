@@ -461,15 +461,15 @@ const EneoOutageView: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-muted text-foreground transition-colors duration-300">
       {/* Header */}
-      <div className="bg-card border-border border-b px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300">
+      <div className="bg-card border-border border-b px-3 sm:px-4 py-3 flex justify-between items-center shadow-sm transition-colors duration-300 gap-2">
         {/* ... (votre header reste le même) ... */}
-        <div className="flex items-center">
-          <h1 className="text-xl font-bold flex items-center">
-            <Zap className="h-6 w-6 mr-2 text-green-600" />
-            Coupures de courant ENEO
+        <div className="flex items-center min-w-0">
+          <h1 className="text-base sm:text-xl font-bold flex items-center truncate">
+            <Zap className="h-5 w-5 sm:h-6 sm:w-6 mr-2 text-green-600 flex-shrink-0" />
+            <span className="truncate">Coupures de courant ENEO</span>
           </h1>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex space-x-1 sm:space-x-2 flex-shrink-0">
           <button
             className={`p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors flex items-center ${
               viewMode === "map" ? "text-blue-600" : ""
@@ -477,8 +477,8 @@ const EneoOutageView: React.FC = () => {
             onClick={() => setViewMode("map")}
             title="Vue Carte"
           >
-            <MapIcon className="h-4 w-4 mr-1" />
-            Carte
+            <MapIcon className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Carte</span>
           </button>
           <button
             className={`p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors flex items-center ${
@@ -487,8 +487,8 @@ const EneoOutageView: React.FC = () => {
             onClick={() => setViewMode("list")}
             title="Vue Liste"
           >
-            <List className="h-4 w-4 mr-1" />
-            Liste
+            <List className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Liste</span>
           </button>
           <button
             className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors flex items-center"
@@ -499,17 +499,25 @@ const EneoOutageView: React.FC = () => {
                 : "Afficher la barre latérale"
             }
           >
-            <Menu className="h-4 w-4 mr-1" />
-            {sidebarOpen ? "Masquer" : "Afficher"}
+            <Menu className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">
+              {sidebarOpen ? "Masquer" : "Afficher"}
+            </span>
           </button>
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         {/* Sidebar */}
         {sidebarOpen && (
           // ... (votre sidebar reste la même) ...
-          <div className="w-80 bg-card shadow-lg overflow-hidden flex flex-col z-10">
+          <>
+            {/* Mobile backdrop */}
+            <div
+              className="fixed inset-0 bg-black/40 z-10 md:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+            <div className="absolute md:relative inset-y-0 left-0 z-20 md:z-10 w-[85vw] max-w-sm md:w-80 bg-card shadow-lg overflow-hidden flex flex-col">
             <div className="bg-muted border-b p-4">
               <h2 className="font-bold text-foreground flex items-center">
                 <Zap className="h-5 w-5 mr-2 text-yellow-500" />
@@ -625,15 +633,16 @@ const EneoOutageView: React.FC = () => {
                 Total: {totalOutages} coupure(s) programmée(s)
               </div>
             </div>
-          </div>
+            </div>
+          </>
         )}
 
         {/* Map / List View */}
         <div className="flex-1 flex overflow-hidden relative">
           {viewMode === "map" ? (
             <div
-              className={`${
-                detailsOpen ? "w-3/5" : "w-full"
+              className={`w-full ${
+                detailsOpen ? "md:w-3/5" : ""
               } transition-all duration-300 relative`}
             >
               <Map
@@ -726,7 +735,7 @@ const EneoOutageView: React.FC = () => {
 
               {/* Message d'erreur/invitation de localisation */}
               {locationError && !userLocation && (
-                <div className="absolute top-4 left-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md z-20">
+                <div className="absolute top-4 left-4 max-w-[calc(100vw-2rem)] sm:max-w-xs bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md z-20">
                   <p className="font-bold">Localisation requise</p>
                   <p className="text-sm mt-1">{locationError}</p>
                   {locationError.includes("refusé") && (
@@ -741,7 +750,7 @@ const EneoOutageView: React.FC = () => {
               )}
               {/* Message d'invitation par défaut si non demandé/refusé et non localisé */}
               {!locationPrompted && !userLocation && (
-                <div className="absolute top-4 left-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded shadow-md z-20">
+                <div className="absolute top-4 left-4 max-w-[calc(100vw-2rem)] sm:max-w-xs bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded shadow-md z-20">
                   <p className="font-bold">Localisez-vous !</p>
                   <p className="text-sm mt-1">
                     Cliquez pour voir les coupures proches de chez vous.
@@ -819,8 +828,8 @@ const EneoOutageView: React.FC = () => {
             </div>
           ) : (
             // ... (votre vue liste reste la même) ...
-            <div className="w-full p-4 overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4">
+            <div className="w-full p-3 sm:p-4 overflow-y-auto">
+              <h2 className="text-lg sm:text-xl font-bold mb-4">
                 Liste des coupures programmées
               </h2>
 
@@ -898,7 +907,7 @@ const EneoOutageView: React.FC = () => {
 
           {/* Details panel */}
           {viewMode === "map" && detailsOpen && selectedRegion && (
-            <div className="w-2/5 bg-card shadow-lg overflow-y-auto transition-all duration-300 border-l border-border">
+            <div className="fixed inset-0 z-30 md:static md:inset-auto md:z-auto md:w-2/5 w-full bg-card shadow-lg overflow-y-auto transition-all duration-300 border-l border-border">
               <div className="sticky top-0 z-10 bg-card shadow-sm">
                 <div className="bg-blue-700 p-4 text-white">
                   <div className="flex items-center justify-between">
@@ -909,7 +918,7 @@ const EneoOutageView: React.FC = () => {
                     >
                       <ChevronRight className="h-5 w-5" />
                     </button>
-                    <h3 className="text-xl font-bold flex-1 text-center">
+                    <h3 className="text-lg sm:text-xl font-bold flex-1 text-center truncate px-2">
                       {selectedRegion.regionName}
                     </h3>
                     <div className="w-5"></div> {/* Spacer for alignment */}
@@ -999,9 +1008,9 @@ const EneoOutageView: React.FC = () => {
               </div>
 
               {/* Quick navigation between regions */}
-              <div className="sticky bottom-0 bg-card border-t border-border p-3 flex justify-between">
+              <div className="sticky bottom-0 bg-card border-t border-border p-2 sm:p-3 flex justify-between gap-2">
                 <button
-                  className="px-3 py-2 bg-muted hover:bg-muted/70 text-foreground rounded flex items-center text-sm transition-colors"
+                  className="px-2 sm:px-3 py-2 bg-muted hover:bg-muted/70 text-foreground rounded flex items-center text-xs sm:text-sm transition-colors min-w-0"
                   onClick={() => {
                     const currentIndex = outageData.findIndex(
                       (r) => r.regionCode === selectedRegion.regionCode
@@ -1012,11 +1021,14 @@ const EneoOutageView: React.FC = () => {
                     handleMarkerClick(outageData[prevIndex]);
                   }}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Région précédente
+                  <ChevronLeft className="h-4 w-4 mr-1 flex-shrink-0" />
+                  <span className="truncate">
+                    <span className="sm:hidden">Précédente</span>
+                    <span className="hidden sm:inline">Région précédente</span>
+                  </span>
                 </button>
                 <button
-                  className="px-3 py-2 bg-muted hover:bg-muted/70 text-foreground rounded flex items-center text-sm transition-colors"
+                  className="px-2 sm:px-3 py-2 bg-muted hover:bg-muted/70 text-foreground rounded flex items-center text-xs sm:text-sm transition-colors min-w-0"
                   onClick={() => {
                     const currentIndex = outageData.findIndex(
                       (r) => r.regionCode === selectedRegion.regionCode
@@ -1025,8 +1037,11 @@ const EneoOutageView: React.FC = () => {
                     handleMarkerClick(outageData[nextIndex]);
                   }}
                 >
-                  Région suivante
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <span className="truncate">
+                    <span className="sm:hidden">Suivante</span>
+                    <span className="hidden sm:inline">Région suivante</span>
+                  </span>
+                  <ChevronRight className="h-4 w-4 ml-1 flex-shrink-0" />
                 </button>
               </div>
             </div>

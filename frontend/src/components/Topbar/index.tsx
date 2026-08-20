@@ -1,24 +1,35 @@
 import React from "react";
-import { Search, Sun, Moon, Star } from "lucide-react";
+import { Search, Sun, Moon, Star, Menu } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 
 interface TopbarProps {
   onOpenCommandPalette: () => void;
   title: string;
   onOpenFavorites?: () => void;
+  onOpenSidebar?: () => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
   onOpenCommandPalette,
   title,
   onOpenFavorites,
+  onOpenSidebar,
 }) => {
   const { theme, toggleTheme } = useTheme();
   const isMac =
     typeof navigator !== "undefined" && /Mac/.test(navigator.platform);
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-4 sm:px-8 py-3 bg-background/80 backdrop-blur-md border-b border-border">
+    <header className="sticky top-0 z-30 flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-8 py-3 bg-background/80 backdrop-blur-md border-b border-border">
+      {onOpenSidebar && (
+        <button
+          onClick={onOpenSidebar}
+          className="md:hidden flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl border border-border bg-card text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Ouvrir le menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      )}
       <p className="text-sm font-medium text-muted-foreground truncate hidden sm:block">
         {title}
       </p>

@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
   MapPin,
@@ -10,6 +10,7 @@ import {
   Map,
   Zap,
   Scale,
+  X,
 } from "lucide-react";
 import type { ViewType } from "@/components/CommandPalette";
 
@@ -68,15 +69,36 @@ const navigation: NavigationItem[] = [
 type SidebarProps = {
   activeView: NavigationItem["key"];
   setActiveView: (view: NavigationItem["key"]) => void;
+  mobileOpen?: boolean;
+  onClose?: () => void;
 };
 
-export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
+export default function Sidebar({
+  activeView,
+  setActiveView,
+  mobileOpen = false,
+  onClose,
+}: SidebarProps) {
   return (
-    <motion.div
-      initial={{ x: -300 }}
-      animate={{ x: 0 }}
-      className="fixed inset-y-0 left-0 w-64 bg-card border-r border-border shadow-2xl z-50"
-    >
+    <>
+      {/* Overlay mobile */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      <div
+        className={`fixed inset-y-0 left-0 w-64 max-w-[85vw] bg-card border-r border-border shadow-2xl z-50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
       <div className="flex flex-col h-full">
         {/* Logo */}
         <motion.div
@@ -85,6 +107,16 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
           className="flex items-center justify-center h-20 px-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-indigo-600/20 animate-pulse"></div>
+          {/* Bouton fermer (mobile) */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="absolute right-2 top-2 p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors lg:hidden"
+              aria-label="Fermer le menu"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
           <div className="relative flex items-center space-x-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
               <TrendingUp className="w-6 h-6 text-white" />
@@ -227,6 +259,7 @@ export default function Sidebar({ activeView, setActiveView }: SidebarProps) {
           </div>
         </motion.div>
       </div>
-    </motion.div>
+      </div>
+    </>
   );
 }

@@ -136,7 +136,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -12, scale: 0.98 }}
                 transition={{ duration: 0.15 }}
-                className="fixed left-1/2 top-24 -translate-x-1/2 w-full max-w-xl z-[101] px-4"
+                className="fixed left-1/2 top-16 sm:top-24 -translate-x-1/2 w-full max-w-xl z-[101] px-4"
               >
                 <Dialog.Title className="sr-only">
                   Recherche DataKamer

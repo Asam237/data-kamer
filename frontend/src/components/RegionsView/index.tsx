@@ -54,11 +54,11 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
     region: Region;
     onClose: () => void;
   }) => (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-3 sm:p-4">
       <div className="bg-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-border">
-        <div className="p-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-2xl text-white">
+        <div className="p-4 sm:p-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-2xl text-white">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold">{region.name}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold">{region.name}</h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => toggleFavorite("region", region.name, region.name)}
@@ -80,8 +80,8 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
             </div>
           </div>
         </div>
-        <div className="p-6 space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
+        <div className="p-4 sm:p-6 space-y-6">
+          <div className="grid sm:grid-cols-2 gap-6">
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <MapIcon className="w-6 h-6 text-blue-500" />
@@ -156,7 +156,7 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 mx-auto mb-4"></div>
           <p className="text-xl text-muted-foreground">
@@ -169,7 +169,7 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center bg-red-500/10 p-8 rounded-lg">
           <p className="text-xl text-red-500 mb-4">Erreur de chargement</p>
           <p className="text-muted-foreground mb-4">{error}</p>
@@ -184,7 +184,7 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
     );
   }
   return (
-    <div className="p-6 sm:p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header and Search */}
         <PageHeader
@@ -194,8 +194,8 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
           } référencée${filteredRegions.length !== 1 ? "s" : ""}`}
           icon={MapIcon}
           actions={
-            <div className="flex items-center gap-2">
-              <div className="relative w-full md:w-64">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+              <div className="relative w-full sm:w-64">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
                   type="text"
@@ -207,11 +207,11 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
               </div>
               <button
                 onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium flex-shrink-0"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium flex-shrink-0"
                 title="Exporter en CSV"
               >
                 <Download className="w-4 h-4" />
-                <span className="hidden sm:inline">Exporter</span>
+                <span>Exporter</span>
               </button>
             </div>
           }
@@ -219,7 +219,7 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
 
         {/* Regions Grid */}
         {filteredRegions.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {filteredRegions.map((region) => (
               <div
                 key={region.id}

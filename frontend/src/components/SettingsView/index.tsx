@@ -370,7 +370,7 @@ const SettingsView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 p-6 sm:p-8">
+    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8">
       <PageHeader
         title="Paramètres"
         subtitle="Personnalisez votre expérience DataKamer"
@@ -378,25 +378,25 @@ const SettingsView: React.FC = () => {
         align="center"
       />
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Sidebar */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="lg:w-64 flex-shrink-0"
         >
-          <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+          <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden flex lg:flex-col overflow-x-auto lg:overflow-x-visible">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center px-6 py-4 text-left transition-all duration-200 ${
+                className={`flex-shrink-0 lg:w-full flex items-center px-4 lg:px-6 py-3 lg:py-4 text-left whitespace-nowrap transition-all duration-200 ${
                   activeTab === tab.id
-                    ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-r-4 border-blue-500"
+                    ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-b-4 lg:border-b-0 lg:border-r-4 border-blue-500"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
-                <tab.icon className="w-5 h-5 mr-3" />
+                <tab.icon className="w-5 h-5 mr-2 lg:mr-3" />
                 {tab.name}
               </button>
             ))}
@@ -418,7 +418,7 @@ const SettingsView: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mt-8 flex justify-end"
           >
-            <button className="flex items-center px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-lg">
+            <button className="flex items-center justify-center px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-lg w-full sm:w-auto">
               <Save className="w-5 h-5 mr-2" />
               Sauvegarder les Modifications
             </button>

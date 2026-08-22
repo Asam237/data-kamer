@@ -890,7 +890,6 @@ const MapView: React.FC = () => {
               </div>
             </div>
             </div>
-          </>
         )}
 
         <div className="flex-1 flex overflow-hidden relative">

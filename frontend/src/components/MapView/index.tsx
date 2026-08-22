@@ -697,7 +697,7 @@ const MapView: React.FC = () => {
         </div>
         <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
           <button
-            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
+            className="p-1.5 sm:p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
             onClick={() => setShowWeather(!showWeather)}
             title={showWeather ? "Masquer la météo" : "Afficher la météo"}
           >
@@ -708,14 +708,14 @@ const MapView: React.FC = () => {
             )}
           </button>
           <button
-            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
+            className="p-1.5 sm:p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
             onClick={toggleMapStyle}
             title={mapStyle === "default" ? "Vue satellite" : "Vue carte"}
           >
             <Layers className="h-5 w-5" />
           </button>
           <button
-            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
+            className="p-1.5 sm:p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
             onClick={toggleImmersiveMode}
             title={immersiveMode ? "Mode normal" : "Mode immersif"}
           >
@@ -889,7 +889,8 @@ const MapView: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
+          </>
         )}
 
         <div className="flex-1 flex overflow-hidden relative">
@@ -1673,7 +1674,7 @@ const MapView: React.FC = () => {
             className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2.5 sm:p-3 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 hover:rotate-90 z-50 group"
           >
             <X
-              className="w-7 h-7 text-white/80 group-hover:text-white"
+              className="w-5 h-5 sm:w-7 sm:h-7 text-white/80 group-hover:text-white"
               strokeWidth={2}
             />
           </button>

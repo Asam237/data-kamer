@@ -63,6 +63,12 @@
   .border-border {
     border-color: hsl(var(--border));
   }
+
+  /* Hauteur plein écran fiable sur mobile (barres du navigateur) */
+  .h-app {
+    height: 100vh;
+    height: 100dvh;
+  }
 }
 
 /* All your other custom CSS below this line... */

@@ -58,7 +58,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
 
   if (!data) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-[60vh]">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -124,7 +124,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
   ];
 
   return (
-    <div className="space-y-8 p-6 sm:p-8">
+    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8">
       <PageHeader
         title="Tableau de Bord DataKamer"
         subtitle="Tout savoir sur le Cameroun — statistiques et informations clés"
@@ -133,7 +133,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
       />
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((stat, index) => (
           <StatCard key={stat.title} {...stat} delay={index * 0.05} />
         ))}
@@ -171,16 +171,16 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
       )}
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Population by Region Chart */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-card rounded-2xl shadow-sm p-6 border border-border"
+          className="bg-card rounded-2xl shadow-sm p-4 sm:p-6 border border-border"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-foreground">
+            <h3 className="text-lg sm:text-xl font-bold text-foreground">
               Population par Région
             </h3>
             <BarChart3 className="w-6 h-6 text-blue-500" />
@@ -229,10 +229,10 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-card rounded-2xl shadow-sm p-6 border border-border"
+          className="bg-card rounded-2xl shadow-sm p-4 sm:p-6 border border-border"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-foreground">
+            <h3 className="text-lg sm:text-xl font-bold text-foreground">
               Superficie par Région
             </h3>
             <Activity className="w-6 h-6 text-purple-500" />
@@ -277,10 +277,10 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-card rounded-2xl shadow-sm p-6 border border-border lg:col-span-2"
+          className="bg-card rounded-2xl shadow-sm p-4 sm:p-6 border border-border lg:col-span-2"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-foreground">
+            <h3 className="text-lg sm:text-xl font-bold text-foreground">
               Évolution de la Population
             </h3>
             <TrendingUp className="w-6 h-6 text-green-500" />
@@ -315,12 +315,12 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-2xl shadow-sm p-8 border border-border"
+        className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-2xl shadow-sm p-5 sm:p-8 border border-border"
       >
         <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
           Informations Générales
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
           {[
             { label: "Capitale", value: data.capital, icon: MapPin },
             {

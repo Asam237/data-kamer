@@ -332,6 +332,13 @@ const MapView: React.FC = () => {
     }
   };
 
+  // La liste des régions est repliée par défaut sur mobile/tablette
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -432,6 +439,10 @@ const MapView: React.FC = () => {
     setActiveTab("info");
     setSelectedDepartment(null);
     setDepartmentWeatherData(null);
+    // Sur mobile/tablette, on referme la liste pour laisser place aux détails
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
   };
 
   const handleDepartmentClick = (dept: string) => {
@@ -592,7 +603,7 @@ const MapView: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-muted">
+      <div className="flex items-center justify-center h-full min-h-[60vh] bg-muted">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mx-auto mb-6"></div>
           <p className="text-xl font-semibold text-foreground">
@@ -608,7 +619,7 @@ const MapView: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-muted">
+      <div className="flex items-center justify-center h-full min-h-[60vh] bg-muted">
         <div className="bg-card border-red-500 border-l-4 shadow-lg rounded-lg p-6 max-w-md">
           <div className="flex items-center">
             <div className="flex-shrink-0 text-red-500">
@@ -647,7 +658,7 @@ const MapView: React.FC = () => {
 
   if (!cameroonData) {
     return (
-      <div className="flex items-center justify-center h-screen bg-muted">
+      <div className="flex items-center justify-center h-full min-h-[60vh] bg-muted">
         <div className="text-center">
           <p className="text-xl font-semibold text-foreground">
             Aucune donnée disponible
@@ -664,23 +675,29 @@ const MapView: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-muted text-foreground transition-colors duration-300">
-      <div className="bg-card border-border border-b px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center shadow-sm transition-colors duration-300 gap-2">
-        <div className="flex items-center min-w-0 flex-1">
+    <div className="flex flex-col h-full bg-muted text-foreground transition-colors duration-300">
+      <div className="bg-card border-border border-b px-3 sm:px-4 py-2.5 sm:py-3 flex justify-between items-center gap-2 shadow-sm transition-colors duration-300">
+        <div className="flex items-center min-w-0">
           <button
-            className="mr-2 sm:mr-3 p-1.5 sm:p-2 rounded-full hover:bg-muted transition-colors flex-shrink-0"
+            className="mr-2 sm:mr-3 p-2 rounded-full hover:bg-muted transition-colors flex-shrink-0"
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Afficher/masquer la liste des régions"
           >
             <Menu className="h-5 w-5" />
           </button>
           <h1 className="text-base sm:text-xl font-bold flex items-center min-w-0">
-            <Globe className="h-5 w-5 sm:h-6 sm:w-6 mr-1.5 sm:mr-2 text-green-600 flex-shrink-0" />
-            <span className="truncate">Carte Interactive du Cameroun</span>
+            <Globe className="h-5 w-5 sm:h-6 sm:w-6 mr-2 text-green-600 flex-shrink-0" />
+            <span className="truncate">
+              <span className="sm:hidden">Carte du Cameroun</span>
+              <span className="hidden sm:inline">
+                Carte Interactive du Cameroun
+              </span>
+            </span>
           </h1>
         </div>
-        <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
           <button
-            className="p-1.5 sm:p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
+            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
             onClick={() => setShowWeather(!showWeather)}
             title={showWeather ? "Masquer la météo" : "Afficher la météo"}
           >
@@ -691,14 +708,14 @@ const MapView: React.FC = () => {
             )}
           </button>
           <button
-            className="p-1.5 sm:p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
+            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
             onClick={toggleMapStyle}
             title={mapStyle === "default" ? "Vue satellite" : "Vue carte"}
           >
             <Layers className="h-5 w-5" />
           </button>
           <button
-            className="p-1.5 sm:p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
+            className="p-2 rounded-full bg-muted hover:bg-muted/70 transition-colors"
             onClick={toggleImmersiveMode}
             title={immersiveMode ? "Mode normal" : "Mode immersif"}
           >
@@ -712,13 +729,15 @@ const MapView: React.FC = () => {
       </div>
 
       <div className="flex flex-1 overflow-hidden relative">
+        {/* Overlay mobile pour la liste des régions */}
         {sidebarOpen && !immersiveMode && (
-          <>
-            <div
-              className="fixed inset-0 bg-black/40 z-10 md:hidden"
-              onClick={() => setSidebarOpen(false)}
-            />
-            <div className="absolute md:relative inset-y-0 left-0 z-20 md:z-10 w-[85vw] max-w-sm md:w-80 bg-card border-border border-r shadow-lg overflow-hidden flex flex-col transition-all duration-300">
+          <div
+            className="absolute inset-0 bg-black/40 z-20 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        {sidebarOpen && !immersiveMode && (
+          <div className="absolute lg:relative inset-y-0 left-0 z-30 lg:z-10 w-80 max-w-[85vw] bg-card border-border border-r shadow-lg overflow-hidden flex flex-col transition-all duration-300">
             <div className="bg-muted border-b p-4">
               <h2 className="font-bold text-foreground flex items-center">
                 <MapIcon className="h-5 w-5 mr-2 text-green-600" />
@@ -870,14 +889,13 @@ const MapView: React.FC = () => {
                 </div>
               </div>
             </div>
-            </div>
-          </>
+          </div>
         )}
 
         <div className="flex-1 flex overflow-hidden relative">
           <div
             className={`w-full ${
-              detailsOpen && !immersiveMode ? "md:w-3/5" : "md:w-full"
+              detailsOpen && !immersiveMode ? "lg:w-3/5" : ""
             } transition-all duration-300 relative`}
           >
             <Map
@@ -973,7 +991,7 @@ const MapView: React.FC = () => {
               <ZoomControl />
             </Map>
 
-            <div className="absolute top-4 right-4 flex flex-col space-y-2">
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex flex-col space-y-2">
               <button
                 className="rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-opacity-90 transition-colors bg-card text-foreground hover:bg-muted"
                 onClick={handleZoomIn}
@@ -1004,7 +1022,7 @@ const MapView: React.FC = () => {
               </button>
             </div>
 
-            <div className="absolute bottom-12 sm:bottom-14 right-2 sm:right-4 p-3 rounded-lg shadow-md border bg-card border-border text-foreground max-w-[calc(100vw-1rem)]">
+            <div className="absolute bottom-14 right-4 p-3 rounded-lg shadow-md border bg-card border-border text-foreground hidden md:block">
               <div className="text-sm font-medium mb-2">Légende</div>
               <div className="space-y-2">
                 <div className="flex items-center">
@@ -1036,7 +1054,7 @@ const MapView: React.FC = () => {
           </div>
 
           {detailsOpen && selectedRegion && !immersiveMode && (
-            <div className="absolute md:relative inset-y-0 right-0 z-30 w-full md:w-2/5 max-w-full overflow-y-auto transition-all duration-300 border-l bg-card border-border shadow-lg">
+            <div className="absolute inset-0 z-40 lg:z-auto lg:static w-full lg:w-2/5 overflow-y-auto transition-all duration-300 lg:border-l bg-card border-border shadow-lg">
               <div className="sticky top-0 z-10">
                 <div className="p-4 text-white bg-blue-700">
                   <div className="flex items-center justify-between">
@@ -1174,7 +1192,7 @@ const MapView: React.FC = () => {
                         <h4 className="text-sm font-semibold mb-2 text-foreground">
                           Départements ({selectedRegion.departments.length})
                         </h4>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {selectedRegion.departments.map((dept, index) => (
                             <div
                               key={index}
@@ -1391,7 +1409,7 @@ const MapView: React.FC = () => {
                               className="relative p-5 rounded-xl transition-all duration-300 bg-muted border"
                             >
                               <div
-                                className="relative p-0 overflow-hidden transition-all duration-500 transform bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl hover:shadow-3xl group h-96 border border-border cursor-pointer"
+                                className="relative p-0 overflow-hidden transition-all duration-500 transform bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl hover:shadow-3xl group h-64 sm:h-96 border border-border cursor-pointer"
                                 onClick={() => openCarousel(site)}
                               >
                                 <div
@@ -1652,10 +1670,10 @@ const MapView: React.FC = () => {
         >
           <button
             onClick={() => setShowCarousel(false)}
-            className="absolute top-3 right-3 sm:top-6 sm:right-6 p-2 sm:p-3 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 hover:rotate-90 z-50 group"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2.5 sm:p-3 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 hover:rotate-90 z-50 group"
           >
             <X
-              className="w-5 h-5 sm:w-7 sm:h-7 text-white/80 group-hover:text-white"
+              className="w-7 h-7 text-white/80 group-hover:text-white"
               strokeWidth={2}
             />
           </button>
@@ -1665,11 +1683,11 @@ const MapView: React.FC = () => {
               e.stopPropagation();
               prevImage();
             }}
-            className="absolute left-2 sm:left-6 p-2 sm:p-5 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
+            className="absolute left-2 sm:left-6 p-3 sm:p-5 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
             disabled={!selectedSite.images || selectedSite.images.length <= 1}
           >
             <ChevronLeft
-              className="w-5 h-5 sm:w-8 sm:h-8 text-white/80 group-hover:text-white"
+              className="w-6 h-6 sm:w-8 sm:h-8 text-white/80 group-hover:text-white"
               strokeWidth={2.5}
             />
           </button>
@@ -1679,11 +1697,11 @@ const MapView: React.FC = () => {
               e.stopPropagation();
               nextImage();
             }}
-            className="absolute right-2 sm:right-6 p-2 sm:p-5 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
+            className="absolute right-2 sm:right-6 p-3 sm:p-5 bg-card/5 hover:bg-card/10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 hover:border-white/20 hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 z-50 group"
             disabled={!selectedSite.images || selectedSite.images.length <= 1}
           >
             <ChevronRight
-              className="w-5 h-5 sm:w-8 sm:h-8 text-white/80 group-hover:text-white"
+              className="w-6 h-6 sm:w-8 sm:h-8 text-white/80 group-hover:text-white"
               strokeWidth={2.5}
             />
           </button>
@@ -1702,19 +1720,19 @@ const MapView: React.FC = () => {
           </div>
 
           {selectedSite.images && selectedSite.images.length > 1 && (
-            <div className="absolute top-3 left-3 sm:top-6 sm:left-6 px-3 py-1.5 sm:px-4 sm:py-2 bg-black/60 backdrop-blur-md rounded-full border border-white/10 z-50">
-              <span className="text-white text-xs sm:text-sm font-medium">
+            <div className="absolute top-4 left-4 sm:top-6 sm:left-6 px-3 py-1.5 sm:px-4 sm:py-2 bg-black/60 backdrop-blur-md rounded-full border border-white/10 z-50">
+              <span className="text-white text-sm font-medium">
                 {currentImageIndex + 1} / {selectedSite.images.length}
               </span>
             </div>
           )}
 
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent pt-16 sm:pt-32 pb-6 sm:pb-8 px-4 sm:px-8 z-40">
-            <div className="max-w-4xl mx-auto text-center space-y-2 sm:space-y-3">
-              <h3 className="text-xl sm:text-4xl font-bold text-white tracking-tight">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent pt-20 sm:pt-32 pb-6 sm:pb-8 px-4 sm:px-8 z-40">
+            <div className="max-w-4xl mx-auto text-center space-y-3">
+              <h3 className="text-2xl sm:text-4xl font-bold text-white tracking-tight">
                 {selectedSite.name}
               </h3>
-              <p className="text-sm sm:text-lg text-muted-foreground leading-relaxed">
+              <p className="text-sm sm:text-lg text-muted-foreground leading-relaxed line-clamp-3 sm:line-clamp-none">
                 {selectedSite.description}
               </p>
 

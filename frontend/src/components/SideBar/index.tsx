@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
@@ -11,13 +11,8 @@ import {
   Zap,
   Scale,
   X,
-  Coffee,
-  Crown,
 } from "lucide-react";
 import type { ViewType } from "@/components/CommandPalette";
-import { usePro } from "@/lib/pro";
-import { BMC_URL } from "@/lib/bmc";
-import UpgradeModal from "@/components/UpgradeModal";
 
 type NavigationItem = {
   name: string;
@@ -74,37 +69,34 @@ const navigation: NavigationItem[] = [
 type SidebarProps = {
   activeView: NavigationItem["key"];
   setActiveView: (view: NavigationItem["key"]) => void;
-  open?: boolean;
+  mobileOpen?: boolean;
   onClose?: () => void;
 };
 
 export default function Sidebar({
   activeView,
   setActiveView,
-  open = false,
+  mobileOpen = false,
   onClose,
 }: SidebarProps) {
-  const { isPro } = usePro();
-  const [upgradeOpen, setUpgradeOpen] = useState(false);
-
   return (
     <>
-      {/* Mobile backdrop */}
+      {/* Overlay mobile */}
       <AnimatePresence>
-        {open && (
+        {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
           />
         )}
       </AnimatePresence>
 
       <div
-        className={`fixed inset-y-0 left-0 w-72 max-w-[85vw] md:w-64 bg-card border-r border-border shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:translate-x-0 ${
-          open ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-0 left-0 w-64 max-w-[85vw] bg-card border-r border-border shadow-2xl z-50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
       <div className="flex flex-col h-full">
@@ -112,9 +104,19 @@ export default function Sidebar({
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between h-20 px-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden"
+          className="flex items-center justify-center h-20 px-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-indigo-600/20 animate-pulse"></div>
+          {/* Bouton fermer (mobile) */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="absolute right-2 top-2 p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors lg:hidden"
+              aria-label="Fermer le menu"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
           <div className="relative flex items-center space-x-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
               <TrendingUp className="w-6 h-6 text-white" />
@@ -128,13 +130,6 @@ export default function Sidebar({
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="relative md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors"
-            aria-label="Fermer le menu"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </motion.div>
 
         {/* Navigation */}
@@ -148,10 +143,7 @@ export default function Sidebar({
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                onClick={() => {
-                  setActiveView(item.key);
-                  onClose?.();
-                }}
+                onClick={() => setActiveView(item.key)}
                 className={`group w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 relative overflow-hidden ${
                   isActive
                     ? "text-white shadow-lg transform scale-105"
@@ -210,21 +202,6 @@ export default function Sidebar({
           transition={{ delay: 0.5 }}
           className="p-4 border-t border-border bg-muted/40"
         >
-          {!isPro && (
-            <button
-              onClick={() => setUpgradeOpen(true)}
-              className="w-full flex items-center justify-center gap-2 mb-3 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold shadow-sm hover:brightness-105 transition-all"
-            >
-              <Crown className="w-4 h-4" />
-              Passer à Pro
-            </button>
-          )}
-          {isPro && (
-            <div className="w-full flex items-center justify-center gap-2 mb-3 px-4 py-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold">
-              <Crown className="w-3.5 h-3.5" />
-              Plan Pro actif
-            </div>
-          )}
           <div className="text-center">
             <p className="text-xs text-muted-foreground mb-3">
               © {new Date().getFullYear()} DataKamer
@@ -278,23 +255,11 @@ export default function Sidebar({
                   <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                 </svg>
               </a>
-
-              <a
-                href={BMC_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-amber-500 transition-colors duration-200"
-                title="Buy Me a Coffee"
-              >
-                <Coffee className="w-4 h-4" />
-              </a>
             </div>
           </div>
         </motion.div>
       </div>
       </div>
-
-      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} />
     </>
   );
 }

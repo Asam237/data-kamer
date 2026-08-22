@@ -155,9 +155,9 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = ({
   }
 
   return (
-    <div className="space-y-6 p-6 sm:p-8">
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Header with stats */}
-      <div className="bg-card rounded-xl shadow-sm p-6 border border-border">
+      <div className="bg-card rounded-xl shadow-sm p-4 sm:p-6 border border-border">
         <PageHeader
           title="Universités du Cameroun"
           icon={BuildingLibraryIcon}
@@ -186,15 +186,15 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = ({
         />
 
         {/* Stats cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 my-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 my-6">
           <div className="bg-blue-500/10 rounded-lg p-4">
             <div className="flex items-center">
-              <BuildingLibraryIcon className="w-8 h-8 text-blue-500" />
+              <BuildingLibraryIcon className="w-7 h-7 sm:w-8 sm:h-8 text-blue-500 flex-shrink-0" />
               <div className="ml-3">
                 <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
                   Total
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {stats.total}
                 </p>
               </div>
@@ -202,12 +202,12 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = ({
           </div>
           <div className="bg-emerald-500/10 rounded-lg p-4">
             <div className="flex items-center">
-              <UsersIcon className="w-8 h-8 text-emerald-500" />
+              <UsersIcon className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-500 flex-shrink-0" />
               <div className="ml-3">
                 <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
                   Publiques
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {stats.public}
                 </p>
               </div>
@@ -215,12 +215,12 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = ({
           </div>
           <div className="bg-purple-500/10 rounded-lg p-4">
             <div className="flex items-center">
-              <BuildingLibraryIcon className="w-8 h-8 text-purple-500" />
+              <BuildingLibraryIcon className="w-7 h-7 sm:w-8 sm:h-8 text-purple-500 flex-shrink-0" />
               <div className="ml-3">
                 <p className="text-sm font-medium text-purple-600 dark:text-purple-400">
                   Privées
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {stats.private}
                 </p>
               </div>
@@ -228,12 +228,12 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = ({
           </div>
           <div className="bg-orange-500/10 rounded-lg p-4">
             <div className="flex items-center">
-              <CalendarIcon className="w-8 h-8 text-orange-500" />
+              <CalendarIcon className="w-7 h-7 sm:w-8 sm:h-8 text-orange-500 flex-shrink-0" />
               <div className="ml-3">
                 <p className="text-sm font-medium text-orange-600 dark:text-orange-400">
                   Âge moyen
                 </p>
-                <p className="text-2xl font-bold text-foreground">
+                <p className="text-xl sm:text-2xl font-bold text-foreground">
                   {stats.averageAge} ans
                 </p>
               </div>
@@ -256,8 +256,8 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = ({
 
       {/* Filters panel */}
       {showFilters && (
-        <div className="bg-card rounded-xl shadow-sm p-6 border border-border">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-card rounded-xl shadow-sm p-4 sm:p-6 border border-border">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Région
@@ -333,7 +333,7 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = ({
       </div>
 
       {/* Universities grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
         {filteredUniversities.map((university) => (
           <UniversityCard
             key={university.id}
@@ -498,12 +498,12 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
     regions.find((r) => r.id === university.region)?.name || "Région inconnue";
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 max-h-[100vh]">
-      <div className="bg-card rounded-xl shadow-xl max-w-2xl w-full max-h-[100vh] overflow-y-auto border border-border">
-        <div className="p-6">
-          <div className="flex justify-between items-start mb-6">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-3 sm:p-4 z-50">
+      <div className="bg-card rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-border">
+        <div className="p-4 sm:p-6">
+          <div className="flex justify-between items-start gap-3 mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2 break-words">
                 {university.name}
               </h2>
               <div className="flex items-center text-muted-foreground">
@@ -531,7 +531,7 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
             <div className="space-y-4">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
@@ -571,7 +571,7 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
                     href={university.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-lg text-blue-500 hover:text-blue-600 underline"
+                    className="text-lg text-blue-500 hover:text-blue-600 underline break-all"
                   >
                     {university.website}
                   </a>
@@ -596,7 +596,7 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
               <p className="text-sm font-medium text-muted-foreground mb-3">
                 Facultés et Écoles ({university.faculties.length})
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {university.faculties.map((faculty, index) => (
                   <div key={index} className="px-3 py-2 bg-muted rounded-lg">
                     <span className="text-sm text-foreground">

@@ -100,7 +100,7 @@ const CompareView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 p-6 sm:p-8">
+    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8">
       <PageHeader
         title="Comparateur de régions"
         subtitle="Sélectionnez jusqu'à 3 régions pour comparer leurs données clés côte à côte"
@@ -109,7 +109,7 @@ const CompareView: React.FC = () => {
           selectedRegions.length > 0 && (
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors text-sm font-medium shadow-sm"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors text-sm font-medium shadow-sm w-full sm:w-auto"
             >
               {isPro ? (
                 <Download className="w-4 h-4" />
@@ -172,12 +172,12 @@ const CompareView: React.FC = () => {
         <>
           {/* Side-by-side cards */}
           <div
-            className={`grid grid-cols-1 gap-6 ${
+            className={`grid grid-cols-1 gap-4 sm:gap-6 ${
               selectedRegions.length === 1
-                ? "md:grid-cols-1 max-w-md"
+                ? "sm:grid-cols-1 max-w-md"
                 : selectedRegions.length === 2
-                ? "md:grid-cols-2"
-                : "md:grid-cols-3"
+                ? "sm:grid-cols-2"
+                : "sm:grid-cols-2 lg:grid-cols-3"
             }`}
             style={{
               gridTemplateColumns:
@@ -268,7 +268,7 @@ const CompareView: React.FC = () => {
 
           {/* Comparison chart */}
           {selectedRegions.length > 1 && (
-            <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+            <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-lg font-bold text-foreground mb-4">
                 Population &amp; superficie comparées
               </h3>

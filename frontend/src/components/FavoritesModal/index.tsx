@@ -46,7 +46,7 @@ export const FavoritesModal: React.FC<FavoritesModalProps> = ({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -12, scale: 0.98 }}
                 transition={{ duration: 0.15 }}
-                className="fixed left-1/2 top-24 -translate-x-1/2 w-full max-w-lg z-[101] px-4"
+                className="fixed left-1/2 top-16 sm:top-24 -translate-x-1/2 w-full max-w-lg z-[101] px-4"
               >
                 <div className="bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
                   <div className="flex items-center justify-between px-5 py-4 border-b border-border">

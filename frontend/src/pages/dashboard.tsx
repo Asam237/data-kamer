@@ -25,6 +25,9 @@ const VIEW_TITLES: Record<ViewType, string> = {
   settings: "Paramètres",
 };
 
+// Vues qui occupent toute la hauteur disponible (cartes plein écran)
+const FULL_HEIGHT_VIEWS: ViewType[] = ["map", "outages"];
+
 const DashboardPage = () => {
   const [activeView, setActiveView] = useState<ViewType>("dashboard");
   const [data] = useState(cameroonData);
@@ -38,6 +41,13 @@ const DashboardPage = () => {
     setActiveView(view);
     setSidebarOpen(false);
   };
+
+  const handleSetActiveView = (view: ViewType) => {
+    setActiveView(view);
+    setSidebarOpen(false);
+  };
+
+  const isFullHeight = FULL_HEIGHT_VIEWS.includes(activeView);
 
   const renderView = () => {
     const viewProps = {
@@ -80,13 +90,13 @@ const DashboardPage = () => {
         );
       case "outages":
         return (
-          <motion.div {...viewProps}>
+          <motion.div {...viewProps} className="h-full">
             <EneoOutageView />
           </motion.div>
         );
       case "map":
         return (
-          <motion.div {...viewProps}>
+          <motion.div {...viewProps} className="h-full">
             <MapView />
           </motion.div>
         );
@@ -106,21 +116,27 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-app overflow-hidden bg-background">
       <Sidebar
         activeView={activeView}
-        setActiveView={setActiveView}
-        open={sidebarOpen}
+        setActiveView={handleSetActiveView}
+        mobileOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
-      <main className="flex-1 md:ml-64 overflow-auto flex flex-col min-w-0">
+      <main className="flex-1 min-w-0 lg:ml-64 flex flex-col h-full">
         <Topbar
           title={VIEW_TITLES[activeView]}
           onOpenCommandPalette={() => setCommandOpen(true)}
           onOpenFavorites={() => setFavoritesOpen(true)}
-          onOpenSidebar={() => setSidebarOpen(true)}
+          onOpenMenu={() => setSidebarOpen(true)}
         />
-        <div className="flex-1">{renderView()}</div>
+        <div
+          className={`flex-1 min-h-0 ${
+            isFullHeight ? "overflow-hidden" : "overflow-y-auto"
+          }`}
+        >
+          {renderView()}
+        </div>
       </main>
 
       <CommandPalette

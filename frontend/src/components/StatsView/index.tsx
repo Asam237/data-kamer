@@ -204,7 +204,9 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
                 formatter={(value, name) => [
-                  name === "population" ? value.toLocaleString() : value,
+                  name === "population"
+                    ? Number(value ?? 0).toLocaleString()
+                    : value,
                   name === "population" ? "Population" : "Densité (hab/km²)",
                 ]}
                 labelFormatter={(label) =>
@@ -290,8 +292,8 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
 
       case "distribution":
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-96">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <ResponsiveContainer width="100%" height={320}>
               <PieChart>
                 <Pie
                   data={universityTypes}
@@ -309,7 +311,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                 <Tooltip contentStyle={chartTooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={320}>
               <PieChart>
                 <Pie
                   data={populationDistribution}
@@ -380,7 +382,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
   };
 
   return (
-    <div className="space-y-8 p-6 sm:p-8">
+    <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8">
       <PageHeader
         title="Statistiques Avancées"
         subtitle="Analyses détaillées et visualisations interactives des données du Cameroun"
@@ -389,7 +391,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
       />
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         <StatCard
           title="Population Totale"
           value={data.overview.totalPopulation}
@@ -434,7 +436,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card rounded-xl shadow-sm p-6 border border-border"
+        className="bg-card rounded-xl shadow-sm p-4 sm:p-6 border border-border"
       >
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div className="flex flex-wrap gap-2">
@@ -471,7 +473,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
           </div>
           <button
             onClick={handleExport}
-            className="flex items-center px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium"
+            className="flex items-center justify-center px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium w-full sm:w-auto"
           >
             {isPro ? (
               <Download className="w-4 h-4 mr-2" />
@@ -488,20 +490,20 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="bg-muted/40 rounded-lg p-4"
+          className="bg-muted/40 rounded-lg p-2 sm:p-4 overflow-x-hidden"
         >
           {renderChart()}
         </motion.div>
       </motion.div>
 
       {/* Additional Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-card rounded-xl shadow-sm p-6 border border-border"
+          className="bg-card rounded-xl shadow-sm p-4 sm:p-6 border border-border"
         >
-          <h3 className="text-xl font-bold text-foreground mb-4">
+          <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4">
             Top 5 Régions par Population
           </h3>
           <div className="space-y-3">
@@ -539,9 +541,9 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-card rounded-xl shadow-sm p-6 border border-border"
+          className="bg-card rounded-xl shadow-sm p-4 sm:p-6 border border-border"
         >
-          <h3 className="text-xl font-bold text-foreground mb-4">
+          <h3 className="text-lg sm:text-xl font-bold text-foreground mb-4">
             Universités par Région
           </h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -564,9 +566,9 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
                 cursor={{ strokeDasharray: "3 3" }}
                 formatter={(value, name) => [
                   name === "x"
-                    ? value.toLocaleString() + " km²"
+                    ? Number(value ?? 0).toLocaleString() + " km²"
                     : name === "y"
-                    ? value.toLocaleString()
+                    ? Number(value ?? 0).toLocaleString()
                     : value + " hab/km²",
                   name === "x"
                     ? "Superficie"

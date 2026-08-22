@@ -35,11 +35,16 @@ import {
   Activity,
   Target,
   Download,
+  Lock,
 } from "lucide-react";
 import { CameroonData } from "../../../types";
 import PageHeader from "@/components/ui/PageHeader";
 import StatCard from "@/components/ui/StatCard";
 import { exportToCsv } from "@/lib/export";
+import { usePro } from "@/lib/pro";
+import UpgradeModal from "@/components/UpgradeModal";
+
+const PRO_CHART_IDS = ["trends", "radar"];
 
 interface StatsViewProps {
   data: CameroonData;
@@ -55,6 +60,9 @@ const chartTooltipStyle = {
 
 const StatsView: React.FC<StatsViewProps> = ({ data }) => {
   const [activeChart, setActiveChart] = useState<string>("population");
+  const { isPro } = usePro();
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [upgradeReason, setUpgradeReason] = useState<string>("");
 
   // Process data for charts
   const regionData = data.regions
@@ -168,6 +176,11 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
   ];
 
   const handleExport = () => {
+    if (!isPro) {
+      setUpgradeReason("Débloquez l'export CSV illimité des statistiques.");
+      setUpgradeOpen(true);
+      return;
+    }
     exportToCsv(
       "statistiques-regions",
       regionStats.map((r) => ({
@@ -425,26 +438,46 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
       >
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div className="flex flex-wrap gap-2">
-            {chartOptions.map((option) => (
-              <button
-                key={option.id}
-                onClick={() => setActiveChart(option.id)}
-                className={`flex items-center px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
-                  activeChart === option.id
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "bg-muted text-muted-foreground hover:bg-muted/70"
-                }`}
-              >
-                <option.icon className="w-4 h-4 mr-2" />
-                {option.name}
-              </button>
-            ))}
+            {chartOptions.map((option) => {
+              const locked = !isPro && PRO_CHART_IDS.includes(option.id);
+              return (
+                <button
+                  key={option.id}
+                  onClick={() => {
+                    if (locked) {
+                      setUpgradeReason(
+                        "Débloquez les graphiques avancés (radar, tendances)."
+                      );
+                      setUpgradeOpen(true);
+                      return;
+                    }
+                    setActiveChart(option.id);
+                  }}
+                  className={`flex items-center px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
+                    activeChart === option.id
+                      ? "bg-blue-500 text-white shadow-lg"
+                      : "bg-muted text-muted-foreground hover:bg-muted/70"
+                  }`}
+                >
+                  {locked ? (
+                    <Lock className="w-4 h-4 mr-2" />
+                  ) : (
+                    <option.icon className="w-4 h-4 mr-2" />
+                  )}
+                  {option.name}
+                </button>
+              );
+            })}
           </div>
           <button
             onClick={handleExport}
             className="flex items-center px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-medium"
           >
-            <Download className="w-4 h-4 mr-2" />
+            {isPro ? (
+              <Download className="w-4 h-4 mr-2" />
+            ) : (
+              <Lock className="w-4 h-4 mr-2" />
+            )}
             Exporter
           </button>
         </div>
@@ -548,6 +581,12 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
           </ResponsiveContainer>
         </motion.div>
       </div>
+
+      <UpgradeModal
+        open={upgradeOpen}
+        onOpenChange={setUpgradeOpen}
+        reason={upgradeReason}
+      />
     </div>
   );
 };

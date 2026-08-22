@@ -8,6 +8,8 @@ import {
   Building2,
   X,
   Download,
+  Crown,
+  Lock,
 } from "lucide-react";
 import {
   BarChart,
@@ -23,19 +25,35 @@ import cameroonData from "../../../data/cameroon.json";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import { exportToCsv } from "@/lib/export";
+import { usePro } from "@/lib/pro";
+import UpgradeModal from "@/components/UpgradeModal";
 
-const MAX_SELECTION = 3;
-const ACCENT_COLORS = ["#3B82F6", "#10B981", "#F59E0B"];
+const FREE_MAX_SELECTION = 2;
+const PRO_MAX_SELECTION = 6;
+const ACCENT_COLORS = [
+  "#3B82F6",
+  "#10B981",
+  "#F59E0B",
+  "#8B5CF6",
+  "#EC4899",
+  "#14B8A6",
+];
 
 const CompareView: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const { isPro } = usePro();
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const maxSelection = isPro ? PRO_MAX_SELECTION : FREE_MAX_SELECTION;
 
   const regions = cameroonData.regions;
 
   const toggleRegion = (id: number) => {
     setSelectedIds((prev) => {
       if (prev.includes(id)) return prev.filter((r) => r !== id);
-      if (prev.length >= MAX_SELECTION) return prev;
+      if (prev.length >= maxSelection) {
+        if (!isPro) setUpgradeOpen(true);
+        return prev;
+      }
       return [...prev, id];
     });
   };
@@ -63,6 +81,10 @@ const CompareView: React.FC = () => {
   );
 
   const handleExport = () => {
+    if (!isPro) {
+      setUpgradeOpen(true);
+      return;
+    }
     exportToCsv(
       "comparaison-regions",
       selectedRegions.map((r) => ({
@@ -89,26 +111,41 @@ const CompareView: React.FC = () => {
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors text-sm font-medium shadow-sm"
             >
-              <Download className="w-4 h-4" />
+              {isPro ? (
+                <Download className="w-4 h-4" />
+              ) : (
+                <Lock className="w-4 h-4" />
+              )}
               Exporter
             </button>
           )
         }
       />
 
+      {!isPro && (
+        <button
+          onClick={() => setUpgradeOpen(true)}
+          className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-2.5 hover:bg-amber-500/15 transition-colors"
+        >
+          <Crown className="w-4 h-4" />
+          Passez à Pro pour comparer jusqu&apos;à {PRO_MAX_SELECTION} régions
+          et exporter en CSV
+        </button>
+      )}
+
       {/* Region picker */}
       <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
         <p className="text-sm font-medium text-muted-foreground mb-3">
-          {selectedIds.length}/{MAX_SELECTION} régions sélectionnées
+          {selectedIds.length}/{maxSelection} régions sélectionnées
+          {!isPro && ` (limite gratuite)`}
         </p>
         <div className="flex flex-wrap gap-2">
           {regions.map((region) => {
             const isSelected = selectedIds.includes(region.id);
-            const disabled = !isSelected && selectedIds.length >= MAX_SELECTION;
+            const disabled = !isSelected && selectedIds.length >= maxSelection;
             return (
               <button
                 key={region.id}
-                disabled={disabled}
                 onClick={() => toggleRegion(region.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
                   isSelected
@@ -142,6 +179,12 @@ const CompareView: React.FC = () => {
                 ? "md:grid-cols-2"
                 : "md:grid-cols-3"
             }`}
+            style={{
+              gridTemplateColumns:
+                selectedRegions.length > 3
+                  ? `repeat(auto-fit, minmax(220px, 1fr))`
+                  : undefined,
+            }}
           >
             <AnimatePresence>
               {selectedRegions.map((region, index) => (
@@ -255,6 +298,12 @@ const CompareView: React.FC = () => {
           )}
         </>
       )}
+
+      <UpgradeModal
+        open={upgradeOpen}
+        onOpenChange={setUpgradeOpen}
+        reason="Débloquez le comparateur étendu (jusqu'à 6 régions) et l'export CSV."
+      />
     </div>
   );
 };

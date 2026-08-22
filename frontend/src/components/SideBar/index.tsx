@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
@@ -11,8 +11,13 @@ import {
   Zap,
   Scale,
   X,
+  Coffee,
+  Crown,
 } from "lucide-react";
 import type { ViewType } from "@/components/CommandPalette";
+import { usePro } from "@/lib/pro";
+import { BMC_URL } from "@/lib/bmc";
+import UpgradeModal from "@/components/UpgradeModal";
 
 type NavigationItem = {
   name: string;
@@ -79,6 +84,9 @@ export default function Sidebar({
   open = false,
   onClose,
 }: SidebarProps) {
+  const { isPro } = usePro();
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+
   return (
     <>
       {/* Mobile backdrop */}
@@ -202,6 +210,21 @@ export default function Sidebar({
           transition={{ delay: 0.5 }}
           className="p-4 border-t border-border bg-muted/40"
         >
+          {!isPro && (
+            <button
+              onClick={() => setUpgradeOpen(true)}
+              className="w-full flex items-center justify-center gap-2 mb-3 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold shadow-sm hover:brightness-105 transition-all"
+            >
+              <Crown className="w-4 h-4" />
+              Passer à Pro
+            </button>
+          )}
+          {isPro && (
+            <div className="w-full flex items-center justify-center gap-2 mb-3 px-4 py-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold">
+              <Crown className="w-3.5 h-3.5" />
+              Plan Pro actif
+            </div>
+          )}
           <div className="text-center">
             <p className="text-xs text-muted-foreground mb-3">
               © {new Date().getFullYear()} DataKamer
@@ -255,11 +278,23 @@ export default function Sidebar({
                   <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                 </svg>
               </a>
+
+              <a
+                href={BMC_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-amber-500 transition-colors duration-200"
+                title="Buy Me a Coffee"
+              >
+                <Coffee className="w-4 h-4" />
+              </a>
             </div>
           </div>
         </motion.div>
       </div>
       </div>
+
+      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} />
     </>
   );
 }

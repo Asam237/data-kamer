@@ -15,9 +15,14 @@ import {
   EyeOff,
   Moon,
   Sun,
+  Crown,
+  Coffee,
+  Check,
 } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import { useTheme } from "@/contexts/ThemeContext";
+import { usePro, PRO_FEATURES } from "@/lib/pro";
+import { BMC_URL } from "@/lib/bmc";
 
 const SettingsView: React.FC = () => {
   const [activeTab, setActiveTab] = useState("general");
@@ -29,9 +34,11 @@ const SettingsView: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const [language, setLanguage] = useState("fr");
   const [showPassword, setShowPassword] = useState(false);
+  const { isPro, unlock, lock } = usePro();
 
   const tabs = [
     { id: "general", name: "Général", icon: Settings },
+    { id: "subscription", name: "Abonnement", icon: Crown },
     { id: "profile", name: "Profil", icon: User },
     { id: "notifications", name: "Notifications", icon: Bell },
     { id: "security", name: "Sécurité", icon: Shield },
@@ -95,6 +102,93 @@ const SettingsView: React.FC = () => {
                 <option value="WAT">WAT (UTC+1) - Cameroun</option>
                 <option value="UTC">UTC (UTC+0)</option>
               </select>
+            </SettingCard>
+          </div>
+        );
+
+      case "subscription":
+        return (
+          <div className="space-y-6">
+            <SettingCard
+              title="Votre plan"
+              description="DataKamer est gratuit et open-source. Le plan Pro débloque quelques fonctionnalités avancées."
+            >
+              <div className="flex items-center justify-between p-4 rounded-xl bg-muted/50 mb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      isPro ? "bg-amber-500" : "bg-muted-foreground/20"
+                    }`}
+                  >
+                    <Crown
+                      className={`w-5 h-5 ${
+                        isPro ? "text-white" : "text-muted-foreground"
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">
+                      Plan {isPro ? "Pro" : "Gratuit"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {isPro
+                        ? "Toutes les fonctionnalités sont débloquées sur cet appareil"
+                        : "Fonctionnalités de base incluses"}
+                    </p>
+                  </div>
+                </div>
+                {isPro && (
+                  <span className="px-3 py-1 bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-semibold rounded-full">
+                    Actif
+                  </span>
+                )}
+              </div>
+
+              <ul className="space-y-2 mb-4">
+                {PRO_FEATURES.map((f) => (
+                  <li
+                    key={f}
+                    className="flex items-center gap-2 text-sm text-foreground"
+                  >
+                    <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+
+              <p className="text-sm text-muted-foreground mb-4">
+                Ce projet ne prend aucun paiement en carte bancaire : votre
+                soutien passe par Buy Me a Coffee, et le déblocage se fait
+                ensuite ici, sur la confiance.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href={BMC_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#FFDD00] text-[#000000] rounded-xl hover:brightness-95 transition-all text-sm font-semibold shadow-sm"
+                >
+                  <Coffee className="w-4 h-4" />
+                  Offrir un café
+                </a>
+                {isPro ? (
+                  <button
+                    onClick={lock}
+                    className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
+                  >
+                    Repasser en Gratuit
+                  </button>
+                ) : (
+                  <button
+                    onClick={unlock}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-xl hover:bg-amber-600 transition-colors text-sm font-semibold shadow-sm"
+                  >
+                    <Crown className="w-4 h-4" />
+                    J&apos;ai soutenu, débloquer Pro
+                  </button>
+                )}
+              </div>
             </SettingCard>
           </div>
         );

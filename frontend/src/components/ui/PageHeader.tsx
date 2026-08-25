@@ -1,5 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
+import SourceBadge from "@/components/ui/SourceBadge";
+import type { DataSource, SourceKey } from "@/lib/sources";
 
 interface PageHeaderProps {
   title: string;
@@ -7,6 +9,7 @@ interface PageHeaderProps {
   icon?: React.ComponentType<{ className?: string }>;
   actions?: React.ReactNode;
   align?: "center" | "left";
+  source?: SourceKey | DataSource;
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
@@ -15,6 +18,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   icon: Icon,
   actions,
   align = "left",
+  source,
 }) => (
   <motion.div
     initial={{ opacity: 0, y: -12 }}
@@ -30,9 +34,16 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         </div>
       )}
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
-          {title}
-        </h1>
+        <div
+          className={`flex items-center gap-2 flex-wrap ${
+            align === "center" ? "justify-center md:justify-start" : ""
+          }`}
+        >
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+            {title}
+          </h1>
+          {source && <SourceBadge source={source} align="left" />}
+        </div>
         {subtitle && (
           <p className="text-sm md:text-base text-muted-foreground mt-1">
             {subtitle}

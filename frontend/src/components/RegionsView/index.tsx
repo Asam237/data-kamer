@@ -11,6 +11,7 @@ import { useRegions } from "@/hooks/useRegions";
 import { Region } from "@/services/regions.service";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
+import SourceBadge from "@/components/ui/SourceBadge";
 import { useFavorites } from "@/lib/favorites";
 import { exportToCsv } from "@/lib/export";
 
@@ -112,8 +113,35 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
               <p className="text-2xl font-bold text-foreground">
                 {region.population.toLocaleString()}
               </p>
+              <div className="mt-2">
+                <SourceBadge source="demographics" align="left" />
+              </div>
             </div>
           </div>
+
+          {region.tourist_sites && region.tourist_sites.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <MapIcon className="w-6 h-6 text-teal-500" />
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Sites touristiques
+                  </h3>
+                </div>
+                <SourceBadge source="tourism" />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {region.tourist_sites.map((site) => (
+                  <span
+                    key={site.id}
+                    className="px-3 py-1 bg-muted text-foreground rounded-full text-sm"
+                  >
+                    {site.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
 
           {region.specialties?.gastronomy && (
             <div>
@@ -131,11 +159,14 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
 
           {region.major_companies && region.major_companies.length > 0 && (
             <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <DocumentIcon className="w-6 h-6 text-orange-500" />
-                <h3 className="text-lg font-semibold text-foreground">
-                  Grandes Entreprises
-                </h3>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <DocumentIcon className="w-6 h-6 text-orange-500" />
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Grandes Entreprises
+                  </h3>
+                </div>
+                <SourceBadge source="economy" />
               </div>
               <div className="flex flex-wrap gap-2">
                 {region.major_companies.map((company, index) => (
@@ -193,6 +224,7 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
             filteredRegions.length !== 1 ? "s" : ""
           } référencée${filteredRegions.length !== 1 ? "s" : ""}`}
           icon={MapIcon}
+          source="demographics"
           actions={
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
               <div className="relative w-full sm:w-64">
@@ -270,9 +302,12 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
-                          Population
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-sm font-medium text-muted-foreground">
+                            Population
+                          </p>
+                          <SourceBadge source="demographics" iconOnly />
+                        </div>
                         <p className="text-lg font-semibold text-foreground">
                           {region.population.toLocaleString()}
                         </p>

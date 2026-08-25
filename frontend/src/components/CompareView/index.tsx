@@ -25,6 +25,7 @@ import cameroonData from "../../../data/cameroon.json";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import { exportToCsv } from "@/lib/export";
+import SourceBadge from "@/components/ui/SourceBadge";
 import { usePro } from "@/lib/pro";
 import UpgradeModal from "@/components/UpgradeModal";
 
@@ -105,6 +106,7 @@ const CompareView: React.FC = () => {
         title="Comparateur de régions"
         subtitle="Sélectionnez jusqu'à 3 régions pour comparer leurs données clés côte à côte"
         icon={Scale}
+        source="demographics"
         actions={
           selectedRegions.length > 0 && (
             <button
@@ -269,9 +271,12 @@ const CompareView: React.FC = () => {
           {/* Comparison chart */}
           {selectedRegions.length > 1 && (
             <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 shadow-sm">
-              <h3 className="text-lg font-bold text-foreground mb-4">
-                Population &amp; superficie comparées
-              </h3>
+              <div className="flex items-center gap-2 mb-4">
+                <h3 className="text-lg font-bold text-foreground">
+                  Population &amp; superficie comparées
+                </h3>
+                <SourceBadge source="demographics" iconOnly />
+              </div>
               <ResponsiveContainer width="100%" height={320}>
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />

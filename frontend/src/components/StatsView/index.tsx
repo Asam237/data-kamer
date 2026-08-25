@@ -40,6 +40,7 @@ import {
 import { CameroonData } from "../../../types";
 import PageHeader from "@/components/ui/PageHeader";
 import StatCard from "@/components/ui/StatCard";
+import SourceBadge from "@/components/ui/SourceBadge";
 import { exportToCsv } from "@/lib/export";
 import { usePro } from "@/lib/pro";
 import UpgradeModal from "@/components/UpgradeModal";
@@ -388,6 +389,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
         subtitle="Analyses détaillées et visualisations interactives des données du Cameroun"
         icon={BarChart3}
         align="center"
+        source="demographics"
       />
 
       {/* Stats Cards */}
@@ -397,6 +399,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
           value={data.overview.totalPopulation}
           icon={Users}
           accent="blue"
+          source="demographics"
         />
         <StatCard
           title="Densité Moyenne"
@@ -407,6 +410,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
           }
           icon={MapPin}
           accent="emerald"
+          source="demographics"
         />
         <StatCard
           title="Étudiants Total"
@@ -416,6 +420,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
           )}
           icon={GraduationCap}
           accent="purple"
+          source="institutions"
         />
         <StatCard
           title="Âge Moyen Universités"
@@ -429,6 +434,7 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
           }
           icon={Activity}
           accent="orange"
+          source="institutions"
         />
       </div>
 
@@ -485,6 +491,11 @@ const StatsView: React.FC<StatsViewProps> = ({ data }) => {
         </div>
 
         {/* Chart Container */}
+        <div className="flex justify-end mb-2">
+          <SourceBadge
+            source={activeChart === "universities" ? "institutions" : "demographics"}
+          />
+        </div>
         <motion.div
           key={activeChart}
           initial={{ opacity: 0, scale: 0.95 }}

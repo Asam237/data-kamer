@@ -14,6 +14,7 @@ import { useRegions } from "@/hooks/useRegions";
 import { University } from "@/services/universities.service";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
+import SourceBadge from "@/components/ui/SourceBadge";
 import { useFavorites } from "@/lib/favorites";
 import { exportToCsv } from "@/lib/export";
 
@@ -161,6 +162,7 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = ({
         <PageHeader
           title="Universités du Cameroun"
           icon={BuildingLibraryIcon}
+          source="institutions"
           actions={
             <div className="flex items-center gap-2">
               <button
@@ -423,6 +425,7 @@ const UniversityCard: React.FC<UniversityCardProps> = ({
           >
             {university.type}
           </span>
+          <SourceBadge source="institutions" iconOnly />
         </div>
       </div>
 
@@ -503,9 +506,12 @@ const UniversityModal: React.FC<UniversityModalProps> = ({
         <div className="p-4 sm:p-6">
           <div className="flex justify-between items-start gap-3 mb-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2 break-words">
-                {university.name}
-              </h2>
+              <div className="flex items-center gap-2 flex-wrap mb-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground break-words">
+                  {university.name}
+                </h2>
+                <SourceBadge source="institutions" align="left" />
+              </div>
               <div className="flex items-center text-muted-foreground">
                 <MapPinIcon className="w-5 h-5 mr-2" />
                 <span className="text-lg">{regionName}</span>

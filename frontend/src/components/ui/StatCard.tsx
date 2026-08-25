@@ -1,5 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
+import SourceBadge from "@/components/ui/SourceBadge";
+import type { DataSource, SourceKey } from "@/lib/sources";
 
 export interface StatCardProps {
   title: string;
@@ -14,6 +16,7 @@ export interface StatCardProps {
     | "amber";
   description?: string;
   delay?: number;
+  source?: SourceKey | DataSource;
 }
 
 const ACCENTS: Record<
@@ -59,6 +62,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   accent = "blue",
   description,
   delay = 0,
+  source,
 }) => {
   const colors = ACCENTS[accent];
   return (
@@ -95,6 +99,11 @@ export const StatCard: React.FC<StatCardProps> = ({
             <Icon className={`w-6 h-6 ${colors.text}`} />
           </div>
         </div>
+        {source && (
+          <div className="flex justify-end">
+            <SourceBadge source={source} iconOnly />
+          </div>
+        )}
       </div>
     </motion.div>
   );

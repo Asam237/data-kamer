@@ -27,6 +27,7 @@ import {
   RefreshCw,
   ChevronLeft,
 } from "lucide-react";
+import SourceBadge from "@/components/ui/SourceBadge";
 
 interface Department {
   id: number;
@@ -694,6 +695,7 @@ const MapView: React.FC = () => {
               </span>
             </span>
           </h1>
+          <SourceBadge source="demographics" align="left" iconOnly className="ml-2" />
         </div>
         <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
           <button

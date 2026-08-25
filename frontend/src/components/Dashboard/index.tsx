@@ -27,7 +27,9 @@ import {
 import cameroonData from "../../../data/cameroon.json";
 import StatCard from "@/components/ui/StatCard";
 import PageHeader from "@/components/ui/PageHeader";
+import SourceBadge from "@/components/ui/SourceBadge";
 import { useFavorites } from "@/lib/favorites";
+import { SOURCES } from "@/lib/sources";
 import type { ViewType } from "@/components/CommandPalette";
 
 interface DashboardData {
@@ -82,6 +84,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
       icon: Users,
       accent: "blue" as const,
       description: "Habitants du Cameroun",
+      source: "demographics" as const,
     },
     {
       title: "Régions",
@@ -89,6 +92,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
       icon: MapPin,
       accent: "emerald" as const,
       description: "Divisions administratives",
+      source: "demographics" as const,
     },
     {
       title: "Départements",
@@ -96,6 +100,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
       icon: Globe,
       accent: "purple" as const,
       description: "Subdivisions",
+      source: "demographics" as const,
     },
     {
       title: "Universités",
@@ -103,6 +108,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
       icon: GraduationCap,
       accent: "orange" as const,
       description: "Institutions recensées",
+      source: "institutions" as const,
     },
   ];
 
@@ -130,6 +136,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
         subtitle="Tout savoir sur le Cameroun — statistiques et informations clés"
         icon={TrendingUp}
         align="center"
+        source="demographics"
       />
 
       {/* Stats Cards */}
@@ -180,9 +187,12 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
           className="bg-card rounded-2xl shadow-sm p-4 sm:p-6 border border-border"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg sm:text-xl font-bold text-foreground">
-              Population par Région
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground">
+                Population par Région
+              </h3>
+              <SourceBadge source="demographics" iconOnly />
+            </div>
             <BarChart3 className="w-6 h-6 text-blue-500" />
           </div>
           <ResponsiveContainer width="100%" height={300}>
@@ -232,9 +242,12 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
           className="bg-card rounded-2xl shadow-sm p-4 sm:p-6 border border-border"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg sm:text-xl font-bold text-foreground">
-              Superficie par Région
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground">
+                Superficie par Région
+              </h3>
+              <SourceBadge source="demographics" iconOnly />
+            </div>
             <Activity className="w-6 h-6 text-purple-500" />
           </div>
           <ResponsiveContainer width="100%" height={300}>
@@ -280,9 +293,12 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
           className="bg-card rounded-2xl shadow-sm p-4 sm:p-6 border border-border lg:col-span-2"
         >
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg sm:text-xl font-bold text-foreground">
-              Évolution de la Population
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground">
+                Évolution de la Population
+              </h3>
+              <SourceBadge source="demographics" iconOnly />
+            </div>
             <TrendingUp className="w-6 h-6 text-green-500" />
           </div>
           <ResponsiveContainer width="100%" height={280}>
@@ -317,9 +333,12 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
         transition={{ delay: 0.5 }}
         className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-2xl shadow-sm p-5 sm:p-8 border border-border"
       >
-        <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
-          Informations Générales
-        </h3>
+        <div className="flex items-center justify-center gap-2 mb-6">
+          <h3 className="text-2xl font-bold text-foreground text-center">
+            Informations Générales
+          </h3>
+          <SourceBadge source="demographics" iconOnly />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
           {[
             { label: "Capitale", value: data.capital, icon: MapPin },

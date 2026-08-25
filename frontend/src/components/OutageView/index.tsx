@@ -18,6 +18,7 @@ import {
   List,
   Target, // Ajouté pour le bouton de centrage
 } from "lucide-react";
+import SourceBadge from "@/components/ui/SourceBadge";
 
 interface OutageInfo {
   observations: string;
@@ -473,7 +474,7 @@ const EneoOutageView: React.FC = () => {
     <div className="flex flex-col h-full bg-muted text-foreground transition-colors duration-300">
       {/* Header */}
       <div className="bg-card border-border border-b px-3 sm:px-4 py-2.5 sm:py-3 flex justify-between items-center gap-2 shadow-sm transition-colors duration-300">
-        <div className="flex items-center min-w-0">
+        <div className="flex items-center min-w-0 gap-2">
           <h1 className="text-base sm:text-xl font-bold flex items-center min-w-0">
             <Zap className="h-5 w-5 sm:h-6 sm:w-6 mr-2 text-green-600 flex-shrink-0" />
             <span className="truncate">
@@ -483,6 +484,7 @@ const EneoOutageView: React.FC = () => {
               </span>
             </span>
           </h1>
+          <SourceBadge source="outages" align="left" iconOnly />
         </div>
         <div className="flex gap-1.5 sm:gap-2 flex-shrink-0">
           <button

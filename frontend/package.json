@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node --test \"tests/**/*.test.mts\"",
+    "validate:data": "node scripts/validate-data.mts"
   },
   "dependencies": {
     "@babel/core": "^7.23.9",

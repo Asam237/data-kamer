@@ -56,6 +56,14 @@
 @layer base {
   body {
     @apply bg-background text-foreground;
+    /* Typographie auparavant héritée de @radix-ui/themes (retiré : seul son
+       wrapper <Theme> était utilisé, pour ~66 kB de CSS sur chaque page) */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", "Open Sans", system-ui, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji";
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 

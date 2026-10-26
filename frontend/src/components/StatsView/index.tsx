@@ -37,7 +37,7 @@ import {
   Download,
   Lock,
 } from "lucide-react";
-import { CameroonData } from "../../../types";
+import type { RawDataset } from "@/lib/dataset";
 import PageHeader from "@/components/ui/PageHeader";
 import StatCard from "@/components/ui/StatCard";
 import SourceBadge from "@/components/ui/SourceBadge";
@@ -48,7 +48,7 @@ import UpgradeModal from "@/components/UpgradeModal";
 const PRO_CHART_IDS = ["trends", "radar"];
 
 interface StatsViewProps {
-  data: CameroonData;
+  data: RawDataset;
 }
 
 const chartTooltipStyle = {

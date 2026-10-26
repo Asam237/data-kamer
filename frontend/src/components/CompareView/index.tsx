@@ -10,18 +10,25 @@ import {
   Download,
   Crown,
   Lock,
+  FileText,
+  PieChart,
 } from "lucide-react";
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
-import cameroonData from "../../../data/cameroon.json";
+import {
+  getRawRegions,
+  getRegionIndicators,
+  type RegionIndicators,
+} from "@/lib/dataset";
+import { openRegionsReport } from "@/lib/report";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import { exportToCsv } from "@/lib/export";
@@ -40,13 +47,45 @@ const ACCENT_COLORS = [
   "#14B8A6",
 ];
 
+// Indicateurs comparables : un seul indicateur par graphique, car leurs
+// ordres de grandeur sont trop différents pour partager un même axe.
+const METRICS: {
+  key: keyof Pick<
+    RegionIndicators,
+    | "population"
+    | "area"
+    | "density"
+    | "populationShare"
+    | "universityCount"
+    | "students"
+    | "departmentCount"
+  >;
+  label: string;
+  unit?: string;
+}[] = [
+  { key: "population", label: "Population" },
+  { key: "density", label: "Densité", unit: "hab/km²" },
+  { key: "area", label: "Superficie", unit: "km²" },
+  { key: "populationShare", label: "Part de la population", unit: "%" },
+  { key: "departmentCount", label: "Départements" },
+  { key: "universityCount", label: "Universités" },
+  { key: "students", label: "Étudiants (déclarés)" },
+];
+
 const CompareView: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [metricKey, setMetricKey] =
+    useState<(typeof METRICS)[number]["key"]>("population");
   const { isPro } = usePro();
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const maxSelection = isPro ? PRO_MAX_SELECTION : FREE_MAX_SELECTION;
 
-  const regions = cameroonData.regions;
+  const regions = getRawRegions();
+  const indicatorsById = useMemo(
+    () => new Map(getRegionIndicators().map((r) => [r.id, r])),
+    []
+  );
+  const metric = METRICS.find((m) => m.key === metricKey) ?? METRICS[0];
 
   const toggleRegion = (id: number) => {
     setSelectedIds((prev) => {
@@ -67,18 +106,15 @@ const CompareView: React.FC = () => {
     [selectedIds, regions]
   );
 
-  const universityCountFor = (regionName: string) =>
-    cameroonData.universities.filter((u) => u.region === regionName).length;
+  const indicatorsOf = (id: number) => indicatorsById.get(id)!;
 
   const chartData = useMemo(
     () =>
       selectedRegions.map((r) => ({
         name: r.name,
-        Population: r.population,
-        "Superficie (km²)": r.area,
-        Densité: Math.round(r.population / r.area),
+        value: indicatorsById.get(r.id)![metric.key],
       })),
-    [selectedRegions]
+    [selectedRegions, indicatorsById, metric.key]
   );
 
   const handleExport = () => {
@@ -88,15 +124,20 @@ const CompareView: React.FC = () => {
     }
     exportToCsv(
       "comparaison-regions",
-      selectedRegions.map((r) => ({
-        Région: r.name,
-        Capitale: r.capital,
-        Population: r.population,
-        "Superficie (km²)": r.area,
-        "Densité (hab/km²)": Math.round(r.population / r.area),
-        Départements: r.departments.length,
-        Universités: universityCountFor(r.name),
-      }))
+      selectedRegions.map((r) => {
+        const ind = indicatorsOf(r.id);
+        return {
+          Région: r.name,
+          Capitale: r.capital,
+          Population: ind.population,
+          "Part de la population (%)": ind.populationShare,
+          "Superficie (km²)": ind.area,
+          "Densité (hab/km²)": ind.density,
+          Départements: ind.departmentCount,
+          Universités: ind.universityCount,
+          "Étudiants (déclarés)": ind.students,
+        };
+      })
     );
   };
 
@@ -104,22 +145,33 @@ const CompareView: React.FC = () => {
     <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8">
       <PageHeader
         title="Comparateur de régions"
-        subtitle="Sélectionnez jusqu'à 3 régions pour comparer leurs données clés côte à côte"
+        subtitle={`Sélectionnez jusqu'à ${maxSelection} régions pour comparer leurs données clés côte à côte`}
         icon={Scale}
         source="demographics"
         actions={
           selectedRegions.length > 0 && (
-            <button
-              onClick={handleExport}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors text-sm font-medium shadow-sm w-full sm:w-auto"
-            >
-              {isPro ? (
-                <Download className="w-4 h-4" />
-              ) : (
-                <Lock className="w-4 h-4" />
-              )}
-              Exporter
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <button
+                onClick={() =>
+                  openRegionsReport(selectedRegions.map((r) => r.name))
+                }
+                className="flex items-center justify-center gap-2 px-4 py-2 border border-border text-foreground rounded-xl hover:bg-muted transition-colors text-sm font-medium"
+              >
+                <FileText className="w-4 h-4" />
+                Rapport PDF
+              </button>
+              <button
+                onClick={handleExport}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors text-sm font-medium shadow-sm"
+              >
+                {isPro ? (
+                  <Download className="w-4 h-4" />
+                ) : (
+                  <Lock className="w-4 h-4" />
+                )}
+                Exporter CSV
+              </button>
+            </div>
           )
         }
       />
@@ -236,7 +288,19 @@ const CompareView: React.FC = () => {
                         <Building2 className="w-4 h-4" /> Densité
                       </span>
                       <span className="font-semibold text-foreground">
-                        {Math.round(region.population / region.area)} hab/km²
+                        {indicatorsOf(region.id).density.toLocaleString("fr-FR")}{" "}
+                        hab/km²
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <PieChart className="w-4 h-4" /> Part de la population
+                      </span>
+                      <span className="font-semibold text-foreground">
+                        {indicatorsOf(region.id).populationShare.toLocaleString(
+                          "fr-FR"
+                        )}{" "}
+                        %
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -244,7 +308,15 @@ const CompareView: React.FC = () => {
                         <GraduationCap className="w-4 h-4" /> Universités
                       </span>
                       <span className="font-semibold text-foreground">
-                        {universityCountFor(region.name)}
+                        {indicatorsOf(region.id).universityCount}
+                        <span className="text-xs text-muted-foreground font-normal">
+                          {" "}
+                          ·{" "}
+                          {indicatorsOf(region.id).students.toLocaleString(
+                            "fr-FR"
+                          )}{" "}
+                          étudiants
+                        </span>
                       </span>
                     </div>
                     <div>
@@ -271,18 +343,52 @@ const CompareView: React.FC = () => {
           {/* Comparison chart */}
           {selectedRegions.length > 1 && (
             <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="text-lg font-bold text-foreground">
-                  Population &amp; superficie comparées
-                </h3>
-                <SourceBadge source="demographics" iconOnly />
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-foreground">
+                    {metric.label}
+                    {metric.unit ? ` (${metric.unit})` : ""}
+                  </h3>
+                  <SourceBadge source="demographics" iconOnly />
+                </div>
+                <div
+                  className="flex flex-wrap gap-1.5"
+                  role="radiogroup"
+                  aria-label="Indicateur comparé"
+                >
+                  {METRICS.map((m) => (
+                    <button
+                      key={m.key}
+                      role="radio"
+                      aria-checked={m.key === metricKey}
+                      onClick={() => setMetricKey(m.key)}
+                      className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                        m.key === metricKey
+                          ? "bg-blue-500 border-blue-500 text-white"
+                          : "border-border text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
               </div>
               <ResponsiveContainer width="100%" height={320}>
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
+                  <YAxis
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(v) => Number(v).toLocaleString("fr-FR")}
+                    width={80}
+                  />
                   <Tooltip
+                    formatter={(value) => [
+                      `${Number(value).toLocaleString("fr-FR")}${
+                        metric.unit ? ` ${metric.unit}` : ""
+                      }`,
+                      metric.label,
+                    ]}
                     contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       border: "1px solid hsl(var(--border))",
@@ -290,13 +396,11 @@ const CompareView: React.FC = () => {
                       color: "hsl(var(--foreground))",
                     }}
                   />
-                  <Legend />
-                  <Bar dataKey="Population" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                  <Bar
-                    dataKey="Superficie (km²)"
-                    fill="#10B981"
-                    radius={[4, 4, 0, 0]}
-                  />
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                    {chartData.map((entry, index) => (
+                      <Cell key={entry.name} fill={ACCENT_COLORS[index]} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>

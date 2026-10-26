@@ -1,4 +1,5 @@
 import { getLocalRegions } from "@/lib/cameroonAdapter";
+import { matchesQuery } from "@/lib/search";
 
 // Types pour les régions (basés sur votre modèle Django)
 export interface Region {
@@ -79,12 +80,9 @@ export class RegionsService {
    * Rechercher des régions par nom
    */
   static async searchRegions(query: string): Promise<Region[]> {
-    const q = query.trim().toLowerCase();
-    if (!q) return getLocalRegions();
     return getLocalRegions().filter(
       (region) =>
-        region.name.toLowerCase().includes(q) ||
-        region.capital.toLowerCase().includes(q)
+        matchesQuery(region.name, query) || matchesQuery(region.capital, query)
     );
   }
 

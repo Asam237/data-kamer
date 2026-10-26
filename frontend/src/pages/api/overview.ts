@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import cameroonData from "../../../public/data/cameroon.json";
+import { getDataset } from "@/lib/dataset";
 import { ExtendedOverview } from "../../../types";
 
 interface ApiError {
@@ -20,7 +20,8 @@ export default function handler(
   }
 
   try {
-    const { overview, regions, universities } = cameroonData;
+    // Même source que l'interface (data/cameroon.json)
+    const { overview, universities } = getDataset();
 
     // Calculer les statistiques étendues
     const totalStudents = universities.reduce(
@@ -39,14 +40,7 @@ export default function handler(
 
     const stats: ExtendedOverview = {
       ...overview,
-      totalCommunes: regions.reduce(
-        (acc, region) => acc + region.departments.length * 3,
-        0
-      ), // Estimation
-      totalVillages: regions.reduce(
-        (acc, region) => acc + region.departments.length * 50,
-        0
-      ), // Estimation
+      totalUniversities: universities.length,
       totalStudents,
       averageUniversityAge,
     };

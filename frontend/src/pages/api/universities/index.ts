@@ -1,5 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import cameroonData from "../../../../public/data/cameroon.json";
+import { getDataset } from "@/lib/dataset";
+
+// Même source que l'interface (data/cameroon.json)
+const cameroonData = getDataset();
 import { University } from "../../../../types";
 
 interface ApiError {

@@ -12,8 +12,11 @@ import {
   Settings,
   Scale,
   CornerDownLeft,
+  Database,
+  Landmark,
 } from "lucide-react";
-import cameroonData from "../../../data/cameroon.json";
+import { searchDataset, type SearchHitKind } from "@/lib/dataset";
+import { normalizeText } from "@/lib/search";
 
 export type ViewType =
   | "dashboard"
@@ -23,7 +26,8 @@ export type ViewType =
   | "settings"
   | "outages"
   | "map"
-  | "compare";
+  | "compare"
+  | "data";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -51,6 +55,7 @@ const NAV_ITEMS: {
   { key: "map", label: "Carte", icon: Map },
   { key: "outages", label: "Coupures ENEO", icon: Zap },
   { key: "stats", label: "Statistiques", icon: BarChart3 },
+  { key: "data", label: "Données & sources", icon: Database },
   { key: "settings", label: "Paramètres", icon: Settings },
 ];
 
@@ -78,10 +83,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   }, [open, onOpenChange]);
 
   const results = useMemo<ResultItem[]>(() => {
-    const q = query.trim().toLowerCase();
+    const q = normalizeText(query);
 
     const navResults: ResultItem[] = NAV_ITEMS.filter((item) =>
-      q ? item.label.toLowerCase().includes(q) : true
+      q ? normalizeText(item.label).includes(q) : true
     ).map((item) => ({
       id: `nav-${item.key}`,
       label: item.label,
@@ -92,29 +97,29 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
     if (!q) return navResults;
 
-    const regionResults: ResultItem[] = cameroonData.regions
-      .filter((r) => r.name.toLowerCase().includes(q))
-      .slice(0, 5)
-      .map((r) => ({
-        id: `region-${r.id}`,
-        label: r.name,
-        description: `Région · Capitale ${r.capital}`,
-        icon: MapPin,
-        onSelect: () => onNavigate("regions", r.name),
-      }));
+    const describe: Record<SearchHitKind, (region: string) => string> = {
+      region: () => "Région",
+      department: (region) => `Département · Région ${region}`,
+      university: (region) => `Université · ${region}`,
+    };
+    const icons: Record<SearchHitKind, ResultItem["icon"]> = {
+      region: MapPin,
+      department: Landmark,
+      university: GraduationCap,
+    };
 
-    const universityResults: ResultItem[] = cameroonData.universities
-      .filter((u) => u.name.toLowerCase().includes(q))
-      .slice(0, 5)
-      .map((u: any) => ({
-        id: `university-${u.id}`,
-        label: u.name,
-        description: `Université · ${u.region}`,
-        icon: GraduationCap,
-        onSelect: () => onNavigate("universities", u.name),
-      }));
+    const dataResults: ResultItem[] = searchDataset(query).map((hit) => ({
+      id: hit.id,
+      label: hit.label,
+      description: describe[hit.kind](hit.region),
+      icon: icons[hit.kind],
+      onSelect: () =>
+        hit.kind === "university"
+          ? onNavigate("universities", hit.label)
+          : onNavigate("regions", hit.region),
+    }));
 
-    return [...navResults, ...regionResults, ...universityResults];
+    return [...navResults, ...dataResults];
   }, [query, onNavigate]);
 
   return (
@@ -148,7 +153,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       autoFocus
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Rechercher une région, une université, une page..."
+                      placeholder="Rechercher une région, un département, une université..."
                       className="w-full bg-transparent outline-none text-foreground placeholder:text-muted-foreground text-sm"
                     />
                     <kbd className="hidden sm:inline-block text-[10px] font-medium text-muted-foreground border border-border rounded px-1.5 py-0.5">

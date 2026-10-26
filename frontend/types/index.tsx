@@ -36,9 +36,9 @@ export interface CameroonData {
   overview: Overview;
 }
 
+// totalCommunes / totalVillages ont été retirés : ils étaient calculés par
+// une règle arbitraire (départements × 3 / × 50), pas issus d'une source.
 export interface ExtendedOverview extends Overview {
-  totalCommunes: number;
-  totalVillages: number;
   totalStudents?: number;
   averageUniversityAge?: number;
 }

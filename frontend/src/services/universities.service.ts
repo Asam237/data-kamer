@@ -1,4 +1,5 @@
 import { getLocalUniversities } from "@/lib/cameroonAdapter";
+import { matchesQuery } from "@/lib/search";
 
 // Types pour les universités (basés sur votre modèle Django)
 export interface University {
@@ -73,11 +74,7 @@ export class UniversitiesService {
    * Rechercher des universités
    */
   static async searchUniversities(query: string): Promise<University[]> {
-    const q = query.trim().toLowerCase();
-    if (!q) return getLocalUniversities();
-    return getLocalUniversities().filter((u) =>
-      u.name.toLowerCase().includes(q)
-    );
+    return getLocalUniversities().filter((u) => matchesQuery(u.name, query));
   }
 
   /**

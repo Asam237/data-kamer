@@ -13,6 +13,7 @@ import {
   X,
   Coffee,
   Crown,
+  Database,
 } from "lucide-react";
 import type { ViewType } from "@/components/CommandPalette";
 import { usePro } from "@/lib/pro";
@@ -68,6 +69,12 @@ const navigation: NavigationItem[] = [
     key: "stats",
     icon: BarChart3,
     description: "Analyses avancées",
+  },
+  {
+    name: "Données & sources",
+    key: "data",
+    icon: Database,
+    description: "Catalogue, qualité, téléchargements",
   },
 ];
 

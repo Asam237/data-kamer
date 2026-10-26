@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Map, Marker, Overlay, ZoomControl } from "pigeon-maps";
 import {
   Users,
@@ -28,6 +28,17 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import SourceBadge from "@/components/ui/SourceBadge";
+import {
+  getRawOverview,
+  getRawRegions,
+  type RawSpecialties,
+} from "@/lib/dataset";
+import { matchesQuery } from "@/lib/search";
+import {
+  fetchWeatherBatch,
+  WEATHER_ATTRIBUTION,
+  type WeatherData,
+} from "@/lib/weather";
 
 interface Department {
   id: number;
@@ -38,11 +49,7 @@ interface Department {
   departments: string[];
   majorCompanies?: { name: string; sector: string }[];
   touristSites?: any;
-  specialties?: {
-    gastronomy: string;
-    professions: string;
-    entertainment: string;
-  };
+  specialties?: RawSpecialties;
   departmentCoordinates?: Record<string, [number, number]>;
 }
 
@@ -59,24 +66,6 @@ interface Overview {
 interface CameroonData {
   regions: Department[];
   overview: Overview;
-}
-
-interface WeatherData {
-  location: string;
-  temperature: number;
-  condition: string;
-  icon: string;
-  humidity: number;
-  windSpeed: number;
-  precipitation: number;
-  coordinates: [number, number];
-  forecast?: {
-    day: string;
-    condition: string;
-    maxTemp: number;
-    minTemp: number;
-    icon: string;
-  }[];
 }
 
 const REGION_COORDINATES: Record<string, [number, number]> = {
@@ -176,64 +165,6 @@ const DEPARTMENT_COORDINATES: Record<
   },
 };
 
-const fetchWeatherData = async (
-  location: string,
-  coordinates: [number, number]
-): Promise<WeatherData> => {
-  await new Promise((resolve) => setTimeout(resolve, Math.random() * 300));
-  const conditions = [
-    "Ensoleillé",
-    "Partiellement nuageux",
-    "Nuageux",
-    "Pluvieux",
-    "Orageux",
-  ];
-  const icons = ["sun", "cloud-sun", "cloud", "cloud-rain", "cloud-lightning"];
-  const randomConditionIndex = Math.floor(Math.random() * conditions.length);
-
-  let baseTemp = 25;
-  if (coordinates[0] > 8) baseTemp += 5;
-  if (coordinates[0] < 5) baseTemp -= 2;
-
-  const temperature = baseTemp + Math.floor(Math.random() * 10) - 5;
-
-  const forecast = [];
-  const days = [
-    "Lundi",
-    "Mardi",
-    "Mercredi",
-    "Jeudi",
-    "Vendredi",
-    "Samedi",
-    "Dimanche",
-  ];
-  const today = new Date().getDay();
-
-  for (let i = 0; i <= 2; i++) {
-    const dayIndex = (today + i) % 7;
-    const condIndex = Math.floor(Math.random() * conditions.length);
-    forecast.push({
-      day: days[dayIndex],
-      condition: conditions[condIndex],
-      maxTemp: temperature + Math.floor(Math.random() * 5),
-      minTemp: temperature - Math.floor(Math.random() * 5),
-      icon: icons[condIndex],
-    });
-  }
-
-  return {
-    location,
-    temperature,
-    condition: conditions[randomConditionIndex],
-    icon: icons[randomConditionIndex],
-    humidity: 50 + Math.floor(Math.random() * 40),
-    windSpeed: 5 + Math.floor(Math.random() * 20),
-    precipitation: Math.floor(Math.random() * 100),
-    coordinates,
-    forecast,
-  };
-};
-
 const getRegionColor = (id: number): string => {
   const colors = [
     "#3498db",
@@ -274,10 +205,19 @@ const getWeatherIcon = (condition: string) => {
   }
 };
 
+// Données issues de la source canonique (data/cameroon.json), enrichies une
+// seule fois des coordonnées des départements.
+const MAP_DATA: CameroonData = {
+  overview: getRawOverview(),
+  regions: getRawRegions().map((region) => ({
+    ...region,
+    departmentCoordinates: DEPARTMENT_COORDINATES[region.name] || {},
+  })),
+};
+
 const MapView: React.FC = () => {
-  const [cameroonData, setCameroonData] = useState<CameroonData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const cameroonData = MAP_DATA;
+  const [weatherError, setWeatherError] = useState<string | null>(null);
   const [center, setCenter] = useState<[number, number]>([7.3697, 12.3547]);
   const [zoom, setZoom] = useState(6);
   const [selectedRegion, setSelectedRegion] = useState<Department | null>(null);
@@ -341,38 +281,6 @@ const MapView: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/data/cameroon.json");
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-        const data = await response.json();
-
-        const enhancedData = {
-          ...data,
-          regions: data.regions.map((region: Department) => ({
-            ...region,
-            departmentCoordinates: DEPARTMENT_COORDINATES[region.name] || {},
-          })),
-        };
-
-        setCameroonData(enhancedData);
-        setLoading(false);
-      } catch (err) {
-        setError(
-          `Erreur lors du chargement des données: ${
-            err instanceof Error ? err.message : String(err)
-          }`
-        );
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
     if (isAnimating) {
       const timer = setTimeout(() => {
         setIsAnimating(false);
@@ -381,34 +289,42 @@ const MapView: React.FC = () => {
     }
   }, [isAnimating]);
 
+  const departmentPlaces = (region: Department) =>
+    region.departments.map((dept) => ({
+      name: dept,
+      coordinates:
+        region.departmentCoordinates?.[dept] ||
+        DEPARTMENT_COORDINATES[region.name]?.[dept] ||
+        REGION_COORDINATES[region.name],
+    }));
+
+  const loadWeather = async (region: Department, force = false) => {
+    setLoadingWeather(true);
+    setWeatherError(null);
+    try {
+      const data = await fetchWeatherBatch(departmentPlaces(region), {
+        force,
+      });
+      setWeatherData(data);
+      return data;
+    } catch (err) {
+      setWeatherData({});
+      setWeatherError(
+        err instanceof Error
+          ? err.message
+          : "Impossible de récupérer la météo pour le moment."
+      );
+      return null;
+    } finally {
+      setLoadingWeather(false);
+    }
+  };
+
   useEffect(() => {
-    const loadRegionWeather = async () => {
-      if (selectedRegion && activeTab === "weather" && showWeather) {
-        setLoadingWeather(true);
-
-        const weatherPromises = selectedRegion.departments.map(async (dept) => {
-          const coordinates =
-            selectedRegion.departmentCoordinates?.[dept] ||
-            DEPARTMENT_COORDINATES[selectedRegion.name]?.[dept] ||
-            REGION_COORDINATES[selectedRegion.name];
-
-          const data = await fetchWeatherData(dept, coordinates);
-          return [dept, data];
-        });
-
-        const weatherResults = await Promise.all(weatherPromises);
-        const newWeatherData: Record<string, WeatherData> = {};
-
-        weatherResults.forEach(([dept, data]) => {
-          newWeatherData[dept as string] = data as WeatherData;
-        });
-
-        setWeatherData(newWeatherData);
-        setLoadingWeather(false);
-      }
-    };
-
-    loadRegionWeather();
+    if (selectedRegion && activeTab === "weather" && showWeather) {
+      loadWeather(selectedRegion);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRegion, activeTab, showWeather]);
 
   useEffect(() => {
@@ -503,43 +419,22 @@ const MapView: React.FC = () => {
   };
 
   const refreshWeather = async () => {
-    if (selectedRegion) {
-      setLoadingWeather(true);
-
-      const weatherPromises = selectedRegion.departments.map(async (dept) => {
-        const coordinates =
-          selectedRegion.departmentCoordinates?.[dept] ||
-          DEPARTMENT_COORDINATES[selectedRegion.name]?.[dept] ||
-          REGION_COORDINATES[selectedRegion.name];
-
-        const data = await fetchWeatherData(dept, coordinates);
-        return [dept, data];
-      });
-
-      const weatherResults = await Promise.all(weatherPromises);
-      const newWeatherData: Record<string, WeatherData> = {};
-
-      weatherResults.forEach(([dept, data]) => {
-        newWeatherData[dept as string] = data as WeatherData;
-      });
-
-      setWeatherData(newWeatherData);
-
-      if (selectedDepartment) {
-        setDepartmentWeatherData(newWeatherData[selectedDepartment]);
-      }
-
-      setLoadingWeather(false);
+    if (!selectedRegion) return;
+    const data = await loadWeather(selectedRegion, true);
+    if (data && selectedDepartment) {
+      setDepartmentWeatherData(data[selectedDepartment] ?? null);
     }
   };
 
-  const filteredRegions = cameroonData?.regions.filter(
-    (region) =>
-      region.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      region.capital.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      region.departments.some((dept) =>
-        dept.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+  const filteredRegions = useMemo(
+    () =>
+      cameroonData.regions.filter(
+        (region) =>
+          matchesQuery(region.name, searchTerm) ||
+          matchesQuery(region.capital, searchTerm) ||
+          region.departments.some((dept) => matchesQuery(dept, searchTerm))
+      ),
+    [cameroonData, searchTerm]
   );
 
   const closeDetails = () => {
@@ -601,79 +496,6 @@ const MapView: React.FC = () => {
         return "#6b7280";
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full min-h-[60vh] bg-muted">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600 mx-auto mb-6"></div>
-          <p className="text-xl font-semibold text-foreground">
-            Chargement des données...
-          </p>
-          <p className="text-muted-foreground mt-2">
-            Préparation de la carte interactive du Cameroun
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-full min-h-[60vh] bg-muted">
-        <div className="bg-card border-red-500 border-l-4 shadow-lg rounded-lg p-6 max-w-md">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 text-red-500">
-              <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <h2 className="text-lg font-bold text-foreground mb-1">
-                Erreur de chargement
-              </h2>
-              <p className="text-muted-foreground">{error}</p>
-              <p className="mt-4 text-sm text-muted-foreground">
-                Assurez-vous que le fichier JSON est correctement placé dans le
-                dossier{" "}
-                <code className="bg-muted px-2 py-1 rounded text-sm">
-                  public/data/cameroon.json
-                </code>
-              </p>
-              <button
-                className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-                onClick={() => window.location.reload()}
-              >
-                Réessayer
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!cameroonData) {
-    return (
-      <div className="flex items-center justify-center h-full min-h-[60vh] bg-muted">
-        <div className="text-center">
-          <p className="text-xl font-semibold text-foreground">
-            Aucune donnée disponible
-          </p>
-          <button
-            className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-            onClick={() => window.location.reload()}
-          >
-            Réessayer
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col h-full bg-muted text-foreground transition-colors duration-300">
@@ -1412,12 +1234,16 @@ const MapView: React.FC = () => {
                             >
                               <div
                                 className="relative p-0 overflow-hidden transition-all duration-500 transform bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl hover:shadow-3xl group h-64 sm:h-96 border border-border cursor-pointer"
-                                onClick={() => openCarousel(site)}
+                                onClick={() =>
+                                  site.images?.length && openCarousel(site)
+                                }
                               >
                                 <div
                                   className="absolute inset-0 z-0 w-full h-full transition-all duration-700 opacity-90 group-hover:opacity-100 group-hover:scale-105"
                                   style={{
-                                    backgroundImage: `url(${site.image})`,
+                                    backgroundImage: site.images?.length
+                                      ? `url(${site.images[0]})`
+                                      : "linear-gradient(135deg, #0f766e, #1e3a8a)",
                                     backgroundSize: "cover",
                                     backgroundPosition: "center",
                                     filter:
@@ -1466,6 +1292,18 @@ const MapView: React.FC = () => {
                           Actualiser
                         </button>
                       </div>
+
+                      <p className="text-[11px] text-muted-foreground -mt-2">
+                        {WEATHER_ATTRIBUTION} · observation et prévisions
+                        modélisées aux coordonnées du chef-lieu de département.
+                      </p>
+
+                      {weatherError && !loadingWeather && (
+                        <div className="p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-sm text-red-600 dark:text-red-400">
+                          {weatherError}. Aucune donnée météo n&apos;est
+                          affichée tant que le service est injoignable.
+                        </div>
+                      )}
 
                       {loadingWeather ? (
                         <div className="flex justify-center items-center py-8">
@@ -1564,24 +1402,7 @@ const MapView: React.FC = () => {
                                             {day.day}
                                           </div>
                                           <div className="flex justify-center mb-1">
-                                            {day.icon === "sun" && (
-                                              <Sun className="h-5 w-5 text-orange-500" />
-                                            )}
-                                            {day.icon === "cloud-sun" && (
-                                              <div className="relative">
-                                                <Cloud className="h-5 w-5 text-blue-500" />
-                                                <Sun className="h-3 w-3 text-orange-500 absolute -top-1 -right-1" />
-                                              </div>
-                                            )}
-                                            {day.icon === "cloud" && (
-                                              <Cloud className="h-5 w-5 text-blue-500" />
-                                            )}
-                                            {day.icon === "cloud-rain" && (
-                                              <CloudRain className="h-5 w-5 text-orange-500" />
-                                            )}
-                                            {day.icon === "cloud-lightning" && (
-                                              <CloudLightning className="h-5 w-5 text-blue-500" />
-                                            )}
+                                            {getWeatherIcon(day.condition)}
                                           </div>
                                           <div className="text-sm">
                                             {day.maxTemp}° / {day.minTemp}°

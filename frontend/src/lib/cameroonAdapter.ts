@@ -5,7 +5,7 @@
  * Remplace l'ancienne source de données distante (API Django) : tout est
  * désormais servi localement, de façon synchrone, à partir du JSON embarqué.
  */
-import cameroonData from "../../data/cameroon.json";
+import { getRawRegions, getRawUniversities } from "@/lib/dataset";
 import type {
   Region,
   Department,
@@ -24,7 +24,7 @@ let regionsCache: Region[] | null = null;
 let universitiesCache: University[] | null = null;
 
 const buildRegions = (): Region[] =>
-  cameroonData.regions.map((region: any): Region => {
+  getRawRegions().map((region): Region => {
     const departments: Department[] = (region.departments ?? []).map(
       (name: string, idx: number) => ({
         id: region.id * 1000 + idx + 1,
@@ -34,7 +34,7 @@ const buildRegions = (): Region[] =>
     );
 
     const major_companies: Company[] = (region.majorCompanies ?? []).map(
-      (company: any, idx: number) => ({
+      (company, idx) => ({
         id: region.id * 1000 + idx + 1,
         name: company.name,
         sector: company.sector,
@@ -61,12 +61,12 @@ const buildRegions = (): Region[] =>
       : undefined;
 
     const tourist_sites: TouristSite[] = (region.touristSites ?? []).map(
-      (site: any, idx: number) => ({
+      (site, idx) => ({
         id: region.id * 1000 + idx + 1,
         name: site.name,
         description: site.description,
         location: site.location,
-        image: site.image,
+        image: site.images?.[0] ?? site.image,
         region: region.id,
       })
     );
@@ -86,9 +86,9 @@ const buildRegions = (): Region[] =>
     };
   });
 
-const buildUniversities = (regions: Region[]): University[] =>
-  cameroonData.universities.map((uni: any): University => {
-    const region = regions.find((r) => r.name === uni.region);
+const buildUniversities = (regions: Region[]): University[] => {
+  const regionIdByName = new Map(regions.map((r) => [r.name, r.id]));
+  return getRawUniversities().map((uni): University => {
 
     const faculties: Faculty[] = (uni.faculties ?? []).map(
       (name: string, idx: number) => ({
@@ -109,9 +109,9 @@ const buildUniversities = (regions: Region[]): University[] =>
     return {
       id: uni.id,
       name: uni.name,
-      region: region ? region.id : 0,
+      region: regionIdByName.get(uni.region) ?? 0,
       founded: uni.founded,
-      type: uni.type,
+      type: uni.type ?? "Public",
       students: uni.students ?? 0,
       website: uni.website,
       description: uni.description,
@@ -120,6 +120,7 @@ const buildUniversities = (regions: Region[]): University[] =>
       gallery_images,
     };
   });
+};
 
 export const getLocalRegions = (): Region[] => {
   if (!regionsCache) regionsCache = buildRegions();

@@ -17,6 +17,7 @@ import EmptyState from "@/components/ui/EmptyState";
 import SourceBadge from "@/components/ui/SourceBadge";
 import { useFavorites } from "@/lib/favorites";
 import { exportToCsv } from "@/lib/export";
+import { matchesQuery } from "@/lib/search";
 
 interface UniversitiesViewProps {
   initialSearch?: string;
@@ -74,7 +75,7 @@ const UniversitiesView: React.FC<UniversitiesViewProps> = ({
     return universities.filter((university) => {
       const matchesSearch =
         !searchTerm ||
-        university.name.toLowerCase().includes(searchTerm.toLowerCase());
+        matchesQuery(university.name, searchTerm);
 
       const matchesFoundedAfter =
         !filters.foundedAfter ||

@@ -23,19 +23,22 @@
           "name": "Parc National de la Bénoué",
           "description": "Vaste parc national offrant des safaris et l'observation de la faune sauvage",
           "location": "Sud de Ngaoundéré",
-          "image": "/images/regions/adamaoua/benoue_park.jpg"
+          "image": "/pictures/touristiques/adamoua/pb_1.webp",
+          "images": ["/pictures/touristiques/adamoua/pb_1.webp", "/pictures/touristiques/adamoua/pb_2.webp", "/pictures/touristiques/adamoua/pb_3.webp"]
         },
         {
           "name": "Chutes de Tello",
           "description": "Magnifiques chutes d'eau entourées d'une végétation luxuriante",
           "location": "Près de Ngaoundéré",
-          "image": "/images/regions/adamaoua/tello_falls.jpg"
+          "image": "/pictures/touristiques/adamoua/ct_1.webp",
+          "images": ["/pictures/touristiques/adamoua/ct_1.webp", "/pictures/touristiques/adamoua/ct_2.webp"]
         },
         {
           "name": "Lac Tison",
           "description": "Lac volcanique offrant un paysage pittoresque et des activités de pêche",
           "location": "Ngaoundéré",
-          "image": "/images/regions/adamaoua/lac_tison.jpg"
+          "image": "/pictures/touristiques/adamoua/tt_1.webp",
+          "images": ["/pictures/touristiques/adamoua/tt_1.webp", "/pictures/touristiques/adamoua/tt_2.webp", "/pictures/touristiques/adamoua/tt_3.webp"]
         }
       ],
       "mainImage": "/images/regions/adamaoua/adamaoua_region.jpg"
@@ -82,19 +85,22 @@
           "name": "Monument de la Réunification",
           "description": "Monument historique symbolisant l'unification du Cameroun anglophone et francophone",
           "location": "Yaoundé",
-          "image": "/images/regions/centre/reunification_monument.jpg"
+          "image": "/pictures/touristiques/centre/mr_1.webp",
+          "images": ["/pictures/touristiques/centre/mr_1.webp", "/pictures/touristiques/centre/mr_2.webp"]
         },
         {
           "name": "Musée National du Cameroun",
           "description": "Musée présentant l'histoire, l'art et la culture camerounaise",
           "location": "Yaoundé",
-          "image": "/images/regions/centre/national_museum.jpg"
+          "image": "/pictures/touristiques/centre/mn_1.webp",
+          "images": ["/pictures/touristiques/centre/mn_1.webp", "/pictures/touristiques/centre/mn_2.webp"]
         },
         {
           "name": "Cathédrale Notre-Dame-des-Victoires",
           "description": "Imposante cathédrale catholique au cœur de Yaoundé",
           "location": "Yaoundé",
-          "image": "/images/regions/centre/cathedral.jpg"
+          "image": "/pictures/touristiques/centre/cy_1.webp",
+          "images": ["/pictures/touristiques/centre/cy_1.webp"]
         }
       ],
       "mainImage": "/images/regions/centre/centre_region.jpg"
@@ -128,19 +134,22 @@
           "name": "Parc National de Lobéké",
           "description": "Réserve de biosphère abritant gorilles, éléphants et de nombreuses espèces d'oiseaux",
           "location": "Sud-Est de la région",
-          "image": "/images/regions/est/lobeke_park.jpg"
+          "image": "/pictures/touristiques/est/pl_1.webp",
+          "images": ["/pictures/touristiques/est/pl_1.webp", "/pictures/touristiques/est/pl_2.webp", "/pictures/touristiques/est/pl_3.webp"]
         },
         {
           "name": "Réserve de Dja",
           "description": "Site du patrimoine mondial de l'UNESCO, forêt tropicale préservée",
           "location": "Sud de la région",
-          "image": "/images/regions/est/dja_reserve.jpg"
+          "image": "/pictures/touristiques/est/rd_1.webp",
+          "images": ["/pictures/touristiques/est/rd_1.webp", "/pictures/touristiques/est/rd_2.webp"]
         },
         {
           "name": "Chutes de Nachtigal",
           "description": "Impressionnantes chutes d'eau sur le fleuve Sanaga",
           "location": "Près de Bertoua",
-          "image": "/images/regions/est/nachtigal_falls.jpg"
+          "image": "/pictures/touristiques/est/cn_1.webp",
+          "images": ["/pictures/touristiques/est/cn_1.webp"]
         }
       ],
       "mainImage": "/images/regions/est/est_region.jpg"
@@ -180,7 +189,8 @@
           "name": "Parc National de Waza",
           "description": "L'un des parcs les plus célèbres du Cameroun, riche en faune sauvage africaine",
           "location": "Nord de Maroua",
-          "image": "/images/regions/extreme_nord/waza_park.jpg"
+          "image": "/pictures/touristiques/en/pw_1.webp",
+          "images": ["/pictures/touristiques/en/pw_1.webp", "/pictures/touristiques/en/pw_2.webp", "/pictures/touristiques/en/pw_3.webp", "/pictures/touristiques/en/pw_4.webp"]
         },
         {
           "name": "Monts Mandara",
@@ -228,19 +238,22 @@
           "name": "Plage de Limbé",
           "description": "Plage de sable noir volcanique avec vue sur le mont Cameroun",
           "location": "Limbé",
-          "image": "/images/regions/littoral/limbe_beach.jpg"
+          "image": "/pictures/touristiques/littoral/pl_1.webp",
+          "images": ["/pictures/touristiques/littoral/pl_1.webp", "/pictures/touristiques/littoral/pl_2.webp"]
         },
         {
           "name": "Jardin Botanique de Limbé",
           "description": "L'un des plus anciens jardins botaniques d'Afrique avec une riche collection de plantes",
           "location": "Limbé",
-          "image": "/images/regions/littoral/limbe_botanical_garden.jpg"
+          "image": "/pictures/touristiques/littoral/jb_1.webp",
+          "images": ["/pictures/touristiques/littoral/jb_1.webp", "/pictures/touristiques/littoral/jb_2.webp"]
         },
         {
           "name": "Ekom-Nkam Falls",
           "description": "Spectaculaires chutes d'eau dans une forêt tropicale luxuriante",
           "location": "Melong",
-          "image": "/images/regions/littoral/ekom_nkam_falls.jpg"
+          "image": "/pictures/touristiques/littoral/ek_2.webp",
+          "images": ["/pictures/touristiques/littoral/ek_2.webp", "/pictures/touristiques/littoral/ek_1.webp"]
         }
       ],
       "mainImage": "/images/regions/littoral/littoral_region.jpg"
@@ -268,7 +281,8 @@
           "name": "Parc National de Bouba Ndjida",
           "description": "Vaste parc national abritant des éléphants, lions et de nombreuses espèces d'antilopes",
           "location": "Est de Garoua",
-          "image": "/pictures/bn.jpg"
+          "image": "/pictures/touristiques/nord/pb_1.webp",
+          "images": ["/pictures/touristiques/nord/pb_1.webp", "/pictures/touristiques/nord/pb_2.webp"]
         },
         {
           "name": "Lamido Palace",
@@ -280,7 +294,8 @@
           "name": "Fleuve Bénoué",
           "description": "Important cours d'eau offrant des possibilités de pêche et d'observation de la faune",
           "location": "Garoua",
-          "image": "/images/regions/nord/benoue_river.jpg"
+          "image": "/pictures/touristiques/nord/fb_1.webp",
+          "images": ["/pictures/touristiques/nord/fb_1.webp", "/pictures/touristiques/nord/fb_2.webp"]
         }
       ],
       "mainImage": "/images/regions/nord/nord_region.jpg"
@@ -316,19 +331,22 @@
           "name": "Lac Awing",
           "description": "Lac de cratère entouré de collines verdoyantes et de villages traditionnels",
           "location": "Près de Bamenda",
-          "image": "/images/regions/nord_ouest/lake_awing.jpg"
+          "image": "/pictures/touristiques/nw/la_1.webp",
+          "images": ["/pictures/touristiques/nw/la_1.webp", "/pictures/touristiques/nw/la_2.webp", "/pictures/touristiques/nw/la_3.webp"]
         },
         {
           "name": "Palais Royal de Bafut",
           "description": "Résidence traditionnelle du Fon de Bafut, site historique important",
           "location": "Bafut",
-          "image": "/images/regions/nord_ouest/bafut_palace.jpg"
+          "image": "/pictures/touristiques/nw/pb_1.webp",
+          "images": ["/pictures/touristiques/nw/pb_1.webp", "/pictures/touristiques/nw/pb_2.webp"]
         },
         {
           "name": "Lacs jumeaux de Manengouba",
           "description": "Deux lacs de cratère (mâle et femelle) offrant des randonnées spectaculaires",
           "location": "Mont Manengouba",
-          "image": "/images/regions/nord_ouest/manengouba_lakes.jpg"
+          "image": "/pictures/touristiques/nw/lm_1.webp",
+          "images": ["/pictures/touristiques/nw/lm_1.webp", "/pictures/touristiques/nw/lm_2.webp"]
         }
       ],
       "mainImage": "/images/regions/nord_ouest/nord_ouest_region.jpg"
@@ -372,13 +390,15 @@
           "name": "Chefferie de Bandjoun",
           "description": "Centre culturel traditionnel avec musée d'art et architecture bamiléké",
           "location": "Bandjoun",
-          "image": "/images/regions/ouest/bandjoun_chefferie.jpg"
+          "image": "/pictures/touristiques/ouest/cb_1.webp",
+          "images": ["/pictures/touristiques/ouest/cb_1.webp", "/pictures/touristiques/ouest/cb_2.webp", "/pictures/touristiques/ouest/cb_3.webp"]
         },
         {
           "name": "Chutes de la Métché",
           "description": "Cascades pittoresques dans un cadre naturel préservé",
           "location": "Près de Dschang",
-          "image": "/images/regions/ouest/metche_falls.jpg"
+          "image": "/pictures/touristiques/ouest/cm_1.webp",
+          "images": ["/pictures/touristiques/ouest/cm_1.webp", "/pictures/touristiques/ouest/cm_2.webp", "/pictures/touristiques/ouest/cm_3.webp"]
         },
         {
           "name": "Musée des Civilisations",
@@ -413,19 +433,22 @@
           "name": "Plages de Kribi",
           "description": "Magnifiques plages de sable doré bordées de cocotiers",
           "location": "Kribi",
-          "image": "/images/regions/sud/kribi_beaches.jpg"
+          "image": "/pictures/touristiques/sud/pk_1.webp",
+          "images": ["/pictures/touristiques/sud/pk_1.webp", "/pictures/touristiques/sud/pk_2.webp"]
         },
         {
           "name": "Chutes de la Lobé",
           "description": "Rare phénomène naturel où une rivière se jette directement dans l'océan",
           "location": "Kribi",
-          "image": "/images/regions/sud/lobe_falls.jpg"
+          "image": "/pictures/touristiques/sud/cl_1.webp",
+          "images": ["/pictures/touristiques/sud/cl_1.webp", "/pictures/touristiques/sud/cl_2.webp"]
         },
         {
           "name": "Campo Ma'an National Park",
           "description": "Parc national abritant des éléphants de forêt, gorilles et chimpanzés",
           "location": "Sud de Kribi",
-          "image": "/images/regions/sud/campo_maan_park.jpg"
+          "image": "/pictures/touristiques/sud/cm_1.webp",
+          "images": ["/pictures/touristiques/sud/cm_1.webp", "/pictures/touristiques/sud/cm_2.webp"]
         }
       ],
       "mainImage": "/images/regions/sud/sud_region.jpg"
@@ -464,19 +487,22 @@
           "name": "Mont Cameroun",
           "description": "Plus haut sommet d'Afrique de l'Ouest (4 100m), volcan actif offrant des randonnées spectaculaires",
           "location": "Buea",
-          "image": "/images/regions/sud_ouest/mount_cameroon.jpg"
+          "image": "/pictures/touristiques/sw/mc_1.webp",
+          "images": ["/pictures/touristiques/sw/mc_1.webp"]
         },
         {
           "name": "Korup National Park",
           "description": "L'une des plus anciennes forêts tropicales d'Afrique, riche biodiversité",
           "location": "Nord-ouest de la région",
-          "image": "/images/regions/sud_ouest/korup_park.jpg"
+          "image": "/pictures/touristiques/sw/kk_1.webp",
+          "images": ["/pictures/touristiques/sw/kk_1.webp", "/pictures/touristiques/sw/kk_2.webp"]
         },
         {
           "name": "Limbe Wildlife Centre",
           "description": "Centre de réhabilitation pour primates et autres animaux sauvages",
           "location": "Limbé",
-          "image": "/images/regions/sud_ouest/limbe_wildlife_centre.jpg"
+          "image": "/pictures/touristiques/sw/lf_1.webp",
+          "images": ["/pictures/touristiques/sw/lf_1.webp", "/pictures/touristiques/sw/lf_2.webp"]
         }
       ],
       "mainImage": "/images/regions/sud_ouest/sud_ouest_region.jpg"

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   UniversitiesService,
   University,
@@ -28,24 +28,23 @@ export const useUniversities = (
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUniversities = async () => {
+  const region = filters?.region;
+  const type = filters?.type;
+  const search = filters?.search;
+
+  const fetchUniversities = useCallback(async () => {
     try {
-      setLoading(true);
+      // Pas de remise à true de `loading` ici : seul le premier chargement
+      // affiche l'état de chargement, sinon la vue (et son champ de
+      // recherche) serait démontée à chaque frappe.
       setError(null);
 
-      let data: University[];
-
-      if (filters?.search) {
-        data = await UniversitiesService.searchUniversities(filters.search);
-      } else if (filters?.region) {
-        data = await UniversitiesService.getUniversitiesByRegion(
-          filters.region
-        );
-      } else if (filters?.type) {
-        data = await UniversitiesService.getUniversitiesByType(filters.type);
-      } else {
-        data = await UniversitiesService.getAllUniversities();
-      }
+      // Les filtres se cumulent (recherche + région + type)
+      let data: University[] = search
+        ? await UniversitiesService.searchUniversities(search)
+        : await UniversitiesService.getAllUniversities();
+      if (region) data = data.filter((u) => u.region === region);
+      if (type) data = data.filter((u) => u.type === type);
 
       setUniversities(data);
     } catch (err) {
@@ -58,11 +57,11 @@ export const useUniversities = (
     } finally {
       setLoading(false);
     }
-  };
+  }, [region, type, search]);
 
   useEffect(() => {
     fetchUniversities();
-  }, [filters?.region, filters?.type, filters?.search]);
+  }, [fetchUniversities]);
 
   return {
     universities,

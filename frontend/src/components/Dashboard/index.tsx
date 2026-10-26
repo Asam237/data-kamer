@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -10,6 +10,8 @@ import {
   Activity,
   Star,
   ArrowRight,
+  ArrowUpDown,
+  FileText,
 } from "lucide-react";
 import {
   AreaChart,
@@ -24,7 +26,13 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import cameroonData from "../../../data/cameroon.json";
+import {
+  getRawOverview,
+  getRawUniversities,
+  getRegionIndicators,
+  type RegionIndicators,
+} from "@/lib/dataset";
+import { openRegionsReport } from "@/lib/report";
 import StatCard from "@/components/ui/StatCard";
 import PageHeader from "@/components/ui/PageHeader";
 import SourceBadge from "@/components/ui/SourceBadge";
@@ -55,8 +63,69 @@ const chartTooltipStyle = {
   color: "hsl(var(--foreground))",
 };
 
+type SortKey = keyof Pick<
+  RegionIndicators,
+  | "name"
+  | "population"
+  | "populationShare"
+  | "area"
+  | "density"
+  | "departmentCount"
+  | "universityCount"
+>;
+
+const TABLE_COLUMNS: { key: SortKey; label: string; numeric?: boolean }[] = [
+  { key: "name", label: "Région" },
+  { key: "population", label: "Population", numeric: true },
+  { key: "populationShare", label: "Part *", numeric: true },
+  { key: "area", label: "Superficie (km²)", numeric: true },
+  { key: "density", label: "Densité (hab/km²)", numeric: true },
+  { key: "departmentCount", label: "Départements", numeric: true },
+  { key: "universityCount", label: "Universités", numeric: true },
+];
+
+const formatCell = (key: SortKey, value: string | number) => {
+  if (typeof value === "string") return value;
+  if (key === "populationShare") return `${value.toLocaleString("fr-FR")} %`;
+  return value.toLocaleString("fr-FR");
+};
+
+// Série indicative déjà présente dans l'application ; sa source n'est pas
+// documentée dans le jeu de données (seul le point 2025 provient de l'aperçu).
+const GROWTH_SERIES = [
+  { year: "2018", population: 24806000 },
+  { year: "2019", population: 25506000 },
+  { year: "2020", population: 26211000 },
+  { year: "2021", population: 26916000 },
+  { year: "2022", population: 27633000 },
+  { year: "2023", population: 28373000 },
+  { year: "2024", population: 29124000 },
+  { year: "2025", population: getRawOverview().totalPopulation },
+];
+
 const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
   const { favorites } = useFavorites();
+  const [sort, setSort] = useState<{ key: SortKey; desc: boolean }>({
+    key: "population",
+    desc: true,
+  });
+  const indicators = getRegionIndicators();
+  const sortedIndicators = useMemo(() => {
+    const factor = sort.desc ? -1 : 1;
+    return [...indicators].sort((a, b) => {
+      const va = a[sort.key];
+      const vb = b[sort.key];
+      return typeof va === "string"
+        ? factor * va.localeCompare(vb as string, "fr")
+        : factor * (va - (vb as number));
+    });
+  }, [indicators, sort]);
+  const toggleSort = (key: SortKey) =>
+    setSort((prev) =>
+      prev.key === key
+        ? { key, desc: !prev.desc }
+        : { key, desc: key !== "name" }
+    );
 
   if (!data) {
     return (
@@ -75,7 +144,7 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
     );
   }
 
-  const totalUniversities = cameroonData.universities.length;
+  const totalUniversities = getRawUniversities().length;
 
   const stats = [
     {
@@ -112,22 +181,8 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
     },
   ];
 
-  const populationData = cameroonData.regions.map((region: any) => ({
-    name: region.name,
-    population: region.population,
-    area: region.area,
-  }));
-
-  const growthData = [
-    { year: "2018", population: 24806000 },
-    { year: "2019", population: 25506000 },
-    { year: "2020", population: 26211000 },
-    { year: "2021", population: 26916000 },
-    { year: "2022", population: 27633000 },
-    { year: "2023", population: 28373000 },
-    { year: "2024", population: 29124000 },
-    { year: "2025", population: cameroonData.overview.totalPopulation },
-  ];
+  const populationData = indicators;
+  const growthData = GROWTH_SERIES;
 
   return (
     <div className="space-y-6 sm:space-y-8 p-4 sm:p-6 lg:p-8">
@@ -301,6 +356,11 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
             </div>
             <TrendingUp className="w-6 h-6 text-green-500" />
           </div>
+          <p className="text-xs text-amber-600 dark:text-amber-400 -mt-4 mb-4">
+            Série indicative : seule la valeur 2025 est sourcée dans le jeu de
+            données ; l&apos;origine des valeurs 2018–2024 n&apos;est pas
+            documentée.
+          </p>
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={growthData}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
@@ -325,6 +385,96 @@ const Dashboard: React.FC<DashboardProps> = ({ data, onNavigate }) => {
           </ResponsiveContainer>
         </motion.div>
       </div>
+
+      {/* Regional indicators table */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.45 }}
+        className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden"
+      >
+        <div className="flex items-center justify-between gap-2 p-4 sm:p-6 pb-3 sm:pb-4">
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg sm:text-xl font-bold text-foreground">
+              Indicateurs régionaux
+            </h3>
+            <SourceBadge source="demographics" iconOnly />
+          </div>
+          <button
+            onClick={() => openRegionsReport(indicators.map((r) => r.name))}
+            className="flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            <FileText className="w-4 h-4" />
+            <span className="hidden sm:inline">Rapport complet</span>
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/60 text-muted-foreground">
+              <tr>
+                {TABLE_COLUMNS.map((col) => (
+                  <th
+                    key={col.key}
+                    scope="col"
+                    aria-sort={
+                      sort.key === col.key
+                        ? sort.desc
+                          ? "descending"
+                          : "ascending"
+                        : "none"
+                    }
+                    className={`px-4 py-2.5 font-medium whitespace-nowrap ${
+                      col.numeric ? "text-right" : "text-left"
+                    }`}
+                  >
+                    <button
+                      onClick={() => toggleSort(col.key)}
+                      className={`inline-flex items-center gap-1 hover:text-foreground ${
+                        sort.key === col.key ? "text-foreground" : ""
+                      }`}
+                    >
+                      {col.label}
+                      <ArrowUpDown className="w-3 h-3" />
+                    </button>
+                  </th>
+                ))}
+                <th className="px-4 py-2.5" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {sortedIndicators.map((row) => (
+                <tr key={row.id} className="hover:bg-muted/40">
+                  {TABLE_COLUMNS.map((col) => (
+                    <td
+                      key={col.key}
+                      className={`px-4 py-2.5 whitespace-nowrap ${
+                        col.numeric
+                          ? "text-right tabular-nums text-foreground"
+                          : "font-medium text-foreground"
+                      }`}
+                    >
+                      {formatCell(col.key, row[col.key])}
+                    </td>
+                  ))}
+                  <td className="px-4 py-2.5 text-right whitespace-nowrap">
+                    <button
+                      onClick={() => openRegionsReport([row.name])}
+                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      Fiche
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-xs text-muted-foreground px-4 sm:px-6 py-3 border-t border-border">
+          * Part de la région dans la somme des populations régionales du jeu
+          de données (dont l&apos;année de référence peut différer du total
+          national affiché ci-dessus).
+        </p>
+      </motion.div>
 
       {/* General Information */}
       <motion.div

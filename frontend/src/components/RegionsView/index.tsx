@@ -6,7 +6,7 @@ import {
   UserGroupIcon,
   DocumentIcon,
 } from "@heroicons/react/24/outline";
-import { Star, Download } from "lucide-react";
+import { Star, Download, FileText } from "lucide-react";
 import { useRegions } from "@/hooks/useRegions";
 import { Region } from "@/services/regions.service";
 import PageHeader from "@/components/ui/PageHeader";
@@ -14,6 +14,8 @@ import EmptyState from "@/components/ui/EmptyState";
 import SourceBadge from "@/components/ui/SourceBadge";
 import { useFavorites } from "@/lib/favorites";
 import { exportToCsv } from "@/lib/export";
+import { matchesQuery } from "@/lib/search";
+import { openRegionsReport } from "@/lib/report";
 
 interface RegionsViewProps {
   initialSearch?: string;
@@ -29,8 +31,9 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
   const filteredRegions = useMemo(() => {
     return regions.filter(
       (region) =>
-        region.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        region.capital.toLowerCase().includes(searchTerm.toLowerCase())
+        matchesQuery(region.name, searchTerm) ||
+        matchesQuery(region.capital, searchTerm) ||
+        region.departments.some((d) => matchesQuery(d.name, searchTerm))
     );
   }, [regions, searchTerm]);
 
@@ -61,6 +64,14 @@ export default function RegionsView({ initialSearch = "" }: RegionsViewProps) {
           <div className="flex justify-between items-center">
             <h2 className="text-xl sm:text-2xl font-bold">{region.name}</h2>
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => openRegionsReport([region.name])}
+                className="hover:bg-white/20 rounded-full p-2 transition"
+                title="Fiche région imprimable (PDF)"
+                aria-label="Fiche région imprimable (PDF)"
+              >
+                <FileText className="w-5 h-5" />
+              </button>
               <button
                 onClick={() => toggleFavorite("region", region.name, region.name)}
                 className="hover:bg-white/20 rounded-full p-2 transition"
